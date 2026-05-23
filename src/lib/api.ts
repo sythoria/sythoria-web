@@ -76,6 +76,47 @@ export async function chatStream({
   }
 }
 
+export async function chatCompletionTools({
+  apiBase,
+  apiKey,
+  model,
+  messages,
+  tools,
+  temperature,
+  signal,
+}: {
+  apiBase: string;
+  apiKey: string;
+  model: string;
+  messages: { role: string; content: string | null; tool_calls?: unknown[]; tool_call_id?: string; name?: string }[];
+  tools: unknown[];
+  temperature: number;
+  signal?: AbortSignal;
+}): Promise<{ choices?: { message: { content: string | null; tool_calls?: { id: string; function: { name: string; arguments: string } }[] } }[] }> {
+  const res = await fetch(apiBase, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
+    },
+    body: JSON.stringify({
+      model,
+      messages,
+      tools,
+      temperature,
+      stream: false,
+    }),
+    signal,
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`API error ${res.status}: ${text || res.statusText}`);
+  }
+
+  return res.json();
+}
+
 export async function checkApiConnection(apiBase: string, apiKey: string): Promise<boolean> {
   try {
     const res = await fetch(apiBase, {
