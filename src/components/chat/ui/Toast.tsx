@@ -14,10 +14,53 @@ const ERROR_MESSAGES: Record<string, string> = {
   503: "Service unavailable \u2014 the provider is temporarily down.",
 };
 
+interface StructuredAppError {
+  ApiError?: { status: number; message: string };
+  ConfigIo?: string;
+  AppPath?: string;
+  RequestFailed?: string;
+  StreamError?: string;
+  ParseError?: string;
+  AuthError?: string;
+  SearchError?: string;
+  UrlValidationError?: string;
+  KeyNotFound?: string;
+}
+
 function parseApiError(err: unknown): string {
-  if (err instanceof Error) return userFriendlyMessage(err.message);
-  if (typeof err === "string") return userFriendlyMessage(err);
+  if (err instanceof Error) {
+    const structured = tryParseStructuredError(err.message);
+    if (structured) return structured;
+    return userFriendlyMessage(err.message);
+  }
+  if (typeof err === "string") {
+    const structured = tryParseStructuredError(err);
+    if (structured) return structured;
+    return userFriendlyMessage(err);
+  }
   return "An unexpected error occurred. Please try again.";
+}
+
+function tryParseStructuredError(raw: string): string | null {
+  try {
+    const parsed: StructuredAppError = JSON.parse(raw);
+    if (parsed.ApiError) {
+      const code = String(parsed.ApiError.status);
+      return ERROR_MESSAGES[code] ?? `API error ${code}: ${parsed.ApiError.message}`;
+    }
+    if (parsed.UrlValidationError) return `URL validation error: ${parsed.UrlValidationError}`;
+    if (parsed.KeyNotFound) return parsed.KeyNotFound;
+    if (parsed.AuthError) return `Authentication error: ${parsed.AuthError}`;
+    if (parsed.SearchError) return `Search error: ${parsed.SearchError}`;
+    if (parsed.ConfigIo) return "Configuration error — try restarting the app.";
+    if (parsed.StreamError) return "Stream error — the connection was interrupted.";
+    if (parsed.ParseError) return "Response parse error — the API returned unexpected data.";
+    if (parsed.RequestFailed) return userFriendlyMessage(parsed.RequestFailed);
+    if (parsed.AppPath) return "App path error — try reinstalling.";
+  } catch {
+    // Not structured JSON, fall through
+  }
+  return null;
 }
 
 function userFriendlyMessage(raw: string): string {
