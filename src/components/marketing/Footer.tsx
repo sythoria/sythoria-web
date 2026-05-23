@@ -10,12 +10,9 @@ export default function Footer() {
           <span>Sythoria</span>
         </div>
         <div className="flex items-center gap-6">
-          <Link href="/chat" className="text-sm text-text-muted hover:text-text-primary transition-colors">
-            Chat
-          </Link>
-          <Link href="/settings" className="text-sm text-text-muted hover:text-text-primary transition-colors">
-            Settings
-          </Link>
+        <Link href="/chat" className="text-sm text-text-muted hover:text-text-primary transition-colors">
+          Chat
+        </Link>
         </div>
         <p className="text-xs text-text-muted">&copy; {new Date().getFullYear()} Sythoria. Privacy-first AI.</p>
       </div>
