@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Paperclip, ChevronDown, Check } from "lucide-react";
+import { Send, Plus, Paperclip, ChevronDown, Check, Search, Square, Loader2 } from "lucide-react";
 import { STATUS_COLORS, type ModelConfig } from "@/lib/types";
 import type { ModelStatuses } from "@/lib/types";
 import { MAX_INPUT_LENGTH, MAX_TEXTAREA_HEIGHT } from "@/lib/config";
-import { SYSTEM_PROMPTS } from "@/config/systemPrompts";
 
 interface InputBarProps {
   models: ModelConfig[];
@@ -14,9 +13,11 @@ interface InputBarProps {
   onModelChange: (model: string) => void;
   disabled?: boolean;
   modelStatuses: ModelStatuses;
-  systemPromptId: string | null;
-  onSystemPromptChange: (id: string | null) => void;
+  isSearchEnabled: boolean;
+  onToggleSearch: (enabled: boolean) => void;
   inputAutoFocus?: boolean;
+  isStreaming?: boolean;
+  onStop?: () => void;
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -33,26 +34,36 @@ export default function InputBar({
   onModelChange,
   disabled,
   modelStatuses,
-  systemPromptId,
-  onSystemPromptChange,
+  isSearchEnabled,
+  onToggleSearch,
   inputAutoFocus,
+  isStreaming,
+  onStop,
 }: InputBarProps) {
   const [value, setValue] = useState("");
   const [modelOpen, setModelOpen] = useState(false);
+  const [plusOpen, setPlusOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const plusDropdownRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const isOverLimit = value.length > MAX_INPUT_LENGTH;
   const trimmed = value.trim();
-  const canSend = trimmed.length > 0 && !isOverLimit && !disabled;
+  const canSend = trimmed.length > 0 && !isOverLimit && !disabled && !isStreaming;
 
   useEffect(() => {
     if (inputAutoFocus && textareaRef.current) {
       textareaRef.current.focus();
     }
   }, [inputAutoFocus]);
+
+  useEffect(() => {
+    if (isStreaming && textareaRef.current) {
+      textareaRef.current.blur();
+    }
+  }, [isStreaming]);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -68,6 +79,9 @@ export default function InputBar({
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setModelOpen(false);
         setFocusedIndex(-1);
+      }
+      if (plusDropdownRef.current && !plusDropdownRef.current.contains(e.target as Node)) {
+        setPlusOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClick);
@@ -85,21 +99,25 @@ export default function InputBar({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (modelOpen) {
-        if (e.key === "ArrowDown") {
-          e.preventDefault();
-          setFocusedIndex((i) => Math.min(i + 1, models.length - 1));
-        } else if (e.key === "ArrowUp") {
-          e.preventDefault();
-          setFocusedIndex((i) => Math.max(i - 1, 0));
-        } else if (e.key === "Enter" && focusedIndex >= 0) {
-          e.preventDefault();
-          onModelChange(models[focusedIndex].id);
+      if (modelOpen || plusOpen) {
+        if (e.key === "Escape") {
           setModelOpen(false);
+          setPlusOpen(false);
           setFocusedIndex(-1);
-        } else if (e.key === "Escape") {
-          setModelOpen(false);
-          setFocusedIndex(-1);
+        }
+        if (modelOpen) {
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            setFocusedIndex((i) => Math.min(i + 1, models.length - 1));
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            setFocusedIndex((i) => Math.max(i - 1, 0));
+          } else if (e.key === "Enter" && focusedIndex >= 0) {
+            e.preventDefault();
+            onModelChange(models[focusedIndex].id);
+            setModelOpen(false);
+            setFocusedIndex(-1);
+          }
         }
         return;
       }
@@ -109,7 +127,7 @@ export default function InputBar({
         handleSubmit();
       }
     },
-    [modelOpen, focusedIndex, models, onModelChange, handleSubmit],
+    [modelOpen, plusOpen, focusedIndex, models, onModelChange, handleSubmit],
   );
 
   useEffect(() => {
@@ -134,40 +152,61 @@ export default function InputBar({
         <label htmlFor="chat-input" className="sr-only">
           Message
         </label>
-        <div className="flex items-center gap-1 mb-1.5 px-1">
-          {SYSTEM_PROMPTS.map((p) => {
-            const isActive = systemPromptId === p.id;
-            return (
-              <button
-                key={p.id}
-                onClick={() => onSystemPromptChange(isActive ? null : p.id)}
-                className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-medium whitespace-nowrap transition-all duration-150 ${
-                  isActive
-                    ? "bg-accent/15 text-accent border border-accent/30"
-                    : "text-text-muted hover:text-text-secondary hover:bg-hover border border-transparent"
-                }`}
-                aria-label={`${isActive ? "Deselect" : "Select"} ${p.label} mode`}
-                aria-pressed={isActive}
-              >
-                <span className="shrink-0" aria-hidden="true">
-                  {p.icon}
-                </span>
-                <span>{p.label}</span>
-              </button>
-            );
-          })}
-        </div>
         <div
-          className={`flex items-center gap-2 glass-panel rounded-2xl px-4 py-3 transition-all focus-within:border-accent/40 focus-within:shadow-lg focus-within:shadow-accent/5 ${isOverLimit ? "border-red-500/50" : ""}`}
+          className={`flex items-center gap-2 glass-panel rounded-2xl px-4 py-3 transition-all focus-within:border-accent/40 focus-within:shadow-lg focus-within:shadow-accent/5 ${
+            isOverLimit ? "border-red-500/50" : ""
+          } ${isStreaming ? "dark:animate-border-glow animate-border-glow-light" : ""}`}
         >
-          <button
-            className="shrink-0 p-1.5 rounded-lg text-text-muted hover:text-text-secondary hover:bg-hover transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-            title="Attach file"
-            aria-label="Attach file (coming soon)"
-            disabled
-          >
-            <Paperclip size={18} />
-          </button>
+          <div ref={plusDropdownRef} className="relative shrink-0">
+            <button
+              onClick={() => setPlusOpen(!plusOpen)}
+              className={`p-1.5 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center ${
+                isSearchEnabled ? "text-accent hover:bg-accent/10" : "text-text-muted hover:text-text-secondary hover:bg-hover"
+              }`}
+              aria-label="Attach or search"
+              aria-expanded={plusOpen}
+              aria-haspopup="menu"
+            >
+              <Plus size={18} />
+            </button>
+            {plusOpen && (
+              <div
+                className="absolute bottom-full left-0 mb-2 w-52 bg-surface border border-border rounded-xl shadow-2xl py-1 z-50 animate-fade-in"
+                role="menu"
+                aria-label="Attachment and search options"
+              >
+                <button
+                  onClick={() => {
+                    setPlusOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-text-secondary hover:bg-hover hover:text-text-primary transition-colors min-h-[44px]"
+                  role="menuitem"
+                  disabled
+                >
+                  <Paperclip size={16} className="text-text-muted" />
+                  <span>Add File</span>
+                  <span className="ml-auto text-[10px] text-text-muted">Soon</span>
+                </button>
+                <button
+                  onClick={() => {
+                    onToggleSearch(!isSearchEnabled);
+                    setPlusOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm transition-colors min-h-[44px] ${
+                    isSearchEnabled
+                      ? "text-accent bg-accent/5 hover:bg-accent/10"
+                      : "text-text-secondary hover:bg-hover hover:text-text-primary"
+                  }`}
+                  role="menuitemcheckbox"
+                  aria-checked={isSearchEnabled}
+                >
+                  <Search size={16} className={isSearchEnabled ? "text-accent" : "text-text-muted"} />
+                  <span>Web Search</span>
+                  {isSearchEnabled && <Check size={14} className="text-accent ml-auto" />}
+                </button>
+              </div>
+            )}
+          </div>
 
           <textarea
             id="chat-input"
@@ -180,7 +219,9 @@ export default function InputBar({
             disabled={disabled}
             aria-describedby={isOverLimit ? "input-limit-error" : "input-hint"}
             aria-invalid={isOverLimit}
-            className={`flex-1 bg-transparent text-sm text-text-primary placeholder-text-muted resize-none outline-none leading-relaxed max-h-[${MAX_TEXTAREA_HEIGHT}px] overflow-y-hidden ${isOverLimit ? "text-red-400" : ""}`}
+            className={`flex-1 bg-transparent text-sm text-text-primary placeholder-text-muted resize-none outline-none leading-relaxed max-h-[${MAX_TEXTAREA_HEIGHT}px] overflow-y-hidden ${
+              isOverLimit ? "text-red-400" : ""
+            }`}
           />
 
           <div ref={dropdownRef} className="relative shrink-0">
@@ -262,12 +303,14 @@ export default function InputBar({
           </div>
 
           <button
-            onClick={handleSubmit}
-            disabled={!canSend}
-            className="shrink-0 p-2 rounded-lg bg-accent hover:bg-accent-hover text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:shadow-lg min-w-[44px] min-h-[44px] flex items-center justify-center"
-            aria-label="Send message"
+            onClick={isStreaming ? onStop : handleSubmit}
+            disabled={!isStreaming && !canSend}
+            className={`shrink-0 p-2 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:shadow-lg min-w-[44px] min-h-[44px] flex items-center justify-center ${
+              isStreaming ? "bg-red-500/90 hover:bg-red-600 text-white" : "bg-accent hover:bg-accent-hover text-white"
+            }`}
+            aria-label={isStreaming ? "Stop generating" : "Send message"}
           >
-            <Send size={16} />
+            {isStreaming ? <Square size={16} className="fill-current" /> : <Send size={16} />}
           </button>
         </div>
 
@@ -278,6 +321,21 @@ export default function InputBar({
           {isOverLimit ? (
             <span className="text-red-400" role="alert">
               Message exceeds {MAX_INPUT_LENGTH.toLocaleString()} character limit
+            </span>
+          ) : isStreaming ? (
+            <span className="flex items-center justify-center gap-2 text-accent font-medium animate-generating-pulse">
+              <Loader2 size={13} className="animate-spin" />
+              <span>Generating response</span>
+              <span className="generating-dots">
+                <span />
+                <span />
+                <span />
+              </span>
+            </span>
+          ) : isSearchEnabled ? (
+            <span className="flex items-center justify-center gap-1.5">
+              <Search size={11} className="text-accent" />
+              Web Search enabled
             </span>
           ) : (
             "Sythoria can make mistakes. Consider checking important information."
