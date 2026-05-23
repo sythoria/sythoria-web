@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Conversation, Message, ModelConfig, ConnectionStatus, ModelStatuses } from "@/lib/types";
+import type { Conversation, Message, ModelConfig, ConnectionStatus, ModelStatuses, SearchApiConfig, SearchResult, UrlContent } from "@/lib/types";
 import { STATUS_COLORS } from "@/lib/types";
 import {
   loadConversations,
@@ -11,6 +11,10 @@ import {
   clearConversations,
   loadModelConfigs,
   saveModelConfigs,
+  loadSearchConfigs,
+  saveSearchConfigs,
+  loadSearchApiKeys,
+  saveSearchApiKeys,
 } from "@/utils/storage";
 import { generateId } from "@/utils/generateId";
 import { logError, logInfo } from "@/utils/logger";
@@ -18,9 +22,10 @@ import { TITLE_MAX_LENGTH, DEFAULT_TEMPERATURE } from "@/lib/config";
 import { getSystemPrompt } from "@/config/systemPrompts";
 import { parseApiError } from "@/components/chat/ui/Toast";
 import type { Toast } from "@/components/chat/ui/Toast";
-import { validateModelConfig } from "@/utils/validation";
+import { validateModelConfig, validateSearchConfig } from "@/utils/validation";
 import { chatStream, checkApiConnection } from "@/lib/api";
 import { PROVIDER_PRESETS } from "@/lib/config";
+import { sendWithToolLoop, type LoadingKey as ToolLoopLoadingKey } from "@/lib/toolLoop";
 
 let activeAbortController: AbortController | null = null;
 let healthCheckInterval: ReturnType<typeof setInterval> | null = null;
@@ -64,7 +69,7 @@ function setAssistantError(conversations: Conversation[], convId: string, err: u
   });
 }
 
-export type LoadingKey = "init" | "sendMessage" | "checkConnection" | "saveConfig";
+export type LoadingKey = ToolLoopLoadingKey;
 
 interface AppState {
   conversations: Conversation[];
@@ -86,6 +91,10 @@ interface AppState {
   systemPromptId: string | null;
   loading: Record<LoadingKey, boolean>;
   toasts: Toast[];
+  searchConfigs: SearchApiConfig[];
+  activeSearchId: string | null;
+  isSearchEnabled: boolean;
+  searchApiKeys: Record<string, string>;
 
   init: () => void;
   setSystemPromptId: (id: string | null) => void;
@@ -117,6 +126,13 @@ interface AppState {
   startHealthCheck: () => void;
   stopHealthCheck: () => void;
   cleanup: () => void;
+  addSearchConfig: () => void;
+  updateSearchConfig: (id: string, updates: Partial<SearchApiConfig>) => void;
+  deleteSearchConfig: (id: string) => void;
+  setActiveSearchId: (id: string | null) => void;
+  toggleSearchEnabled: (enabled: boolean) => void;
+  performSearch: (query: string, config: SearchApiConfig, apiKey: string) => Promise<SearchResult[]>;
+  fetchUrlContent: (url: string) => Promise<UrlContent>;
 }
 
 let toastCounter = 0;
@@ -138,9 +154,13 @@ export const useAppStore = create<AppState>((set, get) => ({
   showRenameModal: false,
   renameId: null,
   renameCurrentTitle: "",
-  loading: { init: true, sendMessage: false, checkConnection: false, saveConfig: false },
+  loading: { init: true, sendMessage: false, checkConnection: false, saveConfig: false, toolExecution: false },
   toasts: [],
   systemPromptId: null,
+  searchConfigs: [],
+  activeSearchId: null,
+  isSearchEnabled: false,
+  searchApiKeys: {},
 
   init: () => {
     set((s) => ({ loading: { ...s.loading, init: true } }));
@@ -149,6 +169,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       const loadedConvs = loadConversations();
       const loadedTheme = loadTheme();
       const loadedKeys = loadApiKeys();
+      const loadedSearchConfigs = loadSearchConfigs();
+      const loadedSearchKeys = loadSearchApiKeys();
 
       const models = (loadedModels || []) as ModelConfig[];
       const modelsWithKeys = models.map((m: ModelConfig) => ({
@@ -157,6 +179,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       }));
 
       const nonEmptyConvs = loadedConvs.filter((c: Conversation) => c.messages.length > 0);
+
+      const searchConfigs = loadedSearchConfigs || [];
 
       if (modelsWithKeys.length === 0) {
         const defaultModel: ModelConfig = {
@@ -180,6 +204,9 @@ export const useAppStore = create<AppState>((set, get) => ({
         apiKeys: loadedKeys,
         hasStarted: true,
         isConfigLoaded: true,
+        searchConfigs,
+        activeSearchId: searchConfigs.find((c) => c.enabled)?.id ?? null,
+        searchApiKeys: loadedSearchKeys,
       });
 
       document.documentElement.classList.toggle("dark", loadedTheme === "dark");
@@ -370,7 +397,19 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   sendMessage: async (text) => {
-    const { isStreaming, activeId, selectedModel, models, temperature, apiKeys, systemPromptId } = get();
+    const {
+      isStreaming,
+      activeId,
+      selectedModel,
+      models,
+      temperature,
+      apiKeys,
+      systemPromptId,
+      isSearchEnabled,
+      activeSearchId,
+      searchConfigs,
+      searchApiKeys,
+    } = get();
     if (isStreaming) return;
 
     let convId = activeId;
@@ -394,30 +433,25 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
 
     const userMsg: Message = { id: generateId(), role: "user", content: text, timestamp: new Date() };
-    const assistantMsg: Message = {
-      id: generateId(),
-      role: "assistant",
-      content: "",
-      timestamp: new Date(),
-      isStreaming: true,
-    };
 
     const finalId = convId;
     const modelConfig = models.find((m) => m.id === selectedModel) ?? models[0];
 
     if (!modelConfig) {
       logError("No model configuration selected");
-      get().addToast("No model configured \u2014 add one in Settings", "error");
+      get().addToast("No model configured — add one in Settings", "error");
       return;
     }
 
+    const useTools = isSearchEnabled && activeSearchId;
+    const searchConfig = useTools ? searchConfigs.find((c) => c.id === activeSearchId) : undefined;
+    const searchApiKey = useTools && searchConfig ? searchApiKeys[searchConfig.id] || searchConfig.apiKey || "" : "";
+
     set((state) => ({
-      isStreaming: true,
-      loading: { ...state.loading, sendMessage: true },
       conversations: updateConversationMessages(
         state.conversations,
         finalId,
-        (msgs) => [...msgs, userMsg, assistantMsg],
+        (msgs) => [...msgs, userMsg],
         {
           title:
             state.conversations.find((c) => c.id === finalId)?.messages.length === 0 ? truncateTitle(text) : undefined,
@@ -425,83 +459,118 @@ export const useAppStore = create<AppState>((set, get) => ({
       ),
     }));
 
-    const abortController = new AbortController();
-    activeAbortController = abortController;
+    if (useTools && searchConfig) {
+      const abortController = new AbortController();
+      activeAbortController = abortController;
 
-    try {
-      const apiUrl = modelConfig.apiBase;
-      const apiKey = apiKeys[modelConfig.id] || modelConfig.apiKey;
-
-      const conv = get().conversations.find((c) => c.id === finalId);
-      const promptId = conv?.systemPromptId ?? systemPromptId;
-      const systemContent = promptId ? getSystemPrompt(promptId) : undefined;
-
-      const apiMessages: { role: string; content: string }[] = [];
-      if (systemContent) {
-        apiMessages.push({ role: "system", content: systemContent });
-      }
-      apiMessages.push(
-        ...(conv?.messages.map((m) => ({
-          role: m.role,
-          content: m.content,
-        })) ?? []),
-      );
-      apiMessages.push({ role: "user", content: text });
-
-      await chatStream({
-        apiBase: apiUrl,
-        apiKey,
-        model: modelConfig.modelId,
-        messages: apiMessages,
-        temperature,
-        signal: abortController.signal,
-        onChunk: (delta) => {
-          set((state) => ({
-            conversations: state.conversations.map((c) => {
-              if (c.id !== finalId) return c;
-              const updated = [...c.messages];
-              const last = updated[updated.length - 1];
-              if (last && last.role === "assistant") {
-                updated[updated.length - 1] = { ...last, content: last.content + delta };
-              }
-              return { ...c, messages: updated };
-            }),
-          }));
-        },
-        onDone: () => {
-          set((state) => ({
-            conversations: finalizeAssistantMessage(state.conversations, finalId),
-            isStreaming: false,
-            loading: { ...state.loading, sendMessage: false },
-          }));
-          activeAbortController = null;
-          get().persistConversations();
-        },
-        onError: (err) => {
-          const friendlyMessage = parseApiError(err);
-          set((state) => ({
-            conversations: setAssistantError(state.conversations, finalId, err),
-            isStreaming: false,
-            loading: { ...state.loading, sendMessage: false },
-          }));
-          activeAbortController = null;
-          get().addToast(friendlyMessage, "error");
-          logError("Failed to send message", err);
-        },
-      });
-    } catch (err) {
-      const friendlyMessage = parseApiError(err);
-      set((state) => ({
-        conversations: setAssistantError(state.conversations, finalId, err),
-        isStreaming: false,
-        loading: { ...state.loading, sendMessage: false },
-      }));
+        await sendWithToolLoop(
+          finalId,
+          modelConfig,
+          temperature,
+          apiKeys,
+          searchConfig,
+          searchApiKey,
+          (fn) => set(fn as (state: AppState & Record<string, unknown>) => Partial<AppState & Record<string, unknown>>),
+          () => get() as unknown as AppState,
+          get().performSearch,
+          get().fetchUrlContent,
+          abortController.signal,
+        );
       activeAbortController = null;
-      get().addToast(friendlyMessage, "error");
-      logError("Failed to send message", err);
+    } else {
+      const assistantMsg: Message = {
+        id: generateId(),
+        role: "assistant",
+        content: "",
+        timestamp: new Date(),
+        isStreaming: true,
+      };
+
+      set((state) => ({
+        isStreaming: true,
+        loading: { ...state.loading, sendMessage: true },
+        conversations: updateConversationMessages(state.conversations, finalId, (msgs) => [...msgs, assistantMsg]),
+      }));
+
+      const abortController = new AbortController();
+      activeAbortController = abortController;
+
+      try {
+        const apiUrl = modelConfig.apiBase;
+        const apiKey = apiKeys[modelConfig.id] || modelConfig.apiKey;
+
+        const conv = get().conversations.find((c) => c.id === finalId);
+        const promptId = conv?.systemPromptId ?? systemPromptId;
+        const systemContent = promptId ? getSystemPrompt(promptId) : undefined;
+
+        const apiMessages: { role: string; content: string }[] = [];
+        if (systemContent) {
+          apiMessages.push({ role: "system", content: systemContent });
+        }
+        apiMessages.push(
+          ...(conv?.messages
+            .filter((m) => m.role === "user" || m.role === "assistant")
+            .map((m) => ({
+              role: m.role,
+              content: m.content,
+            })) ?? []),
+        );
+        apiMessages.push({ role: "user", content: text });
+
+        await chatStream({
+          apiBase: apiUrl,
+          apiKey,
+          model: modelConfig.modelId,
+          messages: apiMessages,
+          temperature,
+          signal: abortController.signal,
+          onChunk: (delta) => {
+            set((state) => ({
+              conversations: state.conversations.map((c) => {
+                if (c.id !== finalId) return c;
+                const updated = [...c.messages];
+                const last = updated[updated.length - 1];
+                if (last && last.role === "assistant") {
+                  updated[updated.length - 1] = { ...last, content: last.content + delta };
+                }
+                return { ...c, messages: updated };
+              }),
+            }));
+          },
+          onDone: () => {
+            set((state) => ({
+              conversations: finalizeAssistantMessage(state.conversations, finalId),
+              isStreaming: false,
+              loading: { ...state.loading, sendMessage: false },
+            }));
+            activeAbortController = null;
+            get().persistConversations();
+          },
+          onError: (err) => {
+            const friendlyMessage = parseApiError(err);
+            set((state) => ({
+              conversations: setAssistantError(state.conversations, finalId, err),
+              isStreaming: false,
+              loading: { ...state.loading, sendMessage: false },
+            }));
+            activeAbortController = null;
+            get().addToast(friendlyMessage, "error");
+            logError("Failed to send message", err);
+          },
+        });
+      } catch (err) {
+        const friendlyMessage = parseApiError(err);
+        set((state) => ({
+          conversations: setAssistantError(state.conversations, finalId, err),
+          isStreaming: false,
+          loading: { ...state.loading, sendMessage: false },
+        }));
+        activeAbortController = null;
+        get().addToast(friendlyMessage, "error");
+        logError("Failed to send message", err);
+      }
     }
   },
-
   stopStreaming: () => {
     if (activeAbortController) {
       activeAbortController.abort();
@@ -512,7 +581,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         ...c,
         messages: c.messages.map((m) => (m.isStreaming ? { ...m, isStreaming: false } : m)),
       }));
-      return { isStreaming: false, loading: { ...state.loading, sendMessage: false }, conversations: convs };
+      return { isStreaming: false, loading: { ...state.loading, sendMessage: false, toolExecution: false }, conversations: convs };
     });
   },
 
@@ -523,6 +592,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       `# ${conv.title}`,
       ``,
       ...conv.messages.map((m) => {
+        if (m.role === "tool") {
+          const result = m.toolResult;
+          return `**Tool (${result?.name ?? "unknown"}):** ${m.content.slice(0, 200)}`;
+        }
         const label = m.role === "user" ? "You" : "Assistant";
         return `**${label}:** ${m.content}`;
       }),
@@ -608,5 +681,158 @@ export const useAppStore = create<AppState>((set, get) => ({
   cleanup: () => {
     get().stopHealthCheck();
     get().stopStreaming();
+  },
+
+  addSearchConfig: () => {
+    const newConfig: SearchApiConfig = {
+      id: "search-" + Date.now(),
+      name: "New Search API",
+      provider: "google",
+      baseUrl: "https://www.googleapis.com/customsearch/v1",
+      apiKey: "",
+      cx: "",
+      maxResults: 5,
+      enabled: true,
+    };
+    const validation = validateSearchConfig(newConfig);
+    if (!validation.success) {
+      const firstError = validation.error.issues[0]?.message ?? "Invalid search config";
+      get().addToast(`Validation: ${firstError}`, "error");
+      return;
+    }
+    const { searchConfigs } = get();
+    const updated = [...searchConfigs, newConfig];
+    set({ searchConfigs: updated, activeSearchId: newConfig.id });
+    saveSearchConfigs(updated.map(({ apiKey: _apiKey, ...rest }) => rest as SearchApiConfig));
+    get().addToast("Search API added — configure its details", "info");
+  },
+
+  updateSearchConfig: (id, updates) => {
+    const { searchConfigs, searchApiKeys } = get();
+    const updatedConfigs = searchConfigs.map((c) => (c.id === id ? { ...c, ...updates } : c));
+    set({ searchConfigs: updatedConfigs });
+
+    if (updates.apiKey !== undefined) {
+      const newKeys = { ...searchApiKeys, [id]: updates.apiKey! };
+      set({ searchApiKeys: newKeys });
+      saveSearchApiKeys(newKeys);
+    }
+
+    const configsWithoutKeys = updatedConfigs.map(({ apiKey: _apiKey, ...rest }) => rest as SearchApiConfig);
+    saveSearchConfigs(configsWithoutKeys);
+
+    if (!updatedConfigs.find((c) => c.id === get().activeSearchId) && updatedConfigs.length > 0) {
+      set({ activeSearchId: updatedConfigs[0].id });
+    }
+  },
+
+  deleteSearchConfig: (id) => {
+    const { searchConfigs, activeSearchId, searchApiKeys } = get();
+    const updated = searchConfigs.filter((c) => c.id !== id);
+    const newKeys = { ...searchApiKeys };
+    delete newKeys[id];
+    set({
+      searchConfigs: updated,
+      activeSearchId: activeSearchId === id ? (updated[0]?.id ?? null) : activeSearchId,
+      searchApiKeys: newKeys,
+    });
+    saveSearchConfigs(updated.map(({ apiKey: _apiKey, ...rest }) => rest as SearchApiConfig));
+    saveSearchApiKeys(newKeys);
+    get().addToast("Search API deleted", "info");
+  },
+
+  setActiveSearchId: (id) => set({ activeSearchId: id }),
+  toggleSearchEnabled: (enabled) => set({ isSearchEnabled: enabled }),
+
+  performSearch: async (query, config, apiKey) => {
+    try {
+      const url = new URL(config.baseUrl);
+      if (config.provider === "google") {
+        url.searchParams.set("key", apiKey);
+        url.searchParams.set("cx", config.cx || "");
+        url.searchParams.set("q", query);
+        url.searchParams.set("num", String(config.maxResults));
+        const res = await fetch(url.toString());
+        if (!res.ok) throw new Error(`Google Search API error: ${res.status}`);
+        const data = await res.json();
+        return (data.items || []).map((item: { title?: string; link?: string; snippet?: string }) => ({
+          title: item.title || "",
+          url: item.link || "",
+          snippet: item.snippet || "",
+        })) as SearchResult[];
+      }
+      if (config.provider === "searxng") {
+        url.pathname = "/search";
+        url.searchParams.set("q", query);
+        url.searchParams.set("format", "json");
+        const res = await fetch(url.toString());
+        if (!res.ok) throw new Error(`SearXNG error: ${res.status}`);
+        const data = await res.json();
+        return (data.results || []).slice(0, config.maxResults).map((item: { title?: string; url?: string; content?: string }) => ({
+          title: item.title || "",
+          url: item.url || "",
+          snippet: item.content || "",
+        })) as SearchResult[];
+      }
+      if (config.provider === "firecrawl") {
+        const res = await fetch(`${config.baseUrl}/search`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({ query, limit: config.maxResults }),
+        });
+        if (!res.ok) throw new Error(`Firecrawl error: ${res.status}`);
+        const data = await res.json();
+        return (data.data || data || []).slice(0, config.maxResults).map((item: { title?: string; url?: string; snippet?: string; content?: string }) => ({
+          title: item.title || "",
+          url: item.url || "",
+          snippet: item.snippet || item.content || "",
+        })) as SearchResult[];
+      }
+      const res = await fetch(config.baseUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}) },
+        body: JSON.stringify({ query, maxResults: config.maxResults }),
+      });
+      if (!res.ok) throw new Error(`Custom search API error: ${res.status}`);
+      const data = await res.json();
+      return (data.results || data.items || []).slice(0, config.maxResults).map((item: { title?: string; url?: string; snippet?: string; content?: string }) => ({
+        title: item.title || "",
+        url: item.url || "",
+        snippet: item.snippet || item.content || "",
+      })) as SearchResult[];
+    } catch (err) {
+      logError("Search failed", err);
+      get().addToast(parseApiError(err), "error");
+      return [];
+    }
+  },
+
+  fetchUrlContent: async (url) => {
+    try {
+      const res = await fetch(url, {
+        headers: { "User-Agent": "Sythoria/1.0" },
+      });
+      if (!res.ok) throw new Error(`Fetch error: ${res.status}`);
+      const html = await res.text();
+      const text = html
+        .replace(/<script[\s\S]*?<\/script>/gi, "")
+        .replace(/<style[\s\S]*?<\/style>/gi, "")
+        .replace(/<[^>]+>/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+      const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+      return {
+        url,
+        title: titleMatch?.[1]?.trim() || "",
+        content: text.slice(0, 10000),
+        status: "ok",
+      } as UrlContent;
+    } catch (err) {
+      logError("Fetch URL failed", err);
+      return { url, title: "", content: `Error: ${parseApiError(err)}`, status: "error", error: parseApiError(err) } as UrlContent;
+    }
   },
 }));
