@@ -1,14 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Menu, Square } from "lucide-react";
+import { Menu } from "lucide-react";
 import Sidebar from "@/components/chat/Sidebar";
 import ChatArea from "@/components/chat/ChatArea";
 import InputBar from "@/components/chat/InputBar";
+import StartScreen from "@/components/chat/StartScreen";
+import ScrollToBottomButton from "@/components/chat/ui/ScrollToBottomButton";
 import { RenameChatModal } from "@/components/chat/ui/Modal";
 import { Spinner } from "@/components/chat/ui/Spinner";
 import { ToastContainer } from "@/components/chat/ui/Toast";
 import { useAppStore } from "@/lib/store";
+import { useScrollButton } from "@/hooks/useScrollPosition";
 import { useShallow } from "zustand/react/shallow";
 
 export default function ChatPage() {
@@ -21,11 +24,12 @@ export default function ChatPage() {
     isStreaming,
     modelStatuses,
     isConfigLoaded,
+    hasStarted,
     showRenameModal,
     renameCurrentTitle,
     loading,
     toasts,
-    systemPromptId,
+    isSearchEnabled,
   } = useAppStore(
     useShallow((s) => ({
       conversations: s.conversations,
@@ -36,11 +40,12 @@ export default function ChatPage() {
       isStreaming: s.isStreaming,
       modelStatuses: s.modelStatuses,
       isConfigLoaded: s.isConfigLoaded,
+      hasStarted: s.hasStarted,
       showRenameModal: s.showRenameModal,
       renameCurrentTitle: s.renameCurrentTitle,
       loading: s.loading,
       toasts: s.toasts,
-      systemPromptId: s.systemPromptId,
+      isSearchEnabled: s.isSearchEnabled,
     })),
   );
 
@@ -49,7 +54,6 @@ export default function ChatPage() {
     setActiveId,
     setSidebarOpen,
     setSelectedModel,
-    setSystemPromptId,
     newChat,
     deleteChat,
     openRenameModal,
@@ -59,13 +63,14 @@ export default function ChatPage() {
     stopStreaming,
     exportChat,
     dismissToast,
+    setHasStarted,
+    toggleSearchEnabled,
   } = useAppStore(
     useShallow((s) => ({
       init: s.init,
       setActiveId: s.setActiveId,
       setSidebarOpen: s.setSidebarOpen,
       setSelectedModel: s.setSelectedModel,
-      setSystemPromptId: s.setSystemPromptId,
       newChat: s.newChat,
       deleteChat: s.deleteChat,
       openRenameModal: s.openRenameModal,
@@ -75,8 +80,12 @@ export default function ChatPage() {
       stopStreaming: s.stopStreaming,
       exportChat: s.exportChat,
       dismissToast: s.dismissToast,
+      setHasStarted: s.setHasStarted,
+      toggleSearchEnabled: s.toggleSearchEnabled,
     })),
   );
+
+  const { isAtBottom, setIsAtBottom, scrollToBottom, virtuosoRef } = useScrollButton();
 
   const activeConversation = useMemo(
     () => conversations.find((c) => c.id === activeId) ?? null,
@@ -134,14 +143,11 @@ export default function ChatPage() {
 
   const [inputAutoFocus, setInputAutoFocus] = useState(false);
 
-  const handleSuggestionClick = useCallback(
-    (systemPromptId: string) => {
-      setSystemPromptId(systemPromptId);
-      setInputAutoFocus(false);
-      requestAnimationFrame(() => setInputAutoFocus(true));
-    },
-    [setSystemPromptId],
-  );
+  const handleSuggestionClick = useCallback(() => {
+    toggleSearchEnabled(!isSearchEnabled);
+    setInputAutoFocus(false);
+    requestAnimationFrame(() => setInputAutoFocus(true));
+  }, [toggleSearchEnabled, isSearchEnabled]);
 
   if (!isConfigLoaded || loading.init) {
     return (
@@ -155,6 +161,15 @@ export default function ChatPage() {
           <p className="text-sm text-text-muted">Loading Sythoria...</p>
         </div>
       </div>
+    );
+  }
+
+  if (!hasStarted) {
+    return (
+      <>
+        <StartScreen onStart={() => setHasStarted(true)} />
+        <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+      </>
     );
   }
 
@@ -188,22 +203,23 @@ export default function ChatPage() {
               {activeConversation?.title ?? "Sythoria"}
             </h2>
           </div>
-
-          <div className="flex items-center gap-2">
-            {isStreaming && (
-              <button
-                onClick={stopStreaming}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-colors"
-                aria-label="Stop generating"
-              >
-                <Square size={12} />
-                Stop
-              </button>
-            )}
-          </div>
         </header>
 
-        <ChatArea messages={messages} onSuggestionClick={handleSuggestionClick} />
+        <div className="flex-1 flex flex-col min-h-0 relative">
+          <ChatArea
+            messages={messages}
+            onSuggestionClick={handleSuggestionClick}
+            isAtBottom={isAtBottom}
+            setIsAtBottom={setIsAtBottom}
+            virtuosoRef={virtuosoRef}
+          />
+
+          {!isAtBottom && messages.length > 0 && (
+            <div className="absolute bottom-4 right-4 z-20">
+              <ScrollToBottomButton onClick={scrollToBottom} />
+            </div>
+          )}
+        </div>
 
         <InputBar
           models={models}
@@ -212,8 +228,10 @@ export default function ChatPage() {
           onModelChange={setSelectedModel}
           disabled={isStreaming}
           modelStatuses={modelStatuses}
-          systemPromptId={systemPromptId}
-          onSystemPromptChange={setSystemPromptId}
+          isSearchEnabled={isSearchEnabled}
+          onToggleSearch={toggleSearchEnabled}
+          isStreaming={isStreaming}
+          onStop={stopStreaming}
           inputAutoFocus={inputAutoFocus}
         />
       </main>
