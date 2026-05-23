@@ -1,7 +1,7 @@
 "use client";
 
-import { MessageSquarePlus, Settings, MessageSquare, X, Pencil, Trash2, Search, Download } from "lucide-react";
-import { useMemo, useState, useCallback, useRef } from "react";
+import { MessageSquarePlus, Settings, MessageSquare, X, Pencil, Trash2, Search, Download, MoreVertical } from "lucide-react";
+import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import type { Conversation, ConnectionStatus, ModelStatuses } from "@/lib/types";
 import { STATUS_COLORS } from "@/lib/types";
 import { ConfirmModal } from "@/components/chat/ui/Modal";
@@ -68,6 +68,8 @@ export default function Sidebar({
 }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [chatToDelete, setChatToDelete] = useState<string | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const debouncedQuery = useDebounce(searchQuery);
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -90,6 +92,17 @@ export default function Sidebar({
       setChatToDelete(null);
     }
   }, [chatToDelete, onDeleteChat]);
+
+  useEffect(() => {
+    if (openMenuId === null) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpenMenuId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [openMenuId]);
 
   const aggregateStatus: ConnectionStatus = useMemo(() => {
     const statuses = Object.values(modelStatuses);
@@ -167,63 +180,89 @@ export default function Sidebar({
               <p className="px-2 py-1.5 text-[11px] font-medium uppercase tracking-wider text-text-muted">
                 {group.label}
               </p>
-              {group.items.map((conv) => (
-                <div key={conv.id} className="relative group">
-                  <button
-                    onClick={() => onSelect(conv.id)}
-                    className={`
-                      w-full flex items-center gap-2 px-2.5 py-2 rounded-lg
-                      text-sm text-left transition-colors duration-100 min-h-[44px]
-                      ${
-                        activeId === conv.id
-                          ? "bg-accent-soft text-accent"
-                          : "text-text-secondary hover:bg-hover hover:text-text-primary"
-                      }
-                    `}
-                    aria-label={`Open conversation: ${conv.title}`}
-                    aria-current={activeId === conv.id ? "page" : undefined}
-                  >
-                    <MessageSquare size={14} className="shrink-0" aria-hidden="true" />
-                    <span className="truncate group-hover:pr-12 transition-[padding] duration-100">{conv.title}</span>
-                  </button>
-                  <div
-                    className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                    role="group"
-                    aria-label="Conversation actions"
-                  >
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onExportChat(conv.id);
-                      }}
-                      className="p-1.5 rounded-lg text-text-muted hover:text-text-secondary hover:bg-hover transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center"
-                      aria-label={`Export ${conv.title}`}
-                    >
-                      <Download size={14} />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onRenameChat(conv.id, conv.title);
-                      }}
-                      className="p-1.5 rounded-lg text-text-muted hover:text-text-secondary hover:bg-hover transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center"
-                      aria-label={`Rename ${conv.title}`}
-                    >
-                      <Pencil size={14} />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setChatToDelete(conv.id);
-                      }}
-                      className="p-1.5 rounded-lg text-text-muted hover:text-red-500 hover:bg-red-500/10 transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center"
-                      aria-label={`Delete ${conv.title}`}
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </div>
-              ))}
+        {group.items.map((conv) => (
+          <div key={conv.id} className="relative group">
+            <button
+              onClick={() => onSelect(conv.id)}
+              className={`
+                w-full flex items-center gap-2 px-2.5 py-2 rounded-lg
+                text-sm text-left transition-colors duration-100 min-h-[44px]
+                ${
+                  activeId === conv.id
+                    ? "bg-accent-soft text-accent"
+                    : "text-text-secondary hover:bg-hover hover:text-text-primary"
+                }
+              `}
+              aria-label={`Open conversation: ${conv.title}`}
+              aria-current={activeId === conv.id ? "page" : undefined}
+            >
+              <MessageSquare size={14} className="shrink-0" aria-hidden="true" />
+              <span className="truncate flex-1">{conv.title}</span>
+              <span
+                role="button"
+                tabIndex={0}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpenMenuId(openMenuId === conv.id ? null : conv.id);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.stopPropagation();
+                    setOpenMenuId(openMenuId === conv.id ? null : conv.id);
+                  }
+                }}
+                className="p-1.5 rounded-lg text-text-muted hover:text-text-secondary hover:bg-hover transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 shrink-0"
+                aria-label="Conversation actions"
+              >
+                <MoreVertical size={14} />
+              </span>
+            </button>
+            {openMenuId === conv.id && (
+              <div
+                ref={menuRef}
+                className="absolute right-1 top-full mt-1 z-50 min-w-[160px] py-1 rounded-lg bg-surface border border-border shadow-lg"
+                role="menu"
+              >
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenMenuId(null);
+                    onExportChat(conv.id);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text-secondary hover:bg-hover hover:text-text-primary transition-colors"
+                  role="menuitem"
+                >
+                  <Download size={14} />
+                  Export
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenMenuId(null);
+                    onRenameChat(conv.id, conv.title);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text-secondary hover:bg-hover hover:text-text-primary transition-colors"
+                  role="menuitem"
+                >
+                  <Pencil size={14} />
+                  Rename
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenMenuId(null);
+                    setChatToDelete(conv.id);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-red-500/10 transition-colors"
+                  role="menuitem"
+                >
+                  <Trash2 size={14} />
+                  Delete
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
             </div>
           ))}
 
