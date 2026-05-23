@@ -10,19 +10,13 @@ export default function Navbar() {
           <span className="text-base font-semibold tracking-tight">Sythoria</span>
         </Link>
         <div className="flex items-center gap-4">
-          <Link
-            href="/chat"
-            className="text-sm text-text-secondary hover:text-text-primary transition-colors"
-          >
-            Chat
-          </Link>
-          <Link
-            href="/settings"
-            className="text-sm text-text-secondary hover:text-text-primary transition-colors"
-          >
-            Settings
-          </Link>
-          <Link
+        <Link
+          href="/chat"
+          className="text-sm text-text-secondary hover:text-text-primary transition-colors"
+        >
+          Chat
+        </Link>
+        <Link
             href="/chat"
             className="px-4 py-2 rounded-lg bg-accent hover:bg-accent-hover text-white text-sm font-medium transition-colors"
           >
