@@ -30,3 +30,4 @@ export const MAX_TEMPERATURE = 2.0;
 export const MIN_TEMPERATURE = 0.0;
 export const TEMPERATURE_STEP = 0.1;
 export const SIDEBAR_WIDTH = 260;
+export const MAX_TOOL_STEPS = 5;
