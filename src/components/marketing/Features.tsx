@@ -136,11 +136,7 @@ function FeatureCard({
             <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${accent} flex items-center justify-center shadow-lg shadow-black/5`}>
               <Icon size={20} className="text-white" />
             </div>
-            <div className="w-8 h-8 rounded-lg bg-accent-soft/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-accent">
-                <path d="M7 17L17 7M17 7H7M17 7V17" />
-              </svg>
-            </div>
+            
           </div>
         <div className="flex-1">
           <h3 className="text-base font-semibold text-text-primary mb-1.5">{title}</h3>
@@ -170,7 +166,7 @@ export default function Features() {
             Sythoria unifies your AI workflows under a single, privacy-first interface.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
           {features.map(({ icon, title, description, accent }, i) => (
             <FeatureCard
               key={title}
