@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { ArrowRight, Feather, Lock, Zap } from "lucide-react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { ArrowRight, Feather, Lock, Zap, Cpu } from "lucide-react";
+import { Button, Badge } from "@/components/ui";
 
 function GithubIcon({ size = 18 }: { size?: number }) {
   return (
@@ -22,6 +22,12 @@ const highlights = [
   { icon: Feather, label: "Lightweight", sub: "No bloat, no frameworks" },
   { icon: Zap, label: "Free", sub: "Open source, forever" },
   { icon: Lock, label: "Private", sub: "Your keys, your data" },
+];
+
+const floatingOrbs = [
+  { size: 400, top: "-10%", left: "10%", delay: 0, duration: 8 },
+  { size: 300, top: "20%", right: "5%", delay: 2, duration: 10 },
+  { size: 250, bottom: "10%", left: "30%", delay: 4, duration: 12 },
 ];
 
 function useInView(threshold = 0.15) {
@@ -47,138 +53,237 @@ function useInView(threshold = 0.15) {
   return { ref, visible };
 }
 
+function useTilt() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+      const rect = el.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      el.style.transform = `perspective(800px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
+    };
+
+    const handleMouseLeave = () => {
+      el.style.transform = "perspective(800px) rotateY(0deg) rotateX(0deg)";
+    };
+
+    el.addEventListener("mousemove", handleMouseMove as unknown as EventListener);
+    el.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      el.removeEventListener("mousemove", handleMouseMove as unknown as EventListener);
+      el.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
+
+  return ref;
+}
+
+const providers = [
+  { name: "OpenAI", color: "from-emerald-400 to-emerald-600" },
+  { name: "Anthropic", color: "from-orange-400 to-orange-600" },
+  { name: "Gemini", color: "from-blue-400 to-blue-600" },
+  { name: "Ollama", color: "from-slate-300 to-slate-500" },
+  { name: "NVIDIA", color: "from-green-400 to-green-600" },
+  { name: "OpenRouter", color: "from-purple-400 to-purple-600" },
+];
+
+const terminalLines = [
+  "$ sythoria --init --provider openai",
+  "→ connecting to api.openai.com...",
+  "→ model loaded: gpt-4o",
+  "→ streaming enabled ✓",
+  "$ sythoria --init --provider anthropic",
+  "→ connecting to api.anthropic.com...",
+  "→ model loaded: claude-sonnet-4-20250514",
+  "→ privacy mode: local keys only ✓",
+  "$ sythoria --config ollama.local",
+  "→ scanning localhost:11434...",
+  "→ model loaded: llama3.1:70b",
+  "→ zero telemetry confirmed ✓",
+  "$ sythoria --status",
+  "→ providers: 6 connected",
+  "→ api keys: local only ✓",
+  "→ tracking: disabled ✓",
+  "→ subscription: free forever ✓",
+];
+
+const terminalBlocks = [
+  { lines: terminalLines.slice(0, 6), top: "8%", left: "3%", animation: "terminal-scroll-up", duration: 28, delay: 0 },
+  { lines: terminalLines.slice(6, 12), top: "25%", right: "2%", animation: "terminal-scroll-up-reverse", duration: 32, delay: 4 },
+  { lines: terminalLines.slice(12, 17), bottom: "5%", left: "10%", animation: "terminal-scroll-up", duration: 36, delay: 8 },
+];
+
 export default function Hero() {
   const { ref, visible } = useInView();
+  const tiltRef = useTilt();
 
   return (
-    <section className="relative pt-28 sm:pt-36 pb-20 px-6 overflow-hidden">
-      <div
-        className="pointer-events-none absolute inset-0 -z-10"
-        aria-hidden="true"
-      >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-accent/5 dark:bg-accent/10 blur-[120px] animate-gradient-shift" />
-        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-accent/3 dark:bg-accent/6 blur-[80px]" />
-      </div>
+<section className="relative pt-28 sm:pt-40 pb-24 px-6 overflow-hidden">
+<div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+<div className="hero-terminal-overlay">
+{terminalBlocks.map((block, i) => (
+<div
+key={i}
+className="absolute"
+style={{
+top: block.top,
+left: block.left,
+right: block.right,
+bottom: block.bottom,
+width: "44%",
+animation: `${block.animation} ${block.duration}s linear infinite`,
+animationDelay: `${block.delay}s`,
+}}
+>
+<div className="hero-terminal-line text-accent text-[11px] sm:text-xs leading-relaxed">
+{block.lines.map((line, j) => (
+<span key={j} className="block">
+{line}
+{i === 0 && j === block.lines.length - 1 && <span className="terminal-cursor" />}
+</span>
+))}
+</div>
+</div>
+))}
+</div>
 
-      <div ref={ref} className="max-w-3xl mx-auto text-center">
-        <div
-          className={`animate-fade-in-up stagger-1 ${visible ? "" : "opacity-0"}`}
-        >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent-soft border border-accent/20 text-accent text-xs font-medium mb-8">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-            Open source &middot; Privacy-first
-          </div>
+{floatingOrbs.map((orb, i) => (
+<div
+key={i}
+className="absolute rounded-full bg-accent/5 dark:bg-accent/10 blur-[120px] animate-glow-pulse"
+style={{
+width: orb.size,
+height: orb.size,
+top: orb.top,
+left: orb.left,
+right: orb.right,
+bottom: orb.bottom,
+animationDelay: `${orb.delay}s`,
+animationDuration: `${orb.duration}s`,
+}}
+/>
+))}
+<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--color-accent)/0.03_0%,_transparent_70%)]" />
+<div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
+<div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-chat to-transparent" />
+</div>
+
+      <div ref={ref} className="max-w-4xl mx-auto text-center">
+        <div className={`animate-fade-in-up stagger-1 ${visible ? "" : "opacity-0"}`}>
+          <Badge dot>
+            Open source · Privacy-first
+          </Badge>
         </div>
 
-        <h1
-          className={`animate-fade-in-scale stagger-2 ${visible ? "" : "opacity-0"}`}
-        >
-          <span className="block text-4xl sm:text-5xl md:text-[3.5rem] font-bold text-text-primary leading-[1.1] tracking-tight">
-            One interface.
-          </span>
-          <span className="block text-4xl sm:text-5xl md:text-[3.5rem] font-bold leading-[1.1] tracking-tight mt-2 bg-gradient-to-r from-accent via-accent-hover to-accent bg-clip-text text-transparent animate-gradient-shift">
-            Every AI model.
-          </span>
-        </h1>
+    <h1 className={`mt-8 animate-fade-in-scale stagger-2 ${visible ? "" : "opacity-0"}`}>
+      <span className="block text-5xl sm:text-6xl md:text-7xl font-semibold text-text-primary leading-[1.08] tracking-[-0.035em]">
+        One interface.
+      </span>
+      <span className="block text-5xl sm:text-6xl md:text-7xl font-semibold leading-[1.08] tracking-[-0.035em] mt-2 landing-gradient-text">
+        Every AI model.
+      </span>
+    </h1>
 
-        <p
-          className={`mt-6 text-lg sm:text-xl text-text-secondary max-w-xl mx-auto leading-relaxed animate-fade-in-up stagger-3 ${visible ? "" : "opacity-0"}`}
-        >
+    <p className={`mt-8 text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto leading-[1.65] font-light tracking-[-0.01em] animate-fade-in-up stagger-3 ${visible ? "" : "opacity-0"}`}>
           Sythoria is a lightweight, free chat interface for OpenAI, Anthropic,
           Gemini, Ollama, and any OpenAI-compatible API. No accounts. No
           tracking. Just chat.
         </p>
 
-        <div
-          className={`mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 animate-fade-in-up stagger-4 ${visible ? "" : "opacity-0"}`}
-        >
-          <Link
+        <div className={`mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up stagger-4 ${visible ? "" : "opacity-0"}`}>
+          <Button
+            variant="primary"
+            size="lg"
             href="/chat"
-            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-accent hover:bg-accent-hover text-white text-base font-medium transition-all duration-200 min-h-[48px] animate-border-pulse"
+            iconRight={<ArrowRight size={18} />}
           >
-            Try it out
-            <ArrowRight size={18} />
-          </Link>
-          <a
+            Start chatting
+          </Button>
+          <Button
+            variant="secondary"
+            size="lg"
             href="https://github.com/sythoria/sythoria-desktop"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-surface border border-border text-text-secondary hover:text-text-primary hover:border-accent/40 hover:bg-hover text-base font-medium transition-all duration-200 min-h-[48px]"
+            icon={<GithubIcon size={18} />}
           >
-            <GithubIcon size={18} />
             View on GitHub
-          </a>
+          </Button>
         </div>
 
-        <div
-          className={`mt-14 flex items-center justify-center gap-8 sm:gap-12 animate-fade-in-up stagger-5 ${visible ? "" : "opacity-0"}`}
-        >
+        <div className={`mt-16 flex items-center justify-center gap-8 sm:gap-14 animate-fade-in-up stagger-5 ${visible ? "" : "opacity-0"}`}>
           {highlights.map(({ icon: Icon, label, sub }) => (
-            <div
-              key={label}
-              className="flex flex-col items-center gap-1.5 text-center"
-            >
-              <div className="w-10 h-10 rounded-lg bg-accent-soft flex items-center justify-center">
-                <Icon size={18} className="text-accent" />
+            <div key={label} className="flex flex-col items-center gap-2 text-center">
+              <div className="w-12 h-12 rounded-xl bg-accent-soft border border-accent/10 flex items-center justify-center">
+                <Icon size={20} className="text-accent" />
               </div>
-              <span className="text-sm font-semibold text-text-primary">
-                {label}
-              </span>
+              <span className="text-sm font-semibold text-text-primary">{label}</span>
               <span className="text-xs text-text-muted">{sub}</span>
             </div>
           ))}
         </div>
 
-        <div
-          className={`mt-16 animate-fade-in-scale stagger-5 ${visible ? "" : "opacity-0"}`}
-        >
-          <div className="relative max-w-2xl mx-auto">
-            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-b from-accent/20 via-transparent to-transparent pointer-events-none" />
-            <div className="glass-panel rounded-2xl p-1">
-              <div className="rounded-xl bg-chat border border-border/50 p-6 sm:p-8">
-                <div className="flex items-center gap-2 mb-4">
+        <div className={`mt-20 animate-tilt-in stagger-5 ${visible ? "" : "opacity-0"}`}>
+          <div
+            ref={tiltRef}
+            className="relative max-w-2xl mx-auto transition-transform duration-300 ease-out preserve-3d"
+          >
+            <div className="absolute -inset-2 rounded-3xl bg-gradient-to-b from-accent/20 via-accent/5 to-transparent pointer-events-none blur-sm" />
+            <div className="relative glass-panel rounded-2xl p-1.5 shadow-2xl shadow-accent/5">
+              <div className="rounded-xl bg-chat border border-border/50 overflow-hidden">
+                <div className="flex items-center gap-2 px-5 py-3 border-b border-border/30">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-400/70" />
                   <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/70" />
                   <div className="w-2.5 h-2.5 rounded-full bg-green-400/70" />
-                  <span className="ml-2 text-xs text-text-muted font-mono">
-                    sythoria
-                  </span>
+                  <span className="ml-3 text-xs text-text-muted font-mono">sythoria</span>
+                  <div className="ml-auto flex items-center gap-1.5">
+                    <Cpu size={12} className="text-text-muted" />
+                    <span className="text-[10px] text-text-muted font-mono">gpt-4o</span>
+                  </div>
                 </div>
-                <div className="space-y-3 text-left">
+                <div className="p-6 sm:p-8 space-y-4">
                   <div className="flex gap-3">
-                    <span className="text-xs text-text-muted font-mono shrink-0 pt-0.5">
-                      you
-                    </span>
-                    <p className="text-sm text-text-secondary">
-                      Explain quantum entanglement in simple terms
-                    </p>
+                    <span className="text-xs text-text-muted font-mono shrink-0 pt-0.5">you</span>
+                    <p className="text-sm text-text-secondary">Explain quantum entanglement in simple terms</p>
                   </div>
                   <div className="flex gap-3">
-                    <span className="text-xs text-accent font-mono shrink-0 pt-0.5">
-                      ai
-                    </span>
+                    <span className="text-xs text-accent font-mono shrink-0 pt-0.5">ai</span>
                     <div className="text-sm text-text-secondary leading-relaxed">
                       <p>
                         Imagine you have two coins. When you flip them, they
                         always land on the same side — even if you take one to
                         Mars. That&apos;s entanglement: two particles linked so
                         that measuring one{" "}
-                        <span className="text-accent font-medium">
-                          instantly determines
-                        </span>{" "}
+                        <span className="text-accent font-medium">instantly determines</span>{" "}
                         the state of the other, regardless of distance.
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 pt-1">
+                  <div className="flex items-center gap-2 pt-2">
                     <div className="h-px flex-1 bg-border/50" />
-                    <span className="text-[10px] text-text-muted font-mono">
-                      gpt-4o &middot; streaming
-                    </span>
+                    <span className="text-[10px] text-text-muted font-mono">streaming · 142 tokens</span>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className={`mt-16 animate-fade-in-up stagger-5 ${visible ? "" : "opacity-0"}`}>
+          <p className="text-xs text-text-muted uppercase tracking-widest mb-6 font-medium">Works with your favorite providers</p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {providers.map((p) => (
+              <div
+                key={p.name}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface border border-border/50 text-sm text-text-secondary hover:border-accent/30 hover:text-text-primary transition-all duration-200"
+              >
+                <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${p.color}`} />
+                {p.name}
+              </div>
+            ))}
           </div>
         </div>
       </div>
