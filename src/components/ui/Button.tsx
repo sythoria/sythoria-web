@@ -69,7 +69,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
     const content = (
       <>
         {variant === "primary" && <span className="btn-shine" aria-hidden="true" />}
-        <span className="relative z-[1] inline-flex items-center justify-center gap-inherit">
+        <span className="relative z-[1] inline-flex items-center justify-center [&]:gap-[inherit]">
           {icon && <span className="shrink-0">{icon}</span>}
           {children && <span>{children}</span>}
           {iconRight && <span className="shrink-0 transition-transform duration-300 group-hover:translate-x-0.5">{iconRight}</span>}
