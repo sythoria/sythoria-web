@@ -1,0 +1,45 @@
+---
+title: Streaming Responses
+description: How Sythoria delivers real-time, token-by-token responses using SSE.
+---
+
+# Streaming Responses
+
+Sythoria uses **Server-Sent Events (SSE)** to stream responses token by token, exactly as the upstream APIs intended. No polling, no batching — just real-time text as it's generated.
+
+## How it works
+
+1. You send a message
+2. Sythoria opens an SSE connection to the provider API
+3. Tokens arrive incrementally and render in the chat immediately
+4. The connection closes when the response is complete
+
+## Benefits
+
+- **Lower perceived latency** — you see the first tokens within milliseconds, not after the entire response finishes
+- **Native API compatibility** — we pass through the streaming protocol as-is, so behavior matches the provider's SDK
+- **Cancellation support** — you can stop generation mid-stream with the stop button
+
+## Supported providers
+
+All providers support streaming:
+
+| Provider | Streaming |
+|----------|-----------|
+| OpenAI | ✅ |
+| Anthropic | ✅ |
+| Google Gemini | ✅ |
+| Ollama | ✅ |
+| OpenRouter | ✅ |
+| NVIDIA NIM | ✅ |
+
+## Stopping a stream
+
+Click the **Stop** button (or press `Escape`) during generation to cancel the response. The partial text remains in the conversation.
+
+## Technical details
+
+Sythoria's backend proxy forwards the SSE stream from the provider directly to the client. We don't buffer or transform the stream — it's a pure passthrough, which means:
+
+- No added latency beyond the provider's first-token time
+- Full compatibility with provider-specific streaming features (e.g., Anthropic's content blocks, OpenAI's function calling)
