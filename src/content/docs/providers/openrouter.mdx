@@ -1,0 +1,38 @@
+---
+title: OpenRouter
+description: Access hundreds of models through OpenRouter's unified API.
+---
+
+# OpenRouter
+
+OpenRouter provides a unified API to hundreds of AI models from different providers. Use it to access models you might not have direct API access to.
+
+## Setup
+
+1. Go to [openrouter.ai/keys](https://openrouter.ai/keys)
+2. Create an API key
+3. In Sythoria, select **OpenRouter** as the provider
+4. Paste your API key when prompted
+
+## Default configuration
+
+- **API Base:** `https://openrouter.ai/api/v1/chat/completions`
+- **Default Model:** `anthropic/claude-3.5-sonnet`
+
+## Available models
+
+OpenRouter supports models from OpenAI, Anthropic, Google, Meta, Mistral, and more. Browse the full list at [openrouter.ai/models](https://openrouter.ai/models).
+
+The model dropdown in Sythoria uses the OpenRouter model ID format (e.g., `anthropic/claude-3.5-sonnet`, `meta-llama/llama-3.1-70b-instruct`).
+
+## Benefits
+
+- **Single API key** for multiple providers
+- **Automatic fallback** if a provider is down
+- **Transparent pricing** — pay only for what you use
+
+## Troubleshooting
+
+**401 Unauthorized:** Check your OpenRouter API key and account credits.
+
+**Model not available:** Some models require accepting provider terms on OpenRouter's website first.
