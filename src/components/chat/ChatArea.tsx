@@ -6,7 +6,7 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
-import { Bot, Copy, Check, Search, Globe, Wrench, ChevronDown, Loader2, ExternalLink, Sparkles } from "lucide-react";
+import { Bot, Copy, Check, Search, Globe, Wrench, ChevronDown, Loader2, ExternalLink, Sparkles, RotateCw } from "lucide-react";
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import type { Message } from "@/lib/types";
 import { MessageSkeleton } from "./ui/Skeleton";
@@ -17,6 +17,7 @@ interface ChatAreaProps {
   isAtBottom: boolean;
   setIsAtBottom: (v: boolean) => void;
   virtuosoRef: React.RefObject<VirtuosoHandle | null>;
+  onRetry: () => void;
 }
 
 function MessageContent({ content, isStreaming }: { content: string; isStreaming: boolean }) {
@@ -40,28 +41,50 @@ function MessageContent({ content, isStreaming }: { content: string; isStreaming
   );
 }
 
-function CopyButton({ text }: { text: string }) {
+function MessageActions({
+  content,
+  isUser,
+  onRetry,
+}: {
+  content: string;
+  isUser: boolean;
+  onRetry?: () => void;
+}) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(content);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
       /* clipboard not available */
     }
-  }, [text]);
+  }, [content]);
 
   return (
-    <button
-      onClick={handleCopy}
-      className="p-1.5 rounded-lg text-text-muted hover:text-text-secondary hover:bg-hover transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center"
-      aria-label={copied ? "Copied" : "Copy message"}
-      title={copied ? "Copied" : "Copy"}
-    >
-      {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
-    </button>
+    <div className="flex items-center gap-0.5 mt-1 -ml-1">
+      <button
+        onClick={handleCopy}
+        className={`p-1 rounded-md text-text-muted hover:text-text-secondary hover:bg-hover transition-colors flex items-center justify-center ${
+          copied ? "text-accent" : ""
+        }`}
+        aria-label={copied ? "Copied" : "Copy"}
+        title={copied ? "Copied" : "Copy"}
+      >
+        {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+      </button>
+      {!isUser && (
+        <button
+          onClick={onRetry}
+          className="p-1 rounded-md text-text-muted hover:text-text-secondary hover:bg-hover transition-colors flex items-center justify-center"
+          aria-label="Regenerate"
+          title="Regenerate"
+        >
+          <RotateCw size={14} />
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -256,11 +279,11 @@ function ReasoningBubble({ content, isStreaming }: { content: string; isStreamin
   );
 }
 
-const MessageBubble = memo(function MessageBubble({ message }: { message: Message }) {
+const MessageBubble = memo(function MessageBubble({ message, onRetry }: { message: Message; onRetry?: () => void }) {
   const isUser = message.role === "user";
   const isTool = message.role === "tool";
   const isThought = message.role === "assistant" && !!message.thoughtProcess;
-  const hasReasoning = message.role === "assistant" && message.content.includes("<reasoning>");
+  const hasReasoning = message.role === "assistant" && (message.content.includes("<reasoning>") || message.content.includes("<thinking>") || message.content.includes("<thought>"));
   const [hovered, setHovered] = useState(false);
 
   if (isTool) {
@@ -292,13 +315,13 @@ const MessageBubble = memo(function MessageBubble({ message }: { message: Messag
         role="article"
         aria-label={`User message: ${message.content.slice(0, 80)}`}
       >
-        <div className="relative max-w-[75%]">
+        <div className="max-w-[75%]">
           <div className="glass-panel rounded-2xl rounded-br-md px-4 py-3 text-sm text-text-primary leading-relaxed shadow-sm whitespace-pre-wrap break-words">
             {message.content}
           </div>
           {hovered && (
-            <div className="absolute -left-8 top-1/2 -translate-y-1/2">
-              <CopyButton text={message.content} />
+            <div className="flex justify-end">
+              <MessageActions content={message.content} isUser />
             </div>
           )}
         </div>
@@ -309,10 +332,24 @@ const MessageBubble = memo(function MessageBubble({ message }: { message: Messag
   let reasoningContent = "";
   let displayContent = message.content;
   if (hasReasoning) {
-    const reasoningMatch = message.content.match(/<reasoning>([\s\S]*?)<\/reasoning>/);
+    const reasoningMatch =
+      message.content.match(/<reasoning>([\s\S]*?)<\/reasoning>/) ||
+      message.content.match(/<thinking>([\s\S]*?)<\/thinking>/) ||
+      message.content.match(/<thought>([\s\S]*?)<\/thought>/);
     if (reasoningMatch) {
       reasoningContent = reasoningMatch[1].trim();
-      displayContent = message.content.replace(/<reasoning>[\s\S]*?<\/reasoning>/, "").trim();
+      displayContent = message.content
+        .replace(/<(?:reasoning|thinking|thought)>[\s\S]*?<\/(?:reasoning|thinking|thought)>/, "")
+        .trim();
+    } else {
+      const openMatch =
+        message.content.match(/<reasoning>([\s\S]*)/) ||
+        message.content.match(/<thinking>([\s\S]*)/) ||
+        message.content.match(/<thought>([\s\S]*)/);
+      if (openMatch) {
+        reasoningContent = openMatch[1].trim();
+        displayContent = message.content.replace(/<(?:reasoning|thinking|thought)>[\s\S]*/, "").trim();
+      }
     }
   }
 
@@ -338,30 +375,28 @@ const MessageBubble = memo(function MessageBubble({ message }: { message: Messag
       </div>
       <div className="relative max-w-[80%] text-sm text-text-primary leading-relaxed">
         {hasReasoning && <ReasoningBubble content={reasoningContent} isStreaming={message.isStreaming} />}
-        <div className="markdown-body">
-          {message.isStreaming && displayContent.length === 0 && !hasReasoning ? (
-            <div className="flex items-center gap-2.5 py-1">
-              <Loader2 size={14} className="text-accent animate-spin" />
-              <div className="flex items-center gap-1.5 text-xs text-text-muted font-medium">
-                <span>Thinking</span>
-                <span className="generating-dots">
-                  <span />
-                  <span />
-                  <span />
-                </span>
-              </div>
+      <div className="markdown-body">
+        {message.isStreaming && displayContent.length === 0 && !hasReasoning ? (
+          <div className="flex items-center gap-2.5 py-1">
+            <Loader2 size={14} className="text-accent animate-spin" />
+            <div className="flex items-center gap-1.5 text-xs text-text-muted font-medium">
+              <span>Thinking</span>
+              <span className="generating-dots">
+                <span />
+                <span />
+                <span />
+              </span>
             </div>
-          ) : displayContent.length > 0 ? (
-            <>
-              <MessageContent content={displayContent} isStreaming={!!message.isStreaming} />
-              {!message.isStreaming && hovered && (
-                <div className="absolute -top-1 right-0">
-                  <CopyButton text={displayContent} />
-                </div>
-              )}
-            </>
-          ) : null}
-        </div>
+          </div>
+        ) : displayContent.length > 0 ? (
+          <>
+            <MessageContent content={displayContent} isStreaming={!!message.isStreaming} />
+            {!message.isStreaming && (
+              <MessageActions content={displayContent} isUser={false} onRetry={onRetry} />
+            )}
+          </>
+        ) : null}
+      </div>
         {message.sources && message.sources.length > 0 && !message.isStreaming && (
           <SourcesList sources={message.sources} />
         )}
@@ -372,7 +407,7 @@ const MessageBubble = memo(function MessageBubble({ message }: { message: Messag
 
 const VIRTUALIZED_THRESHOLD = 50;
 
-export default function ChatArea({ messages, onSuggestionClick, isAtBottom, setIsAtBottom, virtuosoRef }: ChatAreaProps) {
+export default function ChatArea({ messages, onSuggestionClick, isAtBottom, setIsAtBottom, virtuosoRef, onRetry }: ChatAreaProps) {
   if (messages.length === 0) {
     return (
       <div
@@ -414,11 +449,11 @@ export default function ChatArea({ messages, onSuggestionClick, isAtBottom, setI
           data={messages}
           atBottomStateChange={setIsAtBottom}
           atBottomThreshold={100}
-          itemContent={(index, msg) => (
-            <div className={index > 0 ? "mt-6" : ""}>
-              <MessageBubble message={msg} />
-            </div>
-          )}
+      itemContent={(index, msg) => (
+        <div className={index > 0 ? "mt-6" : ""}>
+          <MessageBubble message={msg} onRetry={onRetry} />
+        </div>
+      )}
           components={{
             List: forwardRef(function VirtuosoList(props, ref) {
               return <div {...props} ref={ref} className="max-w-3xl mx-auto py-8 px-4 md:px-0" />;
@@ -430,16 +465,18 @@ export default function ChatArea({ messages, onSuggestionClick, isAtBottom, setI
     );
   }
 
-  return <NonVirtualizedChatArea messages={messages} isAtBottom={isAtBottom} setIsAtBottom={setIsAtBottom} />;
+  return <NonVirtualizedChatArea messages={messages} isAtBottom={isAtBottom} setIsAtBottom={setIsAtBottom} onRetry={onRetry} />;
 }
 
 function NonVirtualizedChatArea({
   messages,
   setIsAtBottom,
+  onRetry,
 }: {
   messages: Message[];
   isAtBottom: boolean;
   setIsAtBottom: (v: boolean) => void;
+  onRetry?: () => void;
 }) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -469,7 +506,7 @@ function NonVirtualizedChatArea({
     >
       <div className="max-w-3xl mx-auto py-8 space-y-6">
         {messages.map((msg) => (
-          <MessageBubble key={msg.id} message={msg} />
+          <MessageBubble key={msg.id} message={msg} onRetry={onRetry} />
         ))}
         <div aria-hidden="true" className="h-1" />
       </div>
