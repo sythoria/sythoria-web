@@ -8,6 +8,7 @@ import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 import { Bot, Copy, Check, Search, Globe, Wrench, ChevronDown, Loader2, ExternalLink, Sparkles, RotateCw } from "lucide-react";
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
+import Link from "next/link";
 import type { Message } from "@/lib/types";
 import { MessageSkeleton } from "./ui/Skeleton";
 
@@ -415,17 +416,19 @@ export default function ChatArea({ messages, onSuggestionClick, isAtBottom, setI
         role="region"
         aria-label="Empty chat — type a message to begin"
       >
-        <div className="flex flex-col items-center gap-4 px-4">
-          <div
-            className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center"
-            aria-hidden="true"
-          >
-            <Bot size={28} className="text-accent" />
-          </div>
-          <div className="text-center">
-            <h1 className="text-2xl font-bold tracking-tight text-text-primary">Sythoria</h1>
-            <p className="text-text-muted text-sm mt-1">Your intelligent AI assistant</p>
-          </div>
+		<div className="flex flex-col items-center gap-4 px-4">
+		<Link href="/" className="flex flex-col items-center gap-4 px-4 hover:opacity-80 transition-opacity duration-200">
+			<div
+			className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center"
+			aria-hidden="true"
+			>
+			<Bot size={28} className="text-accent" />
+			</div>
+			<div className="text-center">
+			<h1 className="text-2xl font-bold tracking-tight text-text-primary">Sythoria</h1>
+			<p className="text-text-muted text-sm mt-1">Your intelligent AI assistant</p>
+			</div>
+		</Link>
           <button
             onClick={onSuggestionClick}
             className="mt-2 flex items-center gap-2.5 px-3.5 py-3 rounded-xl border border-border bg-surface/50 hover:bg-hover text-text-secondary hover:text-text-primary text-xs font-medium transition-all duration-150 text-left min-h-[44px]"
