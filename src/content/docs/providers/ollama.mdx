@@ -1,0 +1,44 @@
+---
+title: Ollama (Local)
+description: Run local models with Ollama — no API key needed.
+---
+
+# Ollama (Local)
+
+Use Sythoria with locally-running models through Ollama. No API key, no cloud dependency, no tracking.
+
+## Setup
+
+1. Install Ollama from [ollama.com](https://ollama.com)
+2. Pull a model: `ollama pull llama3.1`
+3. Start the Ollama server: `ollama serve`
+4. In Sythoria, select **Ollama (Local)** as the provider
+
+No API key is needed for Ollama.
+
+## Default configuration
+
+- **API Base:** `http://localhost:11434/v1/chat/completions`
+- **Default Model:** `llama3.1`
+
+## Popular models
+
+| Model | Size | Command |
+|-------|------|---------|
+| Llama 3.1 | 8B / 70B | `ollama pull llama3.1` |
+| Mistral | 7B | `ollama pull mistral` |
+| Code Llama | 7B / 13B / 34B | `ollama pull codellama` |
+| Phi-3 | 3.8B | `ollama pull phi3` |
+| Gemma 2 | 2B / 9B / 27B | `ollama pull gemma2` |
+
+## Model auto-detection
+
+Sythoria queries Ollama's local API to list available models. Any model you've pulled appears in the dropdown automatically.
+
+## Troubleshooting
+
+**Connection refused:** Ensure Ollama is running on port 11434. Run `ollama serve` in a terminal.
+
+**Model not found:** Pull the model first with `ollama pull <model-name>`.
+
+**Slow responses:** Local model speed depends on your hardware. Larger models require more RAM/VRAM.
