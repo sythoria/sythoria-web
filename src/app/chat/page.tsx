@@ -60,6 +60,7 @@ export default function ChatPage() {
     confirmRename,
     closeRenameModal,
     sendMessage,
+    retryLastMessage,
     stopStreaming,
     exportChat,
     dismissToast,
@@ -77,6 +78,7 @@ export default function ChatPage() {
       confirmRename: s.confirmRename,
       closeRenameModal: s.closeRenameModal,
       sendMessage: s.sendMessage,
+      retryLastMessage: s.retryLastMessage,
       stopStreaming: s.stopStreaming,
       exportChat: s.exportChat,
       dismissToast: s.dismissToast,
@@ -149,6 +151,10 @@ export default function ChatPage() {
     requestAnimationFrame(() => setInputAutoFocus(true));
   }, [toggleSearchEnabled, isSearchEnabled]);
 
+  const handleRetry = useCallback(() => {
+    if (activeId) retryLastMessage(activeId);
+  }, [activeId, retryLastMessage]);
+
   if (!isConfigLoaded || loading.init) {
     return (
       <div
@@ -206,13 +212,14 @@ export default function ChatPage() {
         </header>
 
         <div className="flex-1 flex flex-col min-h-0 relative">
-          <ChatArea
-            messages={messages}
-            onSuggestionClick={handleSuggestionClick}
-            isAtBottom={isAtBottom}
-            setIsAtBottom={setIsAtBottom}
-            virtuosoRef={virtuosoRef}
-          />
+            <ChatArea
+              messages={messages}
+              onSuggestionClick={handleSuggestionClick}
+              isAtBottom={isAtBottom}
+              setIsAtBottom={setIsAtBottom}
+              virtuosoRef={virtuosoRef}
+              onRetry={handleRetry}
+            />
 
           {!isAtBottom && messages.length > 0 && (
             <div className="absolute bottom-4 right-4 z-20">
