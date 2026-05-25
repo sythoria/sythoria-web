@@ -1,0 +1,61 @@
+---
+title: Privacy & Security
+description: How Sythoria keeps your data and API keys safe.
+---
+
+# Privacy & Security
+
+Privacy isn't a feature in Sythoria — it's the foundation. Here's exactly how your data is handled.
+
+## API keys stay local
+
+Your API keys are stored **exclusively in your browser's localStorage**. They are:
+
+- ❌ Never sent to our servers
+- ❌ Never included in analytics or logs
+- ❌ Never shared with third parties
+- ✅ Only used to authenticate directly with your chosen AI provider
+
+## No server-side storage
+
+Sythoria's backend is a thin proxy that forwards requests to AI provider APIs. We do not:
+
+- Store your conversations
+- Log your prompts or responses
+- Retain any personal data
+
+Conversations exist only in your browser's local state. Closing the tab or clearing storage removes them entirely.
+
+## Zero telemetry
+
+Sythoria does not collect any usage data, analytics, or tracking information. There are no:
+
+- Analytics scripts
+- Tracking cookies
+- Error reporting services that phone home
+
+## Comparison with other tools
+
+| Feature | Sythoria | Others |
+|---------|----------|--------|
+| API keys stay local | ✅ | ❌ |
+| No account required | ✅ | ❌ |
+| Zero telemetry | ✅ | ❌ |
+| No server-side data | ✅ | ❌ |
+| Open source | ✅ | ❌ |
+
+## Open source verification
+
+Sythoria is fully open source. You can audit every line of code to verify these claims:
+
+- [GitHub Repository](https://github.com/sythoria/sythoria-desktop)
+
+## Local models
+
+For maximum privacy, use Sythoria with **Ollama** or any local model server. With local models:
+
+- No data leaves your machine
+- No API key is needed
+- No network connection required (after model download)
+
+See the [Ollama setup guide](/docs/providers/ollama) to get started.
