@@ -79,8 +79,8 @@ const ModelCard = memo(function ModelCard({
             <input
               id={`model-name-${model.id}`}
               type="text"
-              value={model.name}
-              onChange={(e) => onUpdate(model.id, { name: e.target.value })}
+          value={model.name ?? ""}
+          onChange={(e) => onUpdate(model.id, { name: e.target.value })}
               placeholder="e.g. My Llama 3"
               className="w-full px-3 py-2 rounded-lg border border-input-border bg-input text-sm text-text-primary placeholder-text-muted focus:border-accent/50 focus:outline-none transition-colors"
             />
@@ -132,8 +132,8 @@ const ModelCard = memo(function ModelCard({
           <input
             id={`model-api-${model.id}`}
             type="url"
-            value={model.apiBase}
-            onChange={(e) => onUpdate(model.id, { apiBase: e.target.value })}
+          value={model.apiBase ?? ""}
+          onChange={(e) => onUpdate(model.id, { apiBase: e.target.value })}
             placeholder="https://api.openai.com/v1/chat/completions"
             aria-invalid={!urlValidation.valid}
             aria-describedby={!urlValidation.valid ? `url-error-${model.id}` : undefined}
@@ -163,8 +163,8 @@ const ModelCard = memo(function ModelCard({
             <input
               id={`model-id-${model.id}`}
               type="text"
-              value={model.modelId}
-              onChange={(e) => onUpdate(model.id, { modelId: e.target.value })}
+          value={model.modelId ?? ""}
+          onChange={(e) => onUpdate(model.id, { modelId: e.target.value })}
               placeholder="e.g. gpt-4o or meta/llama-3.3-70b-instruct"
               className="w-full px-3 py-2 rounded-lg border border-input-border bg-input text-sm text-text-primary placeholder-text-muted font-mono text-xs focus:border-accent/50 focus:outline-none transition-colors"
             />
@@ -178,8 +178,8 @@ const ModelCard = memo(function ModelCard({
               <input
                 id={`model-key-${model.id}`}
                 type={showKey ? "text" : "password"}
-                value={model.apiKey}
-                onChange={(e) => onUpdate(model.id, { apiKey: e.target.value })}
+          value={model.apiKey ?? ""}
+          onChange={(e) => onUpdate(model.id, { apiKey: e.target.value })}
                 placeholder="API key (optional for local)"
                 aria-invalid={!keyValidation.valid}
                 aria-describedby={!keyValidation.valid ? `key-warning-${model.id}` : undefined}
@@ -250,8 +250,8 @@ const SearchApiCard = memo(function SearchApiCard({
             <input
               id={`search-name-${config.id}`}
               type="text"
-              value={config.name}
-              onChange={(e) => onUpdate(config.id, { name: e.target.value })}
+          value={config.name ?? ""}
+          onChange={(e) => onUpdate(config.id, { name: e.target.value })}
               placeholder="e.g. Google Search"
               className="w-full px-3 py-2 rounded-lg border border-input-border bg-input text-sm text-text-primary placeholder-text-muted focus:border-accent/50 focus:outline-none transition-colors"
             />
@@ -304,8 +304,8 @@ const SearchApiCard = memo(function SearchApiCard({
           <input
             id={`search-base-${config.id}`}
             type="url"
-            value={config.baseUrl}
-            onChange={(e) => onUpdate(config.id, { baseUrl: e.target.value })}
+          value={config.baseUrl ?? ""}
+          onChange={(e) => onUpdate(config.id, { baseUrl: e.target.value })}
             placeholder={
               config.provider === "google"
                 ? "https://www.googleapis.com/customsearch/v1"
