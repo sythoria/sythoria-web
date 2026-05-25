@@ -130,8 +130,8 @@ function FeatureCard({
       ref={cardRef}
       className={`preserve-3d transition-transform duration-500 ease-out animate-fade-in-up ${delay} ${visible ? "" : "opacity-0"}`}
     >
-      <Card variant="glass" padding="none" hover>
-        <div className="p-6 space-y-4">
+    <Card variant="glass" padding="none" hover className="h-full group">
+      <div className="p-6 space-y-4 flex flex-col h-full">
           <div className="flex items-start justify-between">
             <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${accent} flex items-center justify-center shadow-lg shadow-black/5`}>
               <Icon size={20} className="text-white" />
@@ -142,10 +142,10 @@ function FeatureCard({
               </svg>
             </div>
           </div>
-          <div>
-            <h3 className="text-base font-semibold text-text-primary mb-1.5">{title}</h3>
-            <p className="text-sm text-text-secondary leading-relaxed">{description}</p>
-          </div>
+        <div className="flex-1">
+          <h3 className="text-base font-semibold text-text-primary mb-1.5">{title}</h3>
+          <p className="text-sm text-text-secondary leading-relaxed">{description}</p>
+        </div>
         </div>
       </Card>
     </div>
@@ -170,7 +170,7 @@ export default function Features() {
             Sythoria unifies your AI workflows under a single, privacy-first interface.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
           {features.map(({ icon, title, description, accent }, i) => (
             <FeatureCard
               key={title}
