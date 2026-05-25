@@ -189,14 +189,20 @@ interface RenameChatModalProps {
 }
 
 export function RenameChatModal({ isOpen, currentTitle, onConfirm, onCancel }: RenameChatModalProps) {
-  const [value, setValue] = useState(currentTitle);
+  const [value, setValue] = useState("");
+  const [prevOpen, setPrevOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const isEmpty = value.trim().length === 0;
 
+  if (isOpen && !prevOpen) {
+    setValue(currentTitle);
+  }
+  if (isOpen !== prevOpen) {
+    setPrevOpen(isOpen);
+  }
+
   useEffect(() => {
     if (!isOpen) return;
-
-    setValue(currentTitle);
 
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onCancel();
