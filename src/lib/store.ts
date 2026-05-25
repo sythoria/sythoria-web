@@ -285,9 +285,14 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   setTheme: (theme) => {
+    document.documentElement.classList.add("theme-transition");
     set({ theme });
     document.documentElement.classList.toggle("dark", theme === "dark");
+    localStorage.setItem("sythoria-theme", theme);
     saveTheme(theme);
+    setTimeout(() => {
+      document.documentElement.classList.remove("theme-transition");
+    }, 500);
   },
 
   updateModel: (id, updates) => {
