@@ -5,7 +5,6 @@ import Settings from "@/components/chat/Settings";
 import { Spinner } from "@/components/chat/ui/Spinner";
 import { ToastContainer } from "@/components/chat/ui/Toast";
 import { useAppStore } from "@/lib/store";
-import { useShallow } from "zustand/react/shallow";
 
 export default function SettingsPage() {
   const isConfigLoaded = useAppStore((s) => s.isConfigLoaded);
@@ -13,9 +12,6 @@ export default function SettingsPage() {
   const toasts = useAppStore((s) => s.toasts);
   const init = useAppStore((s) => s.init);
   const dismissToast = useAppStore((s) => s.dismissToast);
-  const sidebarOpen = useAppStore((s) => s.sidebarOpen);
-  const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
-  const modelStatuses = useAppStore((s) => s.modelStatuses);
 
   useEffect(() => {
     init();
