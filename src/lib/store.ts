@@ -118,6 +118,7 @@ interface AppState {
   closeRenameModal: () => void;
   confirmRename: (newTitle: string) => void;
   sendMessage: (text: string) => Promise<void>;
+  retryLastMessage: (convId: string) => Promise<void>;
   stopStreaming: () => void;
   exportChat: (id: string) => void;
   persistConversations: () => void;
@@ -571,6 +572,170 @@ export const useAppStore = create<AppState>((set, get) => ({
       }
     }
   },
+  retryLastMessage: async (convId) => {
+    const {
+      isStreaming,
+      conversations,
+      models,
+      selectedModel,
+      temperature,
+      apiKeys,
+      systemPromptId,
+      isSearchEnabled,
+      activeSearchId,
+      searchConfigs,
+      searchApiKeys,
+    } = get();
+    if (isStreaming) return;
+
+    const conv = conversations.find((c) => c.id === convId);
+    if (!conv || conv.messages.length === 0) return;
+
+    let lastUserIdx = -1;
+    for (let i = conv.messages.length - 1; i >= 0; i--) {
+      if (conv.messages[i].role === "user") {
+        lastUserIdx = i;
+        break;
+      }
+    }
+    if (lastUserIdx === -1) return;
+
+    const lastUserMsg = conv.messages[lastUserIdx];
+    const trimmed = conv.messages.slice(0, lastUserIdx);
+
+    set((state) => ({
+      conversations: state.conversations.map((c) =>
+        c.id === convId ? { ...c, messages: trimmed, timestamp: new Date() } : c,
+      ),
+    }));
+
+    const modelConfig = models.find((m) => m.id === selectedModel) ?? models[0];
+    if (!modelConfig) {
+      logError("No model configuration selected");
+      get().addToast("No model configured — add one in Settings", "error");
+      return;
+    }
+
+    const useTools = isSearchEnabled && activeSearchId;
+    const searchConfig = useTools ? searchConfigs.find((c) => c.id === activeSearchId) : undefined;
+    const searchApiKey = useTools && searchConfig ? searchApiKeys[searchConfig.id] || searchConfig.apiKey || "" : "";
+
+    set((state) => ({
+      conversations: updateConversationMessages(state.conversations, convId, (msgs) => [...msgs, lastUserMsg]),
+    }));
+
+    if (useTools && searchConfig) {
+      const abortController = new AbortController();
+      activeAbortController = abortController;
+
+      await sendWithToolLoop(
+        convId,
+        modelConfig,
+        temperature,
+        apiKeys,
+        searchConfig,
+        searchApiKey,
+        (fn) => set(fn as (state: AppState & Record<string, unknown>) => Partial<AppState & Record<string, unknown>>),
+        () => get() as unknown as AppState,
+        get().performSearch,
+        get().fetchUrlContent,
+        abortController.signal,
+      );
+      activeAbortController = null;
+    } else {
+      const assistantMsg: Message = {
+        id: generateId(),
+        role: "assistant",
+        content: "",
+        timestamp: new Date(),
+        isStreaming: true,
+      };
+
+      set((state) => ({
+        isStreaming: true,
+        loading: { ...state.loading, sendMessage: true },
+        conversations: updateConversationMessages(state.conversations, convId, (msgs) => [...msgs, assistantMsg]),
+      }));
+
+      const abortController = new AbortController();
+      activeAbortController = abortController;
+
+      try {
+        const apiUrl = modelConfig.apiBase;
+        const apiKey = apiKeys[modelConfig.id] || modelConfig.apiKey;
+
+        const currentConv = get().conversations.find((c) => c.id === convId);
+        const promptId = currentConv?.systemPromptId ?? systemPromptId;
+        const systemContent = promptId ? getSystemPrompt(promptId) : undefined;
+
+        const apiMessages: { role: string; content: string }[] = [];
+        if (systemContent) {
+          apiMessages.push({ role: "system", content: systemContent });
+        }
+        apiMessages.push(
+          ...(currentConv?.messages
+            .filter((m) => m.role === "user" || m.role === "assistant")
+            .map((m) => ({
+              role: m.role,
+              content: m.content,
+            })) ?? []),
+        );
+
+        await chatStream({
+          apiBase: apiUrl,
+          apiKey,
+          model: modelConfig.modelId,
+          messages: apiMessages,
+          temperature,
+          signal: abortController.signal,
+          onChunk: (delta) => {
+            set((state) => ({
+              conversations: state.conversations.map((c) => {
+                if (c.id !== convId) return c;
+                const updated = [...c.messages];
+                const last = updated[updated.length - 1];
+                if (last && last.role === "assistant") {
+                  updated[updated.length - 1] = { ...last, content: last.content + delta };
+                }
+                return { ...c, messages: updated };
+              }),
+            }));
+          },
+          onDone: () => {
+            set((state) => ({
+              conversations: finalizeAssistantMessage(state.conversations, convId),
+              isStreaming: false,
+              loading: { ...state.loading, sendMessage: false },
+            }));
+            activeAbortController = null;
+            get().persistConversations();
+          },
+          onError: (err) => {
+            const friendlyMessage = parseApiError(err);
+            set((state) => ({
+              conversations: setAssistantError(state.conversations, convId, err),
+              isStreaming: false,
+              loading: { ...state.loading, sendMessage: false },
+            }));
+            activeAbortController = null;
+            get().addToast(friendlyMessage, "error");
+            logError("Failed to retry message", err);
+          },
+        });
+      } catch (err) {
+        const friendlyMessage = parseApiError(err);
+        set((state) => ({
+          conversations: setAssistantError(state.conversations, convId, err),
+          isStreaming: false,
+          loading: { ...state.loading, sendMessage: false },
+        }));
+        activeAbortController = null;
+        get().addToast(friendlyMessage, "error");
+        logError("Failed to retry message", err);
+      }
+    }
+  },
+
   stopStreaming: () => {
     if (activeAbortController) {
       activeAbortController.abort();
