@@ -1,0 +1,47 @@
+---
+title: Multi-Provider Chat
+description: Switch between AI providers seamlessly within a single interface.
+---
+
+# Multi-Provider Chat
+
+Sythoria unifies multiple AI providers under a single interface. Switch between OpenAI, Anthropic, Gemini, Ollama, and more without switching tabs or apps.
+
+## Switching providers
+
+Use the **model dropdown** in the chat input bar to switch models at any time — even mid-conversation. Each message uses the currently selected model, so you can:
+
+- Start a conversation with GPT-4o, then switch to Claude for a second opinion
+- Use Ollama for offline work, then jump to Gemini for a web-connected query
+- Compare outputs from different models side by side
+
+## Supported providers
+
+| Provider | API Format | Local/Cloud |
+|----------|-----------|-------------|
+| OpenAI | OpenAI API | Cloud |
+| Anthropic | Anthropic API | Cloud |
+| Google Gemini | OpenAI-compatible | Cloud |
+| Ollama | OpenAI-compatible | Local |
+| OpenRouter | OpenAI API | Cloud |
+| NVIDIA NIM | OpenAI API | Cloud |
+| Custom | OpenAI-compatible | Any |
+
+## Custom providers
+
+Sythoria supports any OpenAI-compatible API. Select **Custom** from the provider list and enter:
+
+1. **API Base URL** — the endpoint (e.g., `https://my-llm.example.com/v1/chat/completions`)
+2. **API Key** — if required
+3. **Default Model** — the model identifier to use
+
+This works with services like Together AI, Groq, Fireworks AI, vLLM, and any other OpenAI-compatible server.
+
+## Provider-specific guides
+
+- [OpenAI setup](/docs/providers/openai)
+- [Anthropic setup](/docs/providers/anthropic)
+- [Google Gemini setup](/docs/providers/gemini)
+- [Ollama setup](/docs/providers/ollama)
+- [OpenRouter setup](/docs/providers/openrouter)
+- [NVIDIA NIM setup](/docs/providers/nvidia-nim)
