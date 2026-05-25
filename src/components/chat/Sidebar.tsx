@@ -115,7 +115,13 @@ export default function Sidebar({
 
   return (
     <>
-      {isOpen && <div className="fixed inset-0 bg-black/50 z-20 md:hidden" onClick={onClose} aria-hidden="true" />}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-20 md:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
 
       <aside
         className={`
@@ -125,8 +131,9 @@ export default function Sidebar({
           ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
         `}
         style={{ width: SIDEBAR_WIDTH }}
-        role="navigation"
+        role={isOpen ? "dialog" : "navigation"}
         aria-label="Sidebar navigation"
+        aria-modal={isOpen ? true : undefined}
       >
         <div className="flex items-center justify-between px-4 py-4">
           <h1 className="text-lg font-semibold tracking-tight text-text-primary">Sythoria</h1>
