@@ -1,0 +1,43 @@
+---
+title: OpenAI
+description: Connect Sythoria to OpenAI's GPT models.
+---
+
+# OpenAI
+
+Connect Sythoria to OpenAI's API to use models like GPT-4o, GPT-4o Mini, o1, and more.
+
+## Setup
+
+1. Go to [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+2. Create a new API key
+3. In Sythoria, select **OpenAI** as the provider
+4. Paste your API key when prompted
+
+Your key is stored locally in your browser and never sent to our servers.
+
+## Default configuration
+
+- **API Base:** `https://api.openai.com/v1/chat/completions`
+- **Default Model:** `gpt-4o`
+
+## Available models
+
+The model dropdown auto-populates with models available to your API key. Common options include:
+
+- `gpt-4o` — OpenAI's flagship multimodal model
+- `gpt-4o-mini` — Fast and cost-effective
+- `o1` — Reasoning model for complex tasks
+- `o1-mini` — Lightweight reasoning
+
+## Pricing
+
+OpenAI charges per token. Check [openai.com/pricing](https://openai.com/pricing) for current rates.
+
+## Troubleshooting
+
+**401 Unauthorized:** Your API key is invalid or expired. Generate a new one.
+
+**429 Rate Limit:** You've exceeded your usage tier. Wait a moment or upgrade your OpenAI plan.
+
+**Model not found:** Ensure the model name is correct and available to your account.
