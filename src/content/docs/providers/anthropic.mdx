@@ -1,0 +1,38 @@
+---
+title: Anthropic
+description: Connect Sythoria to Anthropic's Claude models.
+---
+
+# Anthropic
+
+Connect Sythoria to Anthropic's API to use Claude models.
+
+## Setup
+
+1. Go to [console.anthropic.com](https://console.anthropic.com/)
+2. Create an API key
+3. In Sythoria, select **Anthropic** as the provider
+4. Paste your API key when prompted
+
+Your key is stored locally in your browser and never sent to our servers.
+
+## Default configuration
+
+- **API Base:** `https://api.anthropic.com/v1/messages`
+- **Default Model:** `claude-sonnet-4-20250514`
+
+## Available models
+
+- `claude-sonnet-4-20250514` — Latest Sonnet, balanced performance
+- `claude-3-5-haiku-20241022` — Fast and lightweight
+- `claude-opus-4-20250514` — Most capable model
+
+## Notes
+
+Anthropic uses a different API format from OpenAI. Sythoria handles the translation automatically — you don't need to worry about message formatting differences.
+
+## Troubleshooting
+
+**401 Unauthorized:** Your API key is invalid. Generate a new one from the Anthropic console.
+
+**429 Rate Limit:** You've hit your usage limit. Check your console for rate limit details.
