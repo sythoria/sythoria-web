@@ -1,0 +1,36 @@
+---
+title: NVIDIA NIM
+description: Connect Sythoria to NVIDIA's NIM inference endpoints.
+---
+
+# NVIDIA NIM
+
+NVIDIA NIM provides optimized inference endpoints for open-source models running on NVIDIA GPUs.
+
+## Setup
+
+1. Go to [build.nvidia.com](https://build.nvidia.com/)
+2. Sign in and get an API key
+3. In Sythoria, select **NVIDIA NIM** as the provider
+4. Paste your API key when prompted
+
+## Default configuration
+
+- **API Base:** `https://integrate.api.nvidia.com/v1/chat/completions`
+- **Default Model:** `meta/llama-3.3-70b-instruct`
+
+## Available models
+
+NVIDIA NIM hosts optimized versions of popular open-source models:
+
+- `meta/llama-3.3-70b-instruct` — Meta's Llama 3.3 70B
+- `mistralai/mixtral-8x22b-instruct-v0.1` — Mixtral 8x22B
+- `google/gemma-2-27b-it` — Gemma 2 27B
+
+Browse all available models at [build.nvidia.com/explore/discover](https://build.nvidia.com/explore/discover).
+
+## Troubleshooting
+
+**401 Unauthorized:** Your NVIDIA API key is invalid or expired.
+
+**Model not found:** Ensure you're using the exact model ID from NVIDIA's catalog.
