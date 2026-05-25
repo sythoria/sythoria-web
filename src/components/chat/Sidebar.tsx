@@ -2,6 +2,7 @@
 
 import { MessageSquarePlus, Settings, MessageSquare, X, Pencil, Trash2, Search, Download, MoreVertical } from "lucide-react";
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
+import Link from "next/link";
 import type { Conversation, ConnectionStatus, ModelStatuses } from "@/lib/types";
 import { STATUS_COLORS } from "@/lib/types";
 import { ConfirmModal } from "@/components/chat/ui/Modal";
@@ -135,8 +136,11 @@ export default function Sidebar({
         aria-label="Sidebar navigation"
         aria-modal={isOpen ? true : undefined}
       >
-        <div className="flex items-center justify-between px-4 py-4">
-          <h1 className="text-lg font-semibold tracking-tight text-text-primary">Sythoria</h1>
+		<div className="flex items-center justify-between px-4 py-4">
+		<Link href="/" className="flex items-center gap-2.5 text-text-primary hover:text-accent transition-colors">
+			<MessageSquare size={20} className="text-accent" />
+			<span className="text-lg font-semibold tracking-tight">Sythoria</span>
+		</Link>
           <button
             onClick={onClose}
             className="md:hidden p-1 rounded-md hover:bg-hover text-text-muted transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
