@@ -30,7 +30,7 @@ function useInView(threshold = 0.1) {
           obs.unobserve(el);
         }
       },
-      { threshold },
+      { threshold }
     );
     obs.observe(el);
     return () => obs.disconnect();
