@@ -90,7 +90,7 @@ export default function Sidebar({
 
   const nonEmptyConversations = useMemo(
     () => conversations.filter((c) => c.messages.length > 0),
-    [conversations],
+    [conversations]
   );
 
   const filteredConversations = useMemo(() => {
@@ -99,13 +99,13 @@ export default function Sidebar({
     return nonEmptyConversations.filter(
       (conv) =>
         conv.title.toLowerCase().includes(query) ||
-        conv.messages.some((m) => m.content.toLowerCase().includes(query)),
+        conv.messages.some((m) => m.content.toLowerCase().includes(query))
     );
   }, [nonEmptyConversations, debouncedQuery]);
 
   const groups = useMemo(
     () => groupConversations(filteredConversations),
-    [filteredConversations],
+    [filteredConversations]
   );
 
   const handleDeleteConfirm = useCallback(() => {
@@ -253,7 +253,7 @@ export default function Sidebar({
                         if (e.key === "Enter" || e.key === " ") {
                           e.stopPropagation();
                           setOpenMenuId(
-                            openMenuId === conv.id ? null : conv.id,
+                            openMenuId === conv.id ? null : conv.id
                           );
                         }
                       }}
