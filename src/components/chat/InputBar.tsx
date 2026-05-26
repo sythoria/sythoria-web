@@ -80,7 +80,7 @@ export default function InputBar({
       textareaRef.current.style.height = "auto";
       const newHeight = Math.min(
         textareaRef.current.scrollHeight,
-        MAX_TEXTAREA_HEIGHT,
+        MAX_TEXTAREA_HEIGHT
       );
       textareaRef.current.style.height = newHeight + "px";
       textareaRef.current.style.overflowY =
@@ -149,7 +149,7 @@ export default function InputBar({
         handleSubmit();
       }
     },
-    [modelOpen, plusOpen, focusedIndex, models, onModelChange, handleSubmit],
+    [modelOpen, plusOpen, focusedIndex, models, onModelChange, handleSubmit]
   );
 
   useEffect(() => {
