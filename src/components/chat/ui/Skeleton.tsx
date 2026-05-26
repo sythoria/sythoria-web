@@ -23,7 +23,7 @@ export function SidebarSkeleton() {
           <Skeleton className="w-3.5 h-3.5 rounded shrink-0" />
           <Skeleton
             className="h-3.5 rounded flex-1"
-            style={{ maxWidth: `${60 + Math.random() * 30}%` }}
+            style={{ maxWidth: `${60 + ((i * 17) % 31)}%` }}
           />
         </div>
       ))}
