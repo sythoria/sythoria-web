@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     if (!apiBase) {
       return Response.json(
         { error: "Missing required field: apiBase" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
