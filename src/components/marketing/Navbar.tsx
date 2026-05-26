@@ -32,7 +32,7 @@ export default function Navbar() {
   const dark = useSyncExternalStore(
     subscribeTheme,
     getThemeSnapshot,
-    getServerSnapshot,
+    getServerSnapshot
   );
 
   const toggleTheme = useCallback(() => {
