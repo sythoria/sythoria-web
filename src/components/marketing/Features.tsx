@@ -70,7 +70,7 @@ function useInView(threshold = 0.1) {
           obs.unobserve(el);
         }
       },
-      { threshold },
+      { threshold }
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -123,7 +123,7 @@ function FeatureCard({
     return () => {
       el.removeEventListener(
         "mousemove",
-        handleMove as unknown as EventListener,
+        handleMove as unknown as EventListener
       );
       el.removeEventListener("mouseleave", handleLeave);
     };
