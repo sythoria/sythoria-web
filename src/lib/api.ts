@@ -135,7 +135,7 @@ export async function chatCompletionTools({
 
 export async function checkApiConnection(
   apiBase: string,
-  apiKey: string,
+  apiKey: string
 ): Promise<boolean> {
   try {
     const res = await fetch(apiBase, {
