@@ -17,7 +17,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
   const handleTabTrap = useCallback((e: KeyboardEvent) => {
     if (e.key !== "Tab" || !modalRef.current) return;
     const focusable = modalRef.current.querySelectorAll<HTMLElement>(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     );
     if (focusable.length === 0) return;
 
@@ -51,7 +51,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
     const previouslyFocused = document.activeElement as HTMLElement;
     requestAnimationFrame(() => {
       const firstFocusable = modalRef.current?.querySelector<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       );
       firstFocusable?.focus();
     });
