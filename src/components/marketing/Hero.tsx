@@ -51,7 +51,7 @@ function useInView(threshold = 0.15) {
           obs.unobserve(el);
         }
       },
-      { threshold },
+      { threshold }
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -80,14 +80,14 @@ function useTilt() {
 
     el.addEventListener(
       "mousemove",
-      handleMouseMove as unknown as EventListener,
+      handleMouseMove as unknown as EventListener
     );
     el.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
       el.removeEventListener(
         "mousemove",
-        handleMouseMove as unknown as EventListener,
+        handleMouseMove as unknown as EventListener
       );
       el.removeEventListener("mouseleave", handleMouseLeave);
     };
