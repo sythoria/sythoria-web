@@ -52,7 +52,7 @@ function updateConversationMessages(
   conversations: Conversation[],
   convId: string,
   updater: (msgs: Message[]) => Message[],
-  extra?: Partial<Conversation>,
+  extra?: Partial<Conversation>
 ): Conversation[] {
   return conversations.map((c) => {
     if (c.id !== convId) return c;
@@ -67,7 +67,7 @@ function updateConversationMessages(
 
 function finalizeAssistantMessage(
   conversations: Conversation[],
-  convId: string,
+  convId: string
 ): Conversation[] {
   return updateConversationMessages(conversations, convId, (msgs) => {
     const updated = [...msgs];
@@ -82,7 +82,7 @@ function finalizeAssistantMessage(
 function setAssistantError(
   conversations: Conversation[],
   convId: string,
-  err: unknown,
+  err: unknown
 ): Conversation[] {
   const friendlyMessage = parseApiError(err);
   return updateConversationMessages(conversations, convId, (msgs) => {
@@ -165,7 +165,7 @@ interface AppState {
   performSearch: (
     query: string,
     config: SearchApiConfig,
-    apiKey: string,
+    apiKey: string
   ) => Promise<SearchResult[]>;
   fetchUrlContent: (url: string) => Promise<UrlContent>;
 }
@@ -220,7 +220,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       }));
 
       const nonEmptyConvs = loadedConvs.filter(
-        (c: Conversation) => c.messages.length > 0,
+        (c: Conversation) => c.messages.length > 0
       );
 
       const searchConfigs = loadedSearchConfigs || [];
@@ -313,7 +313,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       if (conv?.systemPromptId !== (id ?? undefined)) {
         set({
           conversations: conversations.map((c) =>
-            c.id === activeId ? { ...c, systemPromptId: id ?? undefined } : c,
+            c.id === activeId ? { ...c, systemPromptId: id ?? undefined } : c
           ),
         });
         get().persistConversations();
@@ -344,11 +344,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   updateModel: (id, updates) => {
     const { models, apiKeys } = get();
     const updatedModels = models.map((m) =>
-      m.id === id ? { ...m, ...updates } : m,
+      m.id === id ? { ...m, ...updates } : m
     );
     set({ models: updatedModels });
     saveModelConfigs(
-      updatedModels.map(({ apiKey: _apiKey, ...rest }) => rest as ModelConfig),
+      updatedModels.map(({ apiKey: _apiKey, ...rest }) => rest as ModelConfig)
     );
 
     if (updates.apiKey !== undefined) {
@@ -379,7 +379,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     delete newStatuses[id];
     set({ models: updated, apiKeys: newKeys, modelStatuses: newStatuses });
     saveModelConfigs(
-      updated.map(({ apiKey: _apiKey, ...rest }) => rest as ModelConfig),
+      updated.map(({ apiKey: _apiKey, ...rest }) => rest as ModelConfig)
     );
     saveApiKeys(newKeys);
     if (selectedModel === id && updated.length > 0) {
@@ -401,7 +401,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     const updated = [...models, newModel];
     set({ models: updated });
     saveModelConfigs(
-      updated.map(({ apiKey: _apiKey, ...rest }) => rest as ModelConfig),
+      updated.map(({ apiKey: _apiKey, ...rest }) => rest as ModelConfig)
     );
     get().checkModelConnections([newModel.id]);
     get().addToast("Model added \u2014 configure its details", "info");
@@ -439,7 +439,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   renameChat: (id, newTitle) => {
     set((state) => ({
       conversations: state.conversations.map((c) =>
-        c.id === id ? { ...c, title: newTitle } : c,
+        c.id === id ? { ...c, title: newTitle } : c
       ),
     }));
     get().persistConversations();
@@ -537,7 +537,7 @@ export const useAppStore = create<AppState>((set, get) => ({
               .length === 0
               ? truncateTitle(text)
               : undefined,
-        },
+        }
       ),
     }));
 
@@ -555,13 +555,13 @@ export const useAppStore = create<AppState>((set, get) => ({
         (fn) =>
           set(
             fn as (
-              state: AppState & Record<string, unknown>,
-            ) => Partial<AppState & Record<string, unknown>>,
+              state: AppState & Record<string, unknown>
+            ) => Partial<AppState & Record<string, unknown>>
           ),
         () => get() as unknown as AppState,
         get().performSearch,
         get().fetchUrlContent,
-        abortController.signal,
+        abortController.signal
       );
       activeAbortController = null;
     } else {
@@ -579,7 +579,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         conversations: updateConversationMessages(
           state.conversations,
           finalId,
-          (msgs) => [...msgs, assistantMsg],
+          (msgs) => [...msgs, assistantMsg]
         ),
       }));
 
@@ -604,7 +604,7 @@ export const useAppStore = create<AppState>((set, get) => ({
             .map((m) => ({
               role: m.role,
               content: m.content,
-            })) ?? []),
+            })) ?? [])
         );
         apiMessages.push({ role: "user", content: text });
 
@@ -635,7 +635,7 @@ export const useAppStore = create<AppState>((set, get) => ({
             set((state) => ({
               conversations: finalizeAssistantMessage(
                 state.conversations,
-                finalId,
+                finalId
               ),
               isStreaming: false,
               loading: { ...state.loading, sendMessage: false },
@@ -649,7 +649,7 @@ export const useAppStore = create<AppState>((set, get) => ({
               conversations: setAssistantError(
                 state.conversations,
                 finalId,
-                err,
+                err
               ),
               isStreaming: false,
               loading: { ...state.loading, sendMessage: false },
@@ -705,9 +705,7 @@ export const useAppStore = create<AppState>((set, get) => ({
 
     set((state) => ({
       conversations: state.conversations.map((c) =>
-        c.id === convId
-          ? { ...c, messages: trimmed, timestamp: new Date() }
-          : c,
+        c.id === convId ? { ...c, messages: trimmed, timestamp: new Date() } : c
       ),
     }));
 
@@ -731,7 +729,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       conversations: updateConversationMessages(
         state.conversations,
         convId,
-        (msgs) => [...msgs, lastUserMsg],
+        (msgs) => [...msgs, lastUserMsg]
       ),
     }));
 
@@ -749,13 +747,13 @@ export const useAppStore = create<AppState>((set, get) => ({
         (fn) =>
           set(
             fn as (
-              state: AppState & Record<string, unknown>,
-            ) => Partial<AppState & Record<string, unknown>>,
+              state: AppState & Record<string, unknown>
+            ) => Partial<AppState & Record<string, unknown>>
           ),
         () => get() as unknown as AppState,
         get().performSearch,
         get().fetchUrlContent,
-        abortController.signal,
+        abortController.signal
       );
       activeAbortController = null;
     } else {
@@ -773,7 +771,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         conversations: updateConversationMessages(
           state.conversations,
           convId,
-          (msgs) => [...msgs, assistantMsg],
+          (msgs) => [...msgs, assistantMsg]
         ),
       }));
 
@@ -798,7 +796,7 @@ export const useAppStore = create<AppState>((set, get) => ({
             .map((m) => ({
               role: m.role,
               content: m.content,
-            })) ?? []),
+            })) ?? [])
         );
 
         await chatStream({
@@ -828,7 +826,7 @@ export const useAppStore = create<AppState>((set, get) => ({
             set((state) => ({
               conversations: finalizeAssistantMessage(
                 state.conversations,
-                convId,
+                convId
               ),
               isStreaming: false,
               loading: { ...state.loading, sendMessage: false },
@@ -842,7 +840,7 @@ export const useAppStore = create<AppState>((set, get) => ({
               conversations: setAssistantError(
                 state.conversations,
                 convId,
-                err,
+                err
               ),
               isStreaming: false,
               loading: { ...state.loading, sendMessage: false },
@@ -875,7 +873,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       const convs = state.conversations.map((c) => ({
         ...c,
         messages: c.messages.map((m) =>
-          m.isStreaming ? { ...m, isStreaming: false } : m,
+          m.isStreaming ? { ...m, isStreaming: false } : m
         ),
       }));
       return {
@@ -953,7 +951,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         } catch {
           return { id: model.id, status: "error" as ConnectionStatus };
         }
-      }),
+      })
     );
 
     const newStatuses: ModelStatuses = { ...get().modelStatuses };
@@ -1014,7 +1012,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     const updated = [...searchConfigs, newConfig];
     set({ searchConfigs: updated, activeSearchId: newConfig.id });
     saveSearchConfigs(
-      updated.map(({ apiKey: _apiKey, ...rest }) => rest as SearchApiConfig),
+      updated.map(({ apiKey: _apiKey, ...rest }) => rest as SearchApiConfig)
     );
     get().addToast("Search API added — configure its details", "info");
   },
@@ -1022,7 +1020,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   updateSearchConfig: (id, updates) => {
     const { searchConfigs, searchApiKeys } = get();
     const updatedConfigs = searchConfigs.map((c) =>
-      c.id === id ? { ...c, ...updates } : c,
+      c.id === id ? { ...c, ...updates } : c
     );
     set({ searchConfigs: updatedConfigs });
 
@@ -1033,7 +1031,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
 
     const configsWithoutKeys = updatedConfigs.map(
-      ({ apiKey: _apiKey, ...rest }) => rest as SearchApiConfig,
+      ({ apiKey: _apiKey, ...rest }) => rest as SearchApiConfig
     );
     saveSearchConfigs(configsWithoutKeys);
 
@@ -1057,7 +1055,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       searchApiKeys: newKeys,
     });
     saveSearchConfigs(
-      updated.map(({ apiKey: _apiKey, ...rest }) => rest as SearchApiConfig),
+      updated.map(({ apiKey: _apiKey, ...rest }) => rest as SearchApiConfig)
     );
     saveSearchApiKeys(newKeys);
     get().addToast("Search API deleted", "info");
@@ -1082,7 +1080,7 @@ export const useAppStore = create<AppState>((set, get) => ({
             title: item.title || "",
             url: item.link || "",
             snippet: item.snippet || "",
-          }),
+          })
         ) as SearchResult[];
       }
       if (config.provider === "searxng") {
@@ -1123,7 +1121,7 @@ export const useAppStore = create<AppState>((set, get) => ({
               title: item.title || "",
               url: item.url || "",
               snippet: item.snippet || item.content || "",
-            }),
+            })
           ) as SearchResult[];
       }
       const res = await fetch(config.baseUrl, {
@@ -1148,7 +1146,7 @@ export const useAppStore = create<AppState>((set, get) => ({
             title: item.title || "",
             url: item.url || "",
             snippet: item.snippet || item.content || "",
-          }),
+          })
         ) as SearchResult[];
     } catch (err) {
       logError("Search failed", err);
