@@ -37,8 +37,8 @@ export function getAllDocs(): DocContent[] {
         docs.push(
           ...walk(
             path.join(dir, entry.name),
-            prefix ? `${prefix}/${entry.name}` : entry.name,
-          ),
+            prefix ? `${prefix}/${entry.name}` : entry.name
+          )
         );
       } else if (entry.name.endsWith(".mdx")) {
         const slug = prefix
