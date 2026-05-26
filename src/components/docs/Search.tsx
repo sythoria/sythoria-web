@@ -6,7 +6,7 @@ import { Search, X, FileText } from "lucide-react";
 import { docsNav } from "@/lib/docs-nav";
 
 const allDocs = docsNav.flatMap((g) =>
-  g.items.map((item) => ({ ...item, group: g.title })),
+  g.items.map((item) => ({ ...item, group: g.title }))
 );
 
 type SearchVariant = "minimal" | "full";
@@ -27,7 +27,7 @@ export default function DocsSearch({
       (item) =>
         item.label.toLowerCase().includes(q) ||
         item.group.toLowerCase().includes(q) ||
-        item.slug.toLowerCase().includes(q),
+        item.slug.toLowerCase().includes(q)
     );
   }, [query]);
 
