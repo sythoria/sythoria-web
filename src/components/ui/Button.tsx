@@ -5,7 +5,7 @@ import {
 } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "tertiary" | "outline" | "ghost";
-type ButtonSize = "sm" | "md" | "lg";
+type ButtonSize = "sm" | "md" | "lg" | "xl";
 
 type BaseProps = {
   variant?: ButtonVariant;
@@ -44,6 +44,7 @@ const sizeClasses: Record<ButtonSize, string> = {
   sm: "px-3.5 py-2 text-xs gap-1.5 min-h-[32px] rounded-lg",
   md: "px-5 py-2.5 text-sm gap-2 min-h-[40px] rounded-xl",
   lg: "px-7 py-3.5 text-base gap-2.5 min-h-[48px] rounded-xl",
+  xl: "px-8 py-4 text-lg gap-3 min-h-[56px] rounded-xl",
 };
 
 const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(

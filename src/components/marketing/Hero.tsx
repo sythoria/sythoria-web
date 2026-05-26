@@ -152,7 +152,11 @@ const terminalBlocks = [
   },
 ];
 
-export default function Hero() {
+export default function Hero({
+  latestVersion,
+}: {
+  latestVersion: string | null;
+}) {
   const { ref, visible } = useInView();
   const tiltRef = useTilt();
 
@@ -241,20 +245,25 @@ export default function Hero() {
         <div
           className={`mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up stagger-4 ${visible ? "" : "opacity-0"}`}
         >
-          <Button
-            variant="primary"
-            size="lg"
+          <a
             href="https://github.com/sythoria/sythoria-desktop/releases"
-            icon={<Download size={18} />}
+            className="btn-primary bg-accent hover:bg-accent-hover text-white shadow-sm shadow-accent/20 hover:shadow-lg hover:shadow-accent/25 active:scale-[0.97] hover:-translate-y-0.5 inline-flex items-center justify-center px-8 py-4 text-lg font-medium transition-all duration-300 ease-out select-none min-h-[56px] rounded-xl relative overflow-hidden"
           >
-            Download
-          </Button>
+            <span className="btn-shine" aria-hidden="true" />
+            <span className="relative z-[1] inline-flex items-center gap-3">
+              <Download size={20} className="shrink-0" />
+              <span>Download</span>
+            </span>
+            <span className="absolute bottom-1 left-0 right-0 text-center z-[1] text-[10px] font-normal opacity-40">
+              Latest version{latestVersion ? ` ${latestVersion}` : ""}
+            </span>
+          </a>
           <Button
             variant="secondary"
-            size="lg"
+            size="xl"
             href="https://github.com/sythoria/sythoria-desktop"
             icon={
-              <GithubIcon size={18} className="inline-block align-middle" />
+              <GithubIcon size={20} className="inline-block align-middle" />
             }
           >
             View on GitHub
