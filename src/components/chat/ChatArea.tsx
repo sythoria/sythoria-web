@@ -61,7 +61,7 @@ function MessageContent({
         {renderContent}
       </ReactMarkdown>
     ),
-    [renderContent],
+    [renderContent]
   );
 
   return (
@@ -444,7 +444,7 @@ const MessageBubble = memo(function MessageBubble({
       displayContent = message.content
         .replace(
           /<(?:reasoning|thinking|thought)>[\s\S]*?<\/(?:reasoning|thinking|thought)>/,
-          "",
+          ""
         )
         .trim();
     } else {
