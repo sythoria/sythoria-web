@@ -46,7 +46,7 @@ export default function ChatPage() {
       loading: s.loading,
       toasts: s.toasts,
       isSearchEnabled: s.isSearchEnabled,
-    })),
+    }))
   );
 
   const {
@@ -84,7 +84,7 @@ export default function ChatPage() {
       dismissToast: s.dismissToast,
       setHasStarted: s.setHasStarted,
       toggleSearchEnabled: s.toggleSearchEnabled,
-    })),
+    }))
   );
 
   const { isAtBottom, setIsAtBottom, scrollToBottom, virtuosoRef } =
@@ -92,7 +92,7 @@ export default function ChatPage() {
 
   const activeConversation = useMemo(
     () => conversations.find((c) => c.id === activeId) ?? null,
-    [conversations, activeId],
+    [conversations, activeId]
   );
   const messages = activeConversation?.messages ?? [];
 
@@ -131,7 +131,7 @@ export default function ChatPage() {
     (id: string) => {
       deleteChat(id);
     },
-    [deleteChat],
+    [deleteChat]
   );
 
   const handleSelectConversation = useCallback(
@@ -139,7 +139,7 @@ export default function ChatPage() {
       setActiveId(id);
       setSidebarOpen(false);
     },
-    [setActiveId, setSidebarOpen],
+    [setActiveId, setSidebarOpen]
   );
 
   const handleSettingsClick = useCallback(() => {
