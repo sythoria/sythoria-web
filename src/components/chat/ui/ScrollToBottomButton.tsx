@@ -9,12 +9,17 @@ interface ScrollToBottomButtonProps {
   className?: string;
 }
 
-const ScrollToBottomButton = forwardRef<HTMLButtonElement, ScrollToBottomButtonProps>(function ScrollToBottomButton(
+const ScrollToBottomButton = forwardRef<
+  HTMLButtonElement,
+  ScrollToBottomButtonProps
+>(function ScrollToBottomButton(
   { onClick, hasNewMessages, className = "" },
   ref,
 ) {
   const label = useMemo(() => {
-    return hasNewMessages ? "New messages below. Scroll to bottom." : "Scroll to bottom";
+    return hasNewMessages
+      ? "New messages below. Scroll to bottom."
+      : "Scroll to bottom";
   }, [hasNewMessages]);
 
   return (

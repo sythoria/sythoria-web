@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { ArrowRight, Zap, Shield, MessageSquare, Settings, BookOpen } from "lucide-react";
+import {
+  ArrowRight,
+  Zap,
+  Shield,
+  MessageSquare,
+  Settings,
+  BookOpen,
+} from "lucide-react";
 import { Card } from "@/components/ui";
 
 const categories = [
@@ -13,7 +20,8 @@ const categories = [
   {
     icon: MessageSquare,
     title: "Features",
-    description: "Streaming, multi-provider support, and everything in between.",
+    description:
+      "Streaming, multi-provider support, and everything in between.",
     href: "/docs/features/streaming",
     accent: "from-indigo-500 to-indigo-600",
   },
@@ -27,7 +35,8 @@ const categories = [
   {
     icon: Settings,
     title: "Configuration",
-    description: "Customize models, temperature, system prompts, and other settings.",
+    description:
+      "Customize models, temperature, system prompts, and other settings.",
     href: "/docs/configuration",
     accent: "from-pink-500 to-rose-500",
   },
@@ -48,7 +57,8 @@ export default function DocsLanding() {
           Documentation
         </h1>
         <p className="mt-3 text-lg text-text-secondary leading-relaxed max-w-xl">
-          Everything you need to know about Sythoria — from quickstart to advanced configuration.
+          Everything you need to know about Sythoria — from quickstart to
+          advanced configuration.
         </p>
       </div>
 
@@ -57,18 +67,24 @@ export default function DocsLanding() {
           <Link key={title} href={href} className="group">
             <Card variant="glass" padding="md" hover className="h-full">
               <div className="flex items-start gap-4">
-                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${accent} flex items-center justify-center shrink-0 shadow-lg shadow-black/5`}>
+                <div
+                  className={`w-10 h-10 rounded-xl bg-gradient-to-br ${accent} flex items-center justify-center shrink-0 shadow-lg shadow-black/5`}
+                >
                   <Icon size={18} className="text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-base font-semibold text-text-primary">{title}</h3>
+                    <h3 className="text-base font-semibold text-text-primary">
+                      {title}
+                    </h3>
                     <ArrowRight
                       size={16}
                       className="text-text-muted group-hover:text-accent group-hover:translate-x-0.5 transition-all duration-200"
                     />
                   </div>
-                  <p className="mt-1 text-sm text-text-secondary leading-relaxed">{description}</p>
+                  <p className="mt-1 text-sm text-text-secondary leading-relaxed">
+                    {description}
+                  </p>
                 </div>
               </div>
             </Card>

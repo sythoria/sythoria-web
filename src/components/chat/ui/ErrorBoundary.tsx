@@ -31,7 +31,10 @@ export class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback;
       }
       return (
-        <div className="flex-1 flex flex-col items-center justify-center gap-4 p-8" role="alert">
+        <div
+          className="flex-1 flex flex-col items-center justify-center gap-4 p-8"
+          role="alert"
+        >
           <div className="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
             <svg
               className="w-7 h-7 text-red-500"
@@ -48,7 +51,9 @@ export class ErrorBoundary extends Component<Props, State> {
               />
             </svg>
           </div>
-          <h2 className="text-lg font-semibold text-text-primary">Something went wrong</h2>
+          <h2 className="text-lg font-semibold text-text-primary">
+            Something went wrong
+          </h2>
           <p className="text-sm text-text-muted max-w-md text-center">
             {this.state.error?.message || "An unexpected error occurred."}
           </p>

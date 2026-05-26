@@ -19,7 +19,9 @@ export default function StartScreen({ onStart }: StartScreenProps) {
           <Bot size={40} className="text-accent" />
         </div>
         <h1 className="text-4xl font-bold text-text-primary mb-4">Sythoria</h1>
-        <p className="text-text-muted mb-8">Welcome to Sythoria. Ready to get started?</p>
+        <p className="text-text-muted mb-8">
+          Welcome to Sythoria. Ready to get started?
+        </p>
 
         <button
           onClick={onStart}

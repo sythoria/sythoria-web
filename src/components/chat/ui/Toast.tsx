@@ -46,15 +46,20 @@ function tryParseStructuredError(raw: string): string | null {
     const parsed: StructuredAppError = JSON.parse(raw);
     if (parsed.ApiError) {
       const code = String(parsed.ApiError.status);
-      return ERROR_MESSAGES[code] ?? `API error ${code}: ${parsed.ApiError.message}`;
+      return (
+        ERROR_MESSAGES[code] ?? `API error ${code}: ${parsed.ApiError.message}`
+      );
     }
-    if (parsed.UrlValidationError) return `URL validation error: ${parsed.UrlValidationError}`;
+    if (parsed.UrlValidationError)
+      return `URL validation error: ${parsed.UrlValidationError}`;
     if (parsed.KeyNotFound) return parsed.KeyNotFound;
     if (parsed.AuthError) return `Authentication error: ${parsed.AuthError}`;
     if (parsed.SearchError) return `Search error: ${parsed.SearchError}`;
     if (parsed.ConfigIo) return "Configuration error — try restarting the app.";
-    if (parsed.StreamError) return "Stream error — the connection was interrupted.";
-    if (parsed.ParseError) return "Response parse error — the API returned unexpected data.";
+    if (parsed.StreamError)
+      return "Stream error — the connection was interrupted.";
+    if (parsed.ParseError)
+      return "Response parse error — the API returned unexpected data.";
     if (parsed.RequestFailed) return userFriendlyMessage(parsed.RequestFailed);
     if (parsed.AppPath) return "App path error — try reinstalling.";
   } catch {
@@ -67,16 +72,26 @@ function userFriendlyMessage(raw: string): string {
   const statusMatch = raw.match(/API error (\d{3})/);
   if (statusMatch) {
     const code = statusMatch[1];
-    return ERROR_MESSAGES[code] ?? `API error ${code}: ${raw.replace(/API error \d{3}:\s*/, "")}`;
+    return (
+      ERROR_MESSAGES[code] ??
+      `API error ${code}: ${raw.replace(/API error \d{3}:\s*/, "")}`
+    );
   }
 
-  if (raw.includes("Failed to fetch") || raw.includes("NetworkError") || raw.includes("error sending request")) {
+  if (
+    raw.includes("Failed to fetch") ||
+    raw.includes("NetworkError") ||
+    raw.includes("error sending request")
+  ) {
     return "Network error \u2014 check your internet connection and API base URL.";
   }
   if (raw.includes("timeout") || raw.includes("Timed out")) {
     return "Request timed out \u2014 the provider took too long to respond.";
   }
-  if (raw.includes("Invalid URL") || raw.includes("relative URL without a base")) {
+  if (
+    raw.includes("Invalid URL") ||
+    raw.includes("relative URL without a base")
+  ) {
     return "Invalid API URL \u2014 check the base URL in Settings.";
   }
 
@@ -102,7 +117,13 @@ const VARIANT_STYLES: Record<Toast["variant"], string> = {
   info: "border-accent/30 bg-accent-soft text-text-secondary",
 };
 
-function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string) => void }) {
+function ToastItem({
+  toast,
+  onDismiss,
+}: {
+  toast: Toast;
+  onDismiss: (id: string) => void;
+}) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {

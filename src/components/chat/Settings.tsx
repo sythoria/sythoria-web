@@ -19,10 +19,19 @@ import {
 } from "lucide-react";
 import type { ModelConfig, SearchApiConfig, SearchProvider } from "@/lib/types";
 import { useAppStore } from "@/lib/store";
-import { PROVIDER_PRESETS, MAX_TEMPERATURE, MIN_TEMPERATURE, TEMPERATURE_STEP } from "@/lib/config";
+import {
+  PROVIDER_PRESETS,
+  MAX_TEMPERATURE,
+  MIN_TEMPERATURE,
+  TEMPERATURE_STEP,
+} from "@/lib/config";
 import { SEARCH_PROVIDER_PRESETS } from "@/config/searchPresets";
 import { Switch } from "@/components/chat/ui/Switch";
-import { validateApiUrl, validateApiKey, validateSearchApiKey } from "@/utils/validation";
+import {
+  validateApiUrl,
+  validateApiKey,
+  validateSearchApiKey,
+} from "@/utils/validation";
 
 interface ModelCardProps {
   model: ModelConfig;
@@ -68,26 +77,34 @@ const ModelCard = memo(function ModelCard({
             }`}
             aria-label={`Status: ${connectionStatus}`}
           />
-          <span className="text-[11px] text-text-muted capitalize">{connectionStatus}</span>
+          <span className="text-[11px] text-text-muted capitalize">
+            {connectionStatus}
+          </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="space-y-1">
-            <label className="text-xs font-medium text-text-muted" htmlFor={`model-name-${model.id}`}>
+            <label
+              className="text-xs font-medium text-text-muted"
+              htmlFor={`model-name-${model.id}`}
+            >
               Name
             </label>
             <input
               id={`model-name-${model.id}`}
               type="text"
-          value={model.name ?? ""}
-          onChange={(e) => onUpdate(model.id, { name: e.target.value })}
+              value={model.name ?? ""}
+              onChange={(e) => onUpdate(model.id, { name: e.target.value })}
               placeholder="e.g. My Llama 3"
               className="w-full px-3 py-2 rounded-lg border border-input-border bg-input text-sm text-text-primary placeholder-text-muted focus:border-accent/50 focus:outline-none transition-colors"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-medium text-text-muted" htmlFor={`model-provider-${model.id}`}>
+            <label
+              className="text-xs font-medium text-text-muted"
+              htmlFor={`model-provider-${model.id}`}
+            >
               Provider Preset
             </label>
             <div className="relative">
@@ -95,13 +112,16 @@ const ModelCard = memo(function ModelCard({
                 id={`model-provider-${model.id}`}
                 value={model.provider || "Custom"}
                 onChange={(e) => {
-                  const preset = PROVIDER_PRESETS.find((p) => p.label === e.target.value);
+                  const preset = PROVIDER_PRESETS.find(
+                    (p) => p.label === e.target.value,
+                  );
                   if (preset) {
                     onUpdate(model.id, {
                       provider: preset.label,
                       apiBase: preset.apiBase || model.apiBase,
                       modelId: preset.defaultModel || model.modelId,
-                      name: model.name === "New Model" ? preset.label : model.name,
+                      name:
+                        model.name === "New Model" ? preset.label : model.name,
                     });
                   } else {
                     onUpdate(model.id, { provider: e.target.value });
@@ -126,17 +146,22 @@ const ModelCard = memo(function ModelCard({
         </div>
 
         <div className="space-y-1">
-          <label className="text-xs font-medium text-text-muted" htmlFor={`model-api-${model.id}`}>
+          <label
+            className="text-xs font-medium text-text-muted"
+            htmlFor={`model-api-${model.id}`}
+          >
             API Base URL
           </label>
           <input
             id={`model-api-${model.id}`}
             type="url"
-          value={model.apiBase ?? ""}
-          onChange={(e) => onUpdate(model.id, { apiBase: e.target.value })}
+            value={model.apiBase ?? ""}
+            onChange={(e) => onUpdate(model.id, { apiBase: e.target.value })}
             placeholder="https://api.openai.com/v1/chat/completions"
             aria-invalid={!urlValidation.valid}
-            aria-describedby={!urlValidation.valid ? `url-error-${model.id}` : undefined}
+            aria-describedby={
+              !urlValidation.valid ? `url-error-${model.id}` : undefined
+            }
             className={`w-full px-3 py-2 rounded-lg border bg-input text-sm text-text-primary placeholder-text-muted font-mono text-xs focus:outline-none transition-colors ${
               !urlValidation.valid
                 ? "border-red-500/50 focus:border-red-500"
@@ -157,32 +182,40 @@ const ModelCard = memo(function ModelCard({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="space-y-1">
-            <label className="text-xs font-medium text-text-muted" htmlFor={`model-id-${model.id}`}>
+            <label
+              className="text-xs font-medium text-text-muted"
+              htmlFor={`model-id-${model.id}`}
+            >
               Model ID
             </label>
             <input
               id={`model-id-${model.id}`}
               type="text"
-          value={model.modelId ?? ""}
-          onChange={(e) => onUpdate(model.id, { modelId: e.target.value })}
+              value={model.modelId ?? ""}
+              onChange={(e) => onUpdate(model.id, { modelId: e.target.value })}
               placeholder="e.g. gpt-4o or meta/llama-3.3-70b-instruct"
               className="w-full px-3 py-2 rounded-lg border border-input-border bg-input text-sm text-text-primary placeholder-text-muted font-mono text-xs focus:border-accent/50 focus:outline-none transition-colors"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-medium text-text-muted" htmlFor={`model-key-${model.id}`}>
+            <label
+              className="text-xs font-medium text-text-muted"
+              htmlFor={`model-key-${model.id}`}
+            >
               API Key
             </label>
             <div className="relative">
               <input
                 id={`model-key-${model.id}`}
                 type={showKey ? "text" : "password"}
-          value={model.apiKey ?? ""}
-          onChange={(e) => onUpdate(model.id, { apiKey: e.target.value })}
+                value={model.apiKey ?? ""}
+                onChange={(e) => onUpdate(model.id, { apiKey: e.target.value })}
                 placeholder="API key (optional for local)"
                 aria-invalid={!keyValidation.valid}
-                aria-describedby={!keyValidation.valid ? `key-warning-${model.id}` : undefined}
+                aria-describedby={
+                  !keyValidation.valid ? `key-warning-${model.id}` : undefined
+                }
                 className={`w-full px-3 py-2 pr-9 rounded-lg border bg-input text-sm text-text-primary placeholder-text-muted focus:outline-none transition-colors ${
                   !keyValidation.valid
                     ? "border-yellow-500/50 focus:border-yellow-500"
@@ -244,21 +277,27 @@ const SearchApiCard = memo(function SearchApiCard({
       <div className="pr-12 space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="space-y-1">
-            <label className="text-xs font-medium text-text-muted" htmlFor={`search-name-${config.id}`}>
+            <label
+              className="text-xs font-medium text-text-muted"
+              htmlFor={`search-name-${config.id}`}
+            >
               Name
             </label>
             <input
               id={`search-name-${config.id}`}
               type="text"
-          value={config.name ?? ""}
-          onChange={(e) => onUpdate(config.id, { name: e.target.value })}
+              value={config.name ?? ""}
+              onChange={(e) => onUpdate(config.id, { name: e.target.value })}
               placeholder="e.g. Google Search"
               className="w-full px-3 py-2 rounded-lg border border-input-border bg-input text-sm text-text-primary placeholder-text-muted focus:border-accent/50 focus:outline-none transition-colors"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-medium text-text-muted" htmlFor={`search-provider-${config.id}`}>
+            <label
+              className="text-xs font-medium text-text-muted"
+              htmlFor={`search-provider-${config.id}`}
+            >
               Provider
             </label>
             <div className="relative">
@@ -267,12 +306,17 @@ const SearchApiCard = memo(function SearchApiCard({
                 value={config.provider}
                 onChange={(e) => {
                   const provider = e.target.value as SearchProvider;
-                  const preset = SEARCH_PROVIDER_PRESETS.find((p) => p.provider === provider);
+                  const preset = SEARCH_PROVIDER_PRESETS.find(
+                    (p) => p.provider === provider,
+                  );
                   if (preset) {
                     onUpdate(config.id, {
                       provider,
                       baseUrl: preset.baseUrl || config.baseUrl,
-                      name: config.name === "New Search API" ? preset.label : config.name,
+                      name:
+                        config.name === "New Search API"
+                          ? preset.label
+                          : config.name,
                       maxResults: preset.defaultMaxResults,
                     });
                   } else {
@@ -298,14 +342,17 @@ const SearchApiCard = memo(function SearchApiCard({
         </div>
 
         <div className="space-y-1">
-          <label className="text-xs font-medium text-text-muted" htmlFor={`search-base-${config.id}`}>
+          <label
+            className="text-xs font-medium text-text-muted"
+            htmlFor={`search-base-${config.id}`}
+          >
             Base URL
           </label>
           <input
             id={`search-base-${config.id}`}
             type="url"
-          value={config.baseUrl ?? ""}
-          onChange={(e) => onUpdate(config.id, { baseUrl: e.target.value })}
+            value={config.baseUrl ?? ""}
+            onChange={(e) => onUpdate(config.id, { baseUrl: e.target.value })}
             placeholder={
               config.provider === "google"
                 ? "https://www.googleapis.com/customsearch/v1"
@@ -319,9 +366,14 @@ const SearchApiCard = memo(function SearchApiCard({
           />
         </div>
 
-        {(config.provider === "google" || config.provider === "firecrawl" || config.provider === "custom") && (
+        {(config.provider === "google" ||
+          config.provider === "firecrawl" ||
+          config.provider === "custom") && (
           <div className="space-y-1">
-            <label className="text-xs font-medium text-text-muted" htmlFor={`search-key-${config.id}`}>
+            <label
+              className="text-xs font-medium text-text-muted"
+              htmlFor={`search-key-${config.id}`}
+            >
               API Key
             </label>
             <div className="relative">
@@ -329,8 +381,12 @@ const SearchApiCard = memo(function SearchApiCard({
                 id={`search-key-${config.id}`}
                 type={showKey ? "text" : "password"}
                 value={config.apiKey || ""}
-                onChange={(e) => onUpdate(config.id, { apiKey: e.target.value })}
-                placeholder={config.provider === "google" ? "Google API Key" : "API Key"}
+                onChange={(e) =>
+                  onUpdate(config.id, { apiKey: e.target.value })
+                }
+                placeholder={
+                  config.provider === "google" ? "Google API Key" : "API Key"
+                }
                 className={`w-full px-3 py-2 pr-9 rounded-lg border bg-input text-sm text-text-primary placeholder-text-muted focus:outline-none transition-colors ${
                   !keyValidation.valid
                     ? "border-yellow-500/50 focus:border-yellow-500"
@@ -346,7 +402,10 @@ const SearchApiCard = memo(function SearchApiCard({
               </button>
             </div>
             {!keyValidation.valid && (
-              <p className="flex items-center gap-1 text-[11px] text-yellow-500 mt-0.5" role="alert">
+              <p
+                className="flex items-center gap-1 text-[11px] text-yellow-500 mt-0.5"
+                role="alert"
+              >
                 <AlertCircle size={11} />
                 {keyValidation.warning}
               </p>
@@ -356,7 +415,10 @@ const SearchApiCard = memo(function SearchApiCard({
 
         {config.provider === "google" && (
           <div className="space-y-1">
-            <label className="text-xs font-medium text-text-muted" htmlFor={`search-cx-${config.id}`}>
+            <label
+              className="text-xs font-medium text-text-muted"
+              htmlFor={`search-cx-${config.id}`}
+            >
               Custom Search Engine ID (CX)
             </label>
             <input
@@ -372,7 +434,10 @@ const SearchApiCard = memo(function SearchApiCard({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="space-y-1">
-            <label className="text-xs font-medium text-text-muted" htmlFor={`search-results-${config.id}`}>
+            <label
+              className="text-xs font-medium text-text-muted"
+              htmlFor={`search-results-${config.id}`}
+            >
               Max Results
             </label>
             <input
@@ -381,7 +446,11 @@ const SearchApiCard = memo(function SearchApiCard({
               min={1}
               max={20}
               value={config.maxResults}
-              onChange={(e) => onUpdate(config.id, { maxResults: parseInt(e.target.value) || 5 })}
+              onChange={(e) =>
+                onUpdate(config.id, {
+                  maxResults: parseInt(e.target.value) || 5,
+                })
+              }
               className="w-full px-3 py-2 rounded-lg border border-input-border bg-input text-sm text-text-primary focus:border-accent/50 focus:outline-none transition-colors"
             />
           </div>
@@ -424,9 +493,12 @@ export default function Settings() {
   const addToast = useAppStore((s) => s.addToast);
 
   const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
-  const [searchProviderDropdownOpen, setSearchProviderDropdownOpen] = useState(false);
+  const [searchProviderDropdownOpen, setSearchProviderDropdownOpen] =
+    useState(false);
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
-  const [showSearchKeys, setShowSearchKeys] = useState<Record<string, boolean>>({});
+  const [showSearchKeys, setShowSearchKeys] = useState<Record<string, boolean>>(
+    {},
+  );
   const tempToastRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentModel = models.find((m) => m.id === selectedModel);
@@ -439,7 +511,9 @@ export default function Settings() {
 
   const effectiveModel = currentModel ?? models[0];
   const enabledSearchConfigs = searchConfigs.filter((c) => c.enabled);
-  const activeSearchConfig = enabledSearchConfigs.find((c) => c.id === activeSearchId);
+  const activeSearchConfig = enabledSearchConfigs.find(
+    (c) => c.id === activeSearchId,
+  );
 
   const handleTemperatureChange = useCallback(
     (value: string) => {
@@ -471,10 +545,16 @@ export default function Settings() {
     checkModelConnections();
   };
 
-  const tempPercent = ((temperature - MIN_TEMPERATURE) / (MAX_TEMPERATURE - MIN_TEMPERATURE)) * 100;
+  const tempPercent =
+    ((temperature - MIN_TEMPERATURE) / (MAX_TEMPERATURE - MIN_TEMPERATURE)) *
+    100;
 
   return (
-    <div className="flex-1 flex flex-col min-w-0 overflow-hidden animate-slide-up" role="region" aria-label="Settings">
+    <div
+      className="flex-1 flex flex-col min-w-0 overflow-hidden animate-slide-up"
+      role="region"
+      aria-label="Settings"
+    >
       <header className="shrink-0 flex items-center justify-between px-4 py-3 md:px-6 border-b border-border/50">
         <div className="flex items-center gap-3">
           <a
@@ -484,7 +564,11 @@ export default function Settings() {
           >
             <ArrowLeft size={18} />
           </a>
-          <SettingsIcon size={18} className="text-text-muted" aria-hidden="true" />
+          <SettingsIcon
+            size={18}
+            className="text-text-muted"
+            aria-hidden="true"
+          />
           <h2 className="text-sm font-medium text-text-secondary">Settings</h2>
         </div>
         <button
@@ -504,14 +588,19 @@ export default function Settings() {
         <div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-md bg-accent-soft" aria-hidden="true">
+              <div
+                className="p-1.5 rounded-md bg-accent-soft"
+                aria-hidden="true"
+              >
                 {theme === "dark" ? (
                   <Moon size={16} className="text-accent" />
                 ) : (
                   <Sun size={16} className="text-accent" />
                 )}
               </div>
-              <h3 className="text-sm font-semibold text-text-primary">Appearance</h3>
+              <h3 className="text-sm font-semibold text-text-primary">
+                Appearance
+              </h3>
             </div>
             <div className="bg-surface border border-border rounded-xl p-4 space-y-4 shadow-sm">
               <Switch
@@ -525,17 +614,27 @@ export default function Settings() {
 
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-md bg-accent-soft" aria-hidden="true">
+              <div
+                className="p-1.5 rounded-md bg-accent-soft"
+                aria-hidden="true"
+              >
                 <Sliders size={16} className="text-accent" />
               </div>
-              <h3 className="text-sm font-semibold text-text-primary">AI Configuration</h3>
+              <h3 className="text-sm font-semibold text-text-primary">
+                AI Configuration
+              </h3>
             </div>
             <div className="bg-surface border border-border rounded-xl p-4 space-y-4 shadow-sm">
               <div className="space-y-2">
-                <label htmlFor="default-model-select" className="text-sm font-medium text-text-primary block">
+                <label
+                  htmlFor="default-model-select"
+                  className="text-sm font-medium text-text-primary block"
+                >
                   Default AI Model
                 </label>
-                <p className="text-xs text-text-muted mb-2">Choose the model for new conversations</p>
+                <p className="text-xs text-text-muted mb-2">
+                  Choose the model for new conversations
+                </p>
                 <div className="relative">
                   <button
                     id="default-model-select"
@@ -580,88 +679,115 @@ export default function Settings() {
                           >
                             <div className="flex flex-col items-start">
                               <span className="font-medium">{model.name}</span>
-                              <span className="text-[10px] text-text-muted">{model.modelId}</span>
+                              <span className="text-[10px] text-text-muted">
+                                {model.modelId}
+                              </span>
                             </div>
                             {selectedModel === model.id && (
-                              <Check size={14} className="text-accent shrink-0" aria-hidden="true" />
+                              <Check
+                                size={14}
+                                className="text-accent shrink-0"
+                                aria-hidden="true"
+                              />
                             )}
                           </button>
                         ))}
                       </div>
                     </>
                   )}
-          </div>
-        </div>
-
-        <div className="space-y-2 pt-2">
-          <label htmlFor="default-search-provider" className="text-sm font-medium text-text-primary block">
-            Default Search Provider
-          </label>
-          <p className="text-xs text-text-muted mb-2">Choose the search API used when web search is enabled</p>
-          <div className="relative">
-            <button
-              id="default-search-provider"
-              onClick={() => setSearchProviderDropdownOpen(!searchProviderDropdownOpen)}
-              disabled={enabledSearchConfigs.length === 0}
-              className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg border border-input-border bg-input text-sm text-text-primary hover:border-accent/30 transition-colors min-h-[44px] disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-expanded={searchProviderDropdownOpen}
-              aria-haspopup="listbox"
-            >
-              <span>
-                {activeSearchConfig?.name ||
-                  (enabledSearchConfigs.length === 0 ? "No search APIs configured" : "Select provider")}
-              </span>
-              <ChevronDown
-                size={16}
-                className={`text-text-muted transition-transform ${searchProviderDropdownOpen ? "rotate-180" : ""}`}
-                aria-hidden="true"
-              />
-            </button>
-            {searchProviderDropdownOpen && enabledSearchConfigs.length > 0 && (
-              <>
-                <div
-                  className="fixed inset-0 z-10"
-                  onClick={() => setSearchProviderDropdownOpen(false)}
-                  aria-hidden="true"
-                />
-                <div
-                  className="absolute top-full left-0 right-0 mt-1 bg-surface border border-border rounded-xl shadow-lg z-20 overflow-hidden animate-fade-in max-h-64 overflow-y-auto"
-                  role="listbox"
-                  aria-label="Available search providers"
-                >
-                  {enabledSearchConfigs.map((config) => (
-                    <button
-                      key={config.id}
-                      onClick={() => {
-                        setActiveSearchId(config.id);
-                        setSearchProviderDropdownOpen(false);
-                      }}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 text-sm transition-colors min-h-[44px] ${
-                        activeSearchId === config.id
-                          ? "bg-accent-soft text-accent"
-                          : "text-text-secondary hover:bg-hover hover:text-text-primary"
-                      }`}
-                      role="option"
-                      aria-selected={activeSearchId === config.id}
-                    >
-                      <div className="flex flex-col items-start">
-                        <span className="font-medium">{config.name}</span>
-                        <span className="text-[10px] text-text-muted">{config.provider}</span>
-                      </div>
-                      {activeSearchId === config.id && (
-                        <Check size={14} className="text-accent shrink-0" aria-hidden="true" />
-                      )}
-                    </button>
-                  ))}
                 </div>
-              </>
-            )}
-          </div>
-        </div>
+              </div>
 
-        <div className="space-y-3 pt-2 border-t border-border/50">
+              <div className="space-y-2 pt-2">
+                <label
+                  htmlFor="default-search-provider"
+                  className="text-sm font-medium text-text-primary block"
+                >
+                  Default Search Provider
+                </label>
+                <p className="text-xs text-text-muted mb-2">
+                  Choose the search API used when web search is enabled
+                </p>
+                <div className="relative">
+                  <button
+                    id="default-search-provider"
+                    onClick={() =>
+                      setSearchProviderDropdownOpen(!searchProviderDropdownOpen)
+                    }
+                    disabled={enabledSearchConfigs.length === 0}
+                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg border border-input-border bg-input text-sm text-text-primary hover:border-accent/30 transition-colors min-h-[44px] disabled:opacity-50 disabled:cursor-not-allowed"
+                    aria-expanded={searchProviderDropdownOpen}
+                    aria-haspopup="listbox"
+                  >
+                    <span>
+                      {activeSearchConfig?.name ||
+                        (enabledSearchConfigs.length === 0
+                          ? "No search APIs configured"
+                          : "Select provider")}
+                    </span>
+                    <ChevronDown
+                      size={16}
+                      className={`text-text-muted transition-transform ${searchProviderDropdownOpen ? "rotate-180" : ""}`}
+                      aria-hidden="true"
+                    />
+                  </button>
+                  {searchProviderDropdownOpen &&
+                    enabledSearchConfigs.length > 0 && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-10"
+                          onClick={() => setSearchProviderDropdownOpen(false)}
+                          aria-hidden="true"
+                        />
+                        <div
+                          className="absolute top-full left-0 right-0 mt-1 bg-surface border border-border rounded-xl shadow-lg z-20 overflow-hidden animate-fade-in max-h-64 overflow-y-auto"
+                          role="listbox"
+                          aria-label="Available search providers"
+                        >
+                          {enabledSearchConfigs.map((config) => (
+                            <button
+                              key={config.id}
+                              onClick={() => {
+                                setActiveSearchId(config.id);
+                                setSearchProviderDropdownOpen(false);
+                              }}
+                              className={`w-full flex items-center justify-between px-3 py-2.5 text-sm transition-colors min-h-[44px] ${
+                                activeSearchId === config.id
+                                  ? "bg-accent-soft text-accent"
+                                  : "text-text-secondary hover:bg-hover hover:text-text-primary"
+                              }`}
+                              role="option"
+                              aria-selected={activeSearchId === config.id}
+                            >
+                              <div className="flex flex-col items-start">
+                                <span className="font-medium">
+                                  {config.name}
+                                </span>
+                                <span className="text-[10px] text-text-muted">
+                                  {config.provider}
+                                </span>
+                              </div>
+                              {activeSearchId === config.id && (
+                                <Check
+                                  size={14}
+                                  className="text-accent shrink-0"
+                                  aria-hidden="true"
+                                />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-2 border-t border-border/50">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="temperature-slider" className="text-sm font-medium text-text-primary">
+                  <label
+                    htmlFor="temperature-slider"
+                    className="text-sm font-medium text-text-primary"
+                  >
                     Temperature
                   </label>
                   <span className="text-xs text-text-muted bg-input border border-input-border rounded px-2 py-0.5 font-mono">
@@ -669,10 +795,13 @@ export default function Settings() {
                   </span>
                 </div>
                 <p className="text-xs text-text-muted">
-                  Adjust creativity: lower values produce more focused responses, higher values more creative ones
+                  Adjust creativity: lower values produce more focused
+                  responses, higher values more creative ones
                 </p>
                 <div className="flex items-center gap-4">
-                  <span className="text-xs text-text-muted whitespace-nowrap">{MIN_TEMPERATURE.toFixed(1)}</span>
+                  <span className="text-xs text-text-muted whitespace-nowrap">
+                    {MIN_TEMPERATURE.toFixed(1)}
+                  </span>
                   <div className="relative flex-1 h-1.5 bg-input-border rounded-full">
                     <div
                       className="absolute h-full bg-accent rounded-full transition-all duration-150"
@@ -695,7 +824,9 @@ export default function Settings() {
                       aria-hidden="true"
                     />
                   </div>
-                  <span className="text-xs text-text-muted whitespace-nowrap">{MAX_TEMPERATURE.toFixed(1)}</span>
+                  <span className="text-xs text-text-muted whitespace-nowrap">
+                    {MAX_TEMPERATURE.toFixed(1)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-[10px] text-text-muted pt-1">
                   <span>Precise</span>
@@ -709,10 +840,15 @@ export default function Settings() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-md bg-accent-soft" aria-hidden="true">
+                <div
+                  className="p-1.5 rounded-md bg-accent-soft"
+                  aria-hidden="true"
+                >
                   <SettingsIcon size={16} className="text-accent" />
                 </div>
-                <h3 className="text-sm font-semibold text-text-primary">Model Endpoints</h3>
+                <h3 className="text-sm font-semibold text-text-primary">
+                  Model Endpoints
+                </h3>
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -721,7 +857,9 @@ export default function Settings() {
                   className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-hover border border-border text-xs transition-colors min-h-[44px]"
                   aria-label="Refresh connection status"
                 >
-                  {loading.checkConnection ? <Loader2 size={14} className="animate-spin" /> : null}
+                  {loading.checkConnection ? (
+                    <Loader2 size={14} className="animate-spin" />
+                  ) : null}
                   Refresh
                 </button>
                 <button
@@ -749,7 +887,9 @@ export default function Settings() {
               ))}
               {models.length === 0 && (
                 <div className="text-center py-8 bg-surface border border-border border-dashed rounded-xl">
-                  <p className="text-text-muted text-sm">No models configured.</p>
+                  <p className="text-text-muted text-sm">
+                    No models configured.
+                  </p>
                   <button
                     onClick={addModel}
                     className="mt-2 text-accent hover:text-accent-hover text-sm font-medium min-h-[44px]"
@@ -758,61 +898,74 @@ export default function Settings() {
                   </button>
                 </div>
               )}
-      </div>
-    </div>
-
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-md bg-accent-soft" aria-hidden="true">
-            <Search size={16} className="text-accent" />
+            </div>
           </div>
-          <h3 className="text-sm font-semibold text-text-primary">Web Search APIs</h3>
-        </div>
-        <button
-          onClick={addSearchConfig}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-input text-text-primary hover:bg-hover border border-border text-sm font-medium transition-colors shadow-sm min-h-[44px]"
-          aria-label="Add new search API"
-        >
-          <Plus size={14} />
-          <span>Add Search API</span>
-        </button>
-      </div>
 
-      <div className="space-y-4">
-        {searchConfigs.map((config) => (
-          <SearchApiCard
-            key={config.id}
-            config={config}
-            onUpdate={updateSearchConfig}
-            onDelete={deleteSearchConfig}
-            showKey={!!showSearchKeys[config.id]}
-            onToggleKey={toggleSearchKeyVisibility}
-          />
-        ))}
-        {searchConfigs.length === 0 && (
-          <div className="text-center py-8 bg-surface border border-border border-dashed rounded-xl">
-            <p className="text-text-muted text-sm">No search APIs configured.</p>
-            <p className="text-text-muted text-xs mt-1">Add a search API to enable web search in chat.</p>
-            <button
-              onClick={addSearchConfig}
-              className="mt-2 text-accent hover:text-accent-hover text-sm font-medium min-h-[44px]"
-            >
-              Add your first search API
-            </button>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div
+                  className="p-1.5 rounded-md bg-accent-soft"
+                  aria-hidden="true"
+                >
+                  <Search size={16} className="text-accent" />
+                </div>
+                <h3 className="text-sm font-semibold text-text-primary">
+                  Web Search APIs
+                </h3>
+              </div>
+              <button
+                onClick={addSearchConfig}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-input text-text-primary hover:bg-hover border border-border text-sm font-medium transition-colors shadow-sm min-h-[44px]"
+                aria-label="Add new search API"
+              >
+                <Plus size={14} />
+                <span>Add Search API</span>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {searchConfigs.map((config) => (
+                <SearchApiCard
+                  key={config.id}
+                  config={config}
+                  onUpdate={updateSearchConfig}
+                  onDelete={deleteSearchConfig}
+                  showKey={!!showSearchKeys[config.id]}
+                  onToggleKey={toggleSearchKeyVisibility}
+                />
+              ))}
+              {searchConfigs.length === 0 && (
+                <div className="text-center py-8 bg-surface border border-border border-dashed rounded-xl">
+                  <p className="text-text-muted text-sm">
+                    No search APIs configured.
+                  </p>
+                  <p className="text-text-muted text-xs mt-1">
+                    Add a search API to enable web search in chat.
+                  </p>
+                  <button
+                    onClick={addSearchConfig}
+                    className="mt-2 text-accent hover:text-accent-hover text-sm font-medium min-h-[44px]"
+                  >
+                    Add your first search API
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        )}
-      </div>
-    </div>
 
-    <div className="bg-surface border border-border rounded-xl p-4 shadow-sm">
+          <div className="bg-surface border border-border rounded-xl p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-text-primary">Sythoria</p>
+                <p className="text-sm font-medium text-text-primary">
+                  Sythoria
+                </p>
                 <p className="text-xs text-text-muted mt-0.5">Version 0.1.0</p>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-text-muted">{effectiveModel?.name || "N/A"}</span>
+                <span className="text-xs text-text-muted">
+                  {effectiveModel?.name || "N/A"}
+                </span>
               </div>
             </div>
           </div>

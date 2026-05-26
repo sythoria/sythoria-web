@@ -1,11 +1,23 @@
-import type { Conversation, Message, ModelConfig, SearchApiConfig, SearchResult, UrlContent } from "@/lib/types";
+import type {
+  Conversation,
+  Message,
+  ModelConfig,
+  SearchApiConfig,
+  SearchResult,
+  UrlContent,
+} from "@/lib/types";
 import { generateId } from "@/utils/generateId";
 import { logError } from "@/utils/logger";
 import { MAX_TOOL_STEPS } from "@/lib/config";
 import { parseApiError } from "@/components/chat/ui/Toast";
 import { chatCompletionTools } from "@/lib/api";
 
-export type LoadingKey = "init" | "sendMessage" | "checkConnection" | "saveConfig" | "toolExecution";
+export type LoadingKey =
+  | "init"
+  | "sendMessage"
+  | "checkConnection"
+  | "saveConfig"
+  | "toolExecution";
 
 export interface AppState {
   conversations: Conversation[];
@@ -26,7 +38,10 @@ export const TOOL_DEFINITIONS = [
       parameters: {
         type: "object" as const,
         properties: {
-          query: { type: "string" as const, description: "The search query string" },
+          query: {
+            type: "string" as const,
+            description: "The search query string",
+          },
         },
         required: ["query"],
       },
@@ -41,7 +56,10 @@ export const TOOL_DEFINITIONS = [
       parameters: {
         type: "object" as const,
         properties: {
-          url: { type: "string" as const, description: "The URL to fetch and read" },
+          url: {
+            type: "string" as const,
+            description: "The URL to fetch and read",
+          },
         },
         required: ["url"],
       },
@@ -69,7 +87,9 @@ interface ToolCallData {
 }
 
 interface ToolCallResponse {
-  choices?: { message: { content: string | null; tool_calls?: ToolCallData[] } }[];
+  choices?: {
+    message: { content: string | null; tool_calls?: ToolCallData[] };
+  }[];
 }
 
 function updateConversationMessages(
@@ -80,17 +100,30 @@ function updateConversationMessages(
 ): Conversation[] {
   return conversations.map((c) => {
     if (c.id !== convId) return c;
-    return { ...c, messages: updater(c.messages), timestamp: new Date(), ...extra };
+    return {
+      ...c,
+      messages: updater(c.messages),
+      timestamp: new Date(),
+      ...extra,
+    };
   });
 }
 
-function setAssistantError(conversations: Conversation[], convId: string, err: unknown): Conversation[] {
+function setAssistantError(
+  conversations: Conversation[],
+  convId: string,
+  err: unknown,
+): Conversation[] {
   const friendlyMessage = parseApiError(err);
   return updateConversationMessages(conversations, convId, (msgs) => {
     const updated = [...msgs];
     const last = updated[updated.length - 1];
     if (last && last.role === "assistant") {
-      updated[updated.length - 1] = { ...last, content: `**Error:** ${friendlyMessage}`, isStreaming: false };
+      updated[updated.length - 1] = {
+        ...last,
+        content: `**Error:** ${friendlyMessage}`,
+        isStreaming: false,
+      };
     }
     return updated;
   });
@@ -105,7 +138,11 @@ export async function sendWithToolLoop(
   searchApiKey: string,
   set: (fn: (state: AppState) => Partial<AppState>) => void,
   get: () => AppState,
-  performSearch: (query: string, config: SearchApiConfig, apiKey: string) => Promise<SearchResult[]>,
+  performSearch: (
+    query: string,
+    config: SearchApiConfig,
+    apiKey: string,
+  ) => Promise<SearchResult[]>,
   fetchUrlContent: (url: string) => Promise<UrlContent>,
   abortSignal?: AbortSignal,
 ) {
@@ -163,10 +200,18 @@ export async function sendWithToolLoop(
             thoughtProcess: msg.content,
           };
           set((state) => ({
-            conversations: updateConversationMessages(state.conversations, convId, (msgs) => [...msgs, thoughtMsg]),
+            conversations: updateConversationMessages(
+              state.conversations,
+              convId,
+              (msgs) => [...msgs, thoughtMsg],
+            ),
           }));
         }
-        apiMessages.push({ role: "assistant", content: null, tool_calls: msg.tool_calls });
+        apiMessages.push({
+          role: "assistant",
+          content: null,
+          tool_calls: msg.tool_calls,
+        });
 
         for (const toolCall of msg.tool_calls) {
           const rawName = toolCall.function.name;
@@ -196,7 +241,11 @@ export async function sendWithToolLoop(
               },
             };
             set((state) => ({
-              conversations: updateConversationMessages(state.conversations, convId, (msgs) => [...msgs, unknownMsg]),
+              conversations: updateConversationMessages(
+                state.conversations,
+                convId,
+                (msgs) => [...msgs, unknownMsg],
+              ),
             }));
             apiMessages.push({
               role: "tool",
@@ -211,7 +260,10 @@ export async function sendWithToolLoop(
           const toolCallMsg: Message = {
             id: toolCallMsgId,
             role: "tool",
-            content: fnName === "search_query" ? `Searching: ${fnArgs.query}` : `Fetching: ${fnArgs.url}`,
+            content:
+              fnName === "search_query"
+                ? `Searching: ${fnArgs.query}`
+                : `Fetching: ${fnArgs.url}`,
             timestamp: new Date(),
             toolCall: {
               id: toolCall.id,
@@ -221,40 +273,58 @@ export async function sendWithToolLoop(
           };
 
           set((state) => ({
-            conversations: updateConversationMessages(state.conversations, convId, (msgs) => [...msgs, toolCallMsg]),
+            conversations: updateConversationMessages(
+              state.conversations,
+              convId,
+              (msgs) => [...msgs, toolCallMsg],
+            ),
           }));
 
           let resultContent = "";
 
           if (fnName === "search_query") {
-            const results = await performSearch(fnArgs.query!, searchConfig, searchApiKey);
+            const results = await performSearch(
+              fnArgs.query!,
+              searchConfig,
+              searchApiKey,
+            );
             resultContent = JSON.stringify(results);
-            results.forEach((r) => collectedSources.push({ title: r.title, url: r.url }));
+            results.forEach((r) =>
+              collectedSources.push({ title: r.title, url: r.url }),
+            );
 
-            const displayContent = results.map((r) => `[${r.title}](${r.url}): ${r.snippet}`).join("\n");
+            const displayContent = results
+              .map((r) => `[${r.title}](${r.url}): ${r.snippet}`)
+              .join("\n");
 
             set((state) => ({
-              conversations: updateConversationMessages(state.conversations, convId, (msgs) =>
-                msgs.map((m) =>
-                  m.id === toolCallMsgId
-                    ? {
-                        ...m,
-                        content: displayContent,
-                        toolResult: {
-                          id: toolCall.id,
-                          name: "search_query",
-                          content: resultContent,
-                        },
-                      }
-                    : m,
-                ),
+              conversations: updateConversationMessages(
+                state.conversations,
+                convId,
+                (msgs) =>
+                  msgs.map((m) =>
+                    m.id === toolCallMsgId
+                      ? {
+                          ...m,
+                          content: displayContent,
+                          toolResult: {
+                            id: toolCall.id,
+                            name: "search_query",
+                            content: resultContent,
+                          },
+                        }
+                      : m,
+                  ),
               ),
             }));
           } else if (fnName === "fetch_url") {
             const urlContent = await fetchUrlContent(fnArgs.url!);
             resultContent = JSON.stringify(urlContent);
             if (urlContent.status === "ok") {
-              collectedSources.push({ title: urlContent.title || fnArgs.url!, url: fnArgs.url! });
+              collectedSources.push({
+                title: urlContent.title || fnArgs.url!,
+                url: fnArgs.url!,
+              });
             }
 
             const displayContent =
@@ -263,20 +333,23 @@ export async function sendWithToolLoop(
                 : `Error fetching URL: ${urlContent.error || "Unknown error"}`;
 
             set((state) => ({
-              conversations: updateConversationMessages(state.conversations, convId, (msgs) =>
-                msgs.map((m) =>
-                  m.id === toolCallMsgId
-                    ? {
-                        ...m,
-                        content: displayContent,
-                        toolResult: {
-                          id: toolCall.id,
-                          name: "fetch_url",
-                          content: resultContent,
-                        },
-                      }
-                    : m,
-                ),
+              conversations: updateConversationMessages(
+                state.conversations,
+                convId,
+                (msgs) =>
+                  msgs.map((m) =>
+                    m.id === toolCallMsgId
+                      ? {
+                          ...m,
+                          content: displayContent,
+                          toolResult: {
+                            id: toolCall.id,
+                            name: "fetch_url",
+                            content: resultContent,
+                          },
+                        }
+                      : m,
+                  ),
               ),
             }));
           }
@@ -301,9 +374,17 @@ export async function sendWithToolLoop(
         };
 
         set((state) => ({
-          conversations: updateConversationMessages(state.conversations, convId, (msgs) => [...msgs, assistantMsg]),
+          conversations: updateConversationMessages(
+            state.conversations,
+            convId,
+            (msgs) => [...msgs, assistantMsg],
+          ),
           isStreaming: false,
-          loading: { ...state.loading, sendMessage: false, toolExecution: false },
+          loading: {
+            ...state.loading,
+            sendMessage: false,
+            toolExecution: false,
+          },
         }));
 
         get().persistConversations();
@@ -321,7 +402,11 @@ export async function sendWithToolLoop(
     };
 
     set((state) => ({
-      conversations: updateConversationMessages(state.conversations, convId, (msgs) => [...msgs, maxStepsMsg]),
+      conversations: updateConversationMessages(
+        state.conversations,
+        convId,
+        (msgs) => [...msgs, maxStepsMsg],
+      ),
       isStreaming: false,
       loading: { ...state.loading, sendMessage: false, toolExecution: false },
     }));

@@ -6,7 +6,13 @@ interface SkeletonProps {
 }
 
 export function Skeleton({ className = "", style }: SkeletonProps) {
-  return <div className={`animate-pulse rounded bg-input-border/40 ${className}`} style={style} aria-hidden="true" />;
+  return (
+    <div
+      className={`animate-pulse rounded bg-input-border/40 ${className}`}
+      style={style}
+      aria-hidden="true"
+    />
+  );
 }
 
 export function SidebarSkeleton() {
@@ -15,7 +21,10 @@ export function SidebarSkeleton() {
       {Array.from({ length: 6 }).map((_, i) => (
         <div key={i} className="flex items-center gap-2.5 px-2.5 py-2">
           <Skeleton className="w-3.5 h-3.5 rounded shrink-0" />
-          <Skeleton className="h-3.5 rounded flex-1" style={{ maxWidth: `${60 + Math.random() * 30}%` }} />
+          <Skeleton
+            className="h-3.5 rounded flex-1"
+            style={{ maxWidth: `${60 + Math.random() * 30}%` }}
+          />
         </div>
       ))}
     </div>
@@ -24,7 +33,10 @@ export function SidebarSkeleton() {
 
 export function MessageSkeleton() {
   return (
-    <div className="flex justify-start gap-3 animate-fade-in" aria-hidden="true">
+    <div
+      className="flex justify-start gap-3 animate-fade-in"
+      aria-hidden="true"
+    >
       <div className="shrink-0 w-7 h-7 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center mt-0.5">
         <Skeleton className="w-3.5 h-3.5 rounded" />
       </div>
@@ -39,7 +51,10 @@ export function MessageSkeleton() {
 
 export function ModelCardSkeleton() {
   return (
-    <div className="bg-surface border border-border rounded-xl p-4 space-y-3" aria-hidden="true">
+    <div
+      className="bg-surface border border-border rounded-xl p-4 space-y-3"
+      aria-hidden="true"
+    >
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
           <Skeleton className="h-3 w-10 rounded" />

@@ -88,11 +88,27 @@ export async function chatCompletionTools({
   apiBase: string;
   apiKey: string;
   model: string;
-  messages: { role: string; content: string | null; tool_calls?: unknown[]; tool_call_id?: string; name?: string }[];
+  messages: {
+    role: string;
+    content: string | null;
+    tool_calls?: unknown[];
+    tool_call_id?: string;
+    name?: string;
+  }[];
   tools: unknown[];
   temperature: number;
   signal?: AbortSignal;
-}): Promise<{ choices?: { message: { content: string | null; tool_calls?: { id: string; function: { name: string; arguments: string } }[] } }[] }> {
+}): Promise<{
+  choices?: {
+    message: {
+      content: string | null;
+      tool_calls?: {
+        id: string;
+        function: { name: string; arguments: string };
+      }[];
+    };
+  }[];
+}> {
   const res = await fetch(apiBase, {
     method: "POST",
     headers: {
@@ -117,7 +133,10 @@ export async function chatCompletionTools({
   return res.json();
 }
 
-export async function checkApiConnection(apiBase: string, apiKey: string): Promise<boolean> {
+export async function checkApiConnection(
+  apiBase: string,
+  apiKey: string,
+): Promise<boolean> {
   try {
     const res = await fetch(apiBase, {
       method: "POST",

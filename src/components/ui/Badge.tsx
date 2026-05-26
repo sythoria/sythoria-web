@@ -8,28 +8,17 @@ type BadgeProps = HTMLAttributes<HTMLSpanElement> & {
 };
 
 const variantClasses: Record<BadgeVariant, string> = {
-  default:
-    "bg-accent-soft text-accent border border-accent/10",
-  accent:
-    "bg-accent text-white border border-accent",
-  outline:
-    "bg-transparent text-text-secondary border border-border",
-  success:
-    "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
-  warning:
-    "bg-amber-500/10 text-amber-400 border border-amber-500/20",
+  default: "bg-accent-soft text-accent border border-accent/10",
+  accent: "bg-accent text-white border border-accent",
+  outline: "bg-transparent text-text-secondary border border-border",
+  success: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
+  warning: "bg-amber-500/10 text-amber-400 border border-amber-500/20",
 };
 
 const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
   (
-    {
-      variant = "default",
-      dot = false,
-      className = "",
-      children,
-      ...props
-    },
-    ref
+    { variant = "default", dot = false, className = "", children, ...props },
+    ref,
   ) => {
     const classes = [
       "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium",
@@ -47,7 +36,7 @@ const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
         {children}
       </span>
     );
-  }
+  },
 );
 
 Badge.displayName = "Badge";

@@ -1,4 +1,8 @@
-import { type ButtonHTMLAttributes, type AnchorHTMLAttributes, forwardRef } from "react";
+import {
+  type ButtonHTMLAttributes,
+  type AnchorHTMLAttributes,
+  forwardRef,
+} from "react";
 
 type ButtonVariant = "primary" | "secondary" | "tertiary" | "outline" | "ghost";
 type ButtonSize = "sm" | "md" | "lg";
@@ -54,7 +58,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const classes = [
       "inline-flex items-center justify-center font-medium transition-all duration-300 ease-out select-none whitespace-nowrap relative overflow-hidden",
@@ -68,11 +72,17 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
 
     const content = (
       <>
-        {variant === "primary" && <span className="btn-shine" aria-hidden="true" />}
+        {variant === "primary" && (
+          <span className="btn-shine" aria-hidden="true" />
+        )}
         <span className="relative z-[1] inline-flex items-center justify-center [&]:gap-[inherit]">
           {icon && <span className="shrink-0">{icon}</span>}
           {children && <span>{children}</span>}
-          {iconRight && <span className="shrink-0 transition-transform duration-300 group-hover:translate-x-0.5">{iconRight}</span>}
+          {iconRight && (
+            <span className="shrink-0 transition-transform duration-300 group-hover:translate-x-0.5">
+              {iconRight}
+            </span>
+          )}
         </span>
       </>
     );
@@ -101,7 +111,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
         {content}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";

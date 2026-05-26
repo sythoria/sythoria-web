@@ -17,7 +17,8 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "Sythoria — AI Chat Interface",
-  description: "Modern AI chat interface with support for OpenAI, Anthropic, Google, and local LLMs",
+  description:
+    "Modern AI chat interface with support for OpenAI, Anthropic, Google, and local LLMs",
 };
 
 export default function RootLayout({
@@ -44,7 +45,11 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${dmSans.variable} ${jetbrainsMono.variable} font-sans antialiased`}>{children}</body>
+      <body
+        className={`${dmSans.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+      >
+        {children}
+      </body>
     </html>
   );
 }

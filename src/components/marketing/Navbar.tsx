@@ -29,7 +29,11 @@ function getServerSnapshot(): true {
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [iconKey, setIconKey] = useState(0);
-  const dark = useSyncExternalStore(subscribeTheme, getThemeSnapshot, getServerSnapshot);
+  const dark = useSyncExternalStore(
+    subscribeTheme,
+    getThemeSnapshot,
+    getServerSnapshot,
+  );
 
   const toggleTheme = useCallback(() => {
     const next = !dark;
@@ -54,12 +58,12 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-xl ${
-          scrolled
-            ? "glass-panel border-b border-border/50 shadow-sm shadow-black/5"
-            : "bg-background/70 border-b border-transparent"
-        }`}
+        scrolled
+          ? "glass-panel border-b border-border/50 shadow-sm shadow-black/5"
+          : "bg-background/70 border-b border-transparent"
+      }`}
     >
-<div className="max-w-6xl mx-auto px-6 h-[4.0rem] flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-6 h-[4.0rem] flex items-center justify-between">
         <Link
           href="/"
           className="flex items-center gap-3 text-text-primary hover:text-accent transition-colors"

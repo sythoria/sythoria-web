@@ -11,7 +11,11 @@ export function generateStaticParams() {
   }));
 }
 
-export function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }) {
+export function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>;
+}) {
   return params.then((p) => {
     const slug = p.slug.join("/");
     const doc = getDocBySlug(slug);
@@ -23,7 +27,11 @@ export function generateMetadata({ params }: { params: Promise<{ slug: string[] 
   });
 }
 
-export default async function DocPage({ params }: { params: Promise<{ slug: string[] }> }) {
+export default async function DocPage({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>;
+}) {
   const { slug: slugParts } = await params;
   const slug = slugParts.join("/");
   const doc = getDocBySlug(slug);

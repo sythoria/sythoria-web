@@ -12,8 +12,12 @@ export function Switch({ checked, onChange, label, description }: SwitchProps) {
     <div className="flex items-center justify-between">
       {(label || description) && (
         <div>
-          {label && <p className="text-sm font-medium text-text-primary">{label}</p>}
-          {description && <p className="text-xs text-text-muted mt-0.5">{description}</p>}
+          {label && (
+            <p className="text-sm font-medium text-text-primary">{label}</p>
+          )}
+          {description && (
+            <p className="text-xs text-text-muted mt-0.5">{description}</p>
+          )}
         </div>
       )}
       <button

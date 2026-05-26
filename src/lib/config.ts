@@ -1,12 +1,25 @@
 export const PROVIDER_PRESETS = [
-  { label: "OpenAI", apiBase: "https://api.openai.com/v1/chat/completions", defaultModel: "gpt-4o" },
-  { label: "Anthropic", apiBase: "https://api.anthropic.com/v1/messages", defaultModel: "claude-3-5-sonnet-20240620" },
+  {
+    label: "OpenAI",
+    apiBase: "https://api.openai.com/v1/chat/completions",
+    defaultModel: "gpt-4o",
+  },
+  {
+    label: "Anthropic",
+    apiBase: "https://api.anthropic.com/v1/messages",
+    defaultModel: "claude-3-5-sonnet-20240620",
+  },
   {
     label: "Google Gemini",
-    apiBase: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+    apiBase:
+      "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
     defaultModel: "gemini-2.5-pro",
   },
-  { label: "Ollama (Local)", apiBase: "http://localhost:11434/v1/chat/completions", defaultModel: "llama3.1" },
+  {
+    label: "Ollama (Local)",
+    apiBase: "http://localhost:11434/v1/chat/completions",
+    defaultModel: "llama3.1",
+  },
   {
     label: "NVIDIA NIM",
     apiBase: "https://integrate.api.nvidia.com/v1/chat/completions",

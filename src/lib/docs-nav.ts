@@ -14,9 +14,7 @@ export const docsNav: DocNavGroup[] = [
   {
     title: "Getting Started",
     defaultOpen: true,
-    items: [
-      { label: "Quickstart", slug: "getting-started" },
-    ],
+    items: [{ label: "Quickstart", slug: "getting-started" }],
   },
   {
     title: "Features",
@@ -41,16 +39,12 @@ export const docsNav: DocNavGroup[] = [
   {
     title: "Configuration",
     defaultOpen: false,
-    items: [
-      { label: "Settings", slug: "configuration" },
-    ],
+    items: [{ label: "Settings", slug: "configuration" }],
   },
   {
     title: "Privacy & Security",
     defaultOpen: false,
-    items: [
-      { label: "Privacy", slug: "privacy" },
-    ],
+    items: [{ label: "Privacy", slug: "privacy" }],
   },
 ];
 
@@ -58,7 +52,9 @@ export function getAllDocSlugs(): string[] {
   return docsNav.flatMap((group) => group.items.map((item) => item.slug));
 }
 
-export function getDocMeta(slug: string): { label: string; group: string } | null {
+export function getDocMeta(
+  slug: string,
+): { label: string; group: string } | null {
   for (const group of docsNav) {
     const item = group.items.find((i) => i.slug === slug);
     if (item) return { label: item.label, group: group.title };
@@ -66,7 +62,10 @@ export function getDocMeta(slug: string): { label: string; group: string } | nul
   return null;
 }
 
-export function getAdjacentDocs(slug: string): { prev: DocNavItem | null; next: DocNavItem | null } {
+export function getAdjacentDocs(slug: string): {
+  prev: DocNavItem | null;
+  next: DocNavItem | null;
+} {
   const all = docsNav.flatMap((g) => g.items);
   const idx = all.findIndex((i) => i.slug === slug);
   return {

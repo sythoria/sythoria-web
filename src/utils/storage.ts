@@ -94,7 +94,9 @@ export function loadTheme(): "light" | "dark" {
   } catch (e) {
     logError("Failed to load theme", e);
   }
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
 }
 
 export function saveTheme(theme: "light" | "dark"): void {
@@ -176,7 +178,8 @@ export function loadSearchApiKeys(): Record<string, string> {
     const raw = localStorage.getItem(SEARCH_API_KEYS_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (typeof parsed === "object" && parsed !== null) return parsed as Record<string, string>;
+      if (typeof parsed === "object" && parsed !== null)
+        return parsed as Record<string, string>;
     }
   } catch (e) {
     logError("Failed to load search API keys", e);

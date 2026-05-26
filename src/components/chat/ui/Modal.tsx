@@ -73,7 +73,11 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
       aria-modal="true"
       aria-label={title}
     >
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+        aria-hidden="true"
+      />
       <div
         ref={modalRef}
         className="relative z-10 w-full max-w-md rounded-xl bg-surface border border-border shadow-xl"
@@ -149,14 +153,20 @@ export function ConfirmModal({
       aria-modal="true"
       aria-label={title}
     >
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onCancel} aria-hidden="true" />
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onCancel}
+        aria-hidden="true"
+      />
       <div
         ref={modalRef}
         className="relative z-10 w-full max-w-sm rounded-xl bg-surface border border-border shadow-xl"
       >
         <div className="px-5 pt-5 pb-1">
           <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
-          <p className="mt-1.5 text-xs text-text-muted leading-relaxed">{message}</p>
+          <p className="mt-1.5 text-xs text-text-muted leading-relaxed">
+            {message}
+          </p>
         </div>
         <div className="flex gap-2 p-4 pt-3">
           <button
@@ -188,7 +198,12 @@ interface RenameChatModalProps {
   onCancel: () => void;
 }
 
-export function RenameChatModal({ isOpen, currentTitle, onConfirm, onCancel }: RenameChatModalProps) {
+export function RenameChatModal({
+  isOpen,
+  currentTitle,
+  onConfirm,
+  onCancel,
+}: RenameChatModalProps) {
   const [value, setValue] = useState("");
   const [prevOpen, setPrevOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -241,10 +256,16 @@ export function RenameChatModal({ isOpen, currentTitle, onConfirm, onCancel }: R
       aria-modal="true"
       aria-label="Rename Chat"
     >
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onCancel} aria-hidden="true" />
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onCancel}
+        aria-hidden="true"
+      />
       <div className="relative z-10 w-full max-w-sm rounded-xl bg-surface border border-border shadow-xl">
         <div className="px-5 pt-5 pb-1">
-          <h3 className="text-sm font-semibold text-text-primary">Rename Chat</h3>
+          <h3 className="text-sm font-semibold text-text-primary">
+            Rename Chat
+          </h3>
           <label htmlFor="rename-input" className="sr-only">
             New title
           </label>

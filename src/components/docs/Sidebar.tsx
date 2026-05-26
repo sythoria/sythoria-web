@@ -6,7 +6,13 @@ import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { docsNav, type DocNavGroup } from "@/lib/docs-nav";
 
-function NavGroup({ group, currentSlug }: { group: DocNavGroup; currentSlug: string }) {
+function NavGroup({
+  group,
+  currentSlug,
+}: {
+  group: DocNavGroup;
+  currentSlug: string;
+}) {
   const hasActiveChild = group.items.some((item) => currentSlug === item.slug);
   const [open, setOpen] = useState(group.defaultOpen ?? hasActiveChild);
 

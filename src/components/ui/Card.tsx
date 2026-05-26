@@ -11,12 +11,9 @@ type CardProps = HTMLAttributes<HTMLDivElement> & {
 };
 
 const variantClasses: Record<CardVariant, string> = {
-  glass:
-    "glass-panel border border-white/10 dark:border-white/[0.06]",
-  solid:
-    "bg-surface border border-border",
-  outline:
-    "bg-transparent border border-border",
+  glass: "glass-panel border border-white/10 dark:border-white/[0.06]",
+  solid: "bg-surface border border-border",
+  outline: "bg-transparent border border-border",
   elevated:
     "bg-surface border border-border shadow-lg shadow-black/5 dark:shadow-black/20",
 };
@@ -39,15 +36,13 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const classes = [
       "rounded-xl",
       variantClasses[variant],
       paddingClasses[padding],
-      hover
-        ? "card-hover"
-        : "",
+      hover ? "card-hover" : "",
       glow ? "card-glow" : "",
       className,
     ]
@@ -59,7 +54,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 
 Card.displayName = "Card";

@@ -87,7 +87,8 @@ export default function ChatPage() {
     })),
   );
 
-  const { isAtBottom, setIsAtBottom, scrollToBottom, virtuosoRef } = useScrollButton();
+  const { isAtBottom, setIsAtBottom, scrollToBottom, virtuosoRef } =
+    useScrollButton();
 
   const activeConversation = useMemo(
     () => conversations.find((c) => c.id === activeId) ?? null,
@@ -100,7 +101,9 @@ export default function ChatPage() {
   }, [init]);
 
   useEffect(() => {
-    const conv = useAppStore.getState().conversations.find((c) => c.id === activeId);
+    const conv = useAppStore
+      .getState()
+      .conversations.find((c) => c.id === activeId);
     useAppStore.getState().setSystemPromptId(conv?.systemPromptId ?? null);
   }, [activeId]);
 
@@ -195,7 +198,10 @@ export default function ChatPage() {
         modelStatuses={modelStatuses}
       />
 
-      <main className="flex-1 flex flex-col min-w-0 bg-chat" aria-label="Chat area">
+      <main
+        className="flex-1 flex flex-col min-w-0 bg-chat"
+        aria-label="Chat area"
+      >
         <header className="shrink-0 flex items-center justify-between px-4 py-3 md:px-6 border-b border-border/50 bg-chat/80 backdrop-blur-md">
           <div className="flex items-center gap-3">
             <button
@@ -212,14 +218,14 @@ export default function ChatPage() {
         </header>
 
         <div className="flex-1 flex flex-col min-h-0 relative">
-            <ChatArea
-              messages={messages}
-              onSuggestionClick={handleSuggestionClick}
-              isAtBottom={isAtBottom}
-              setIsAtBottom={setIsAtBottom}
-              virtuosoRef={virtuosoRef}
-              onRetry={handleRetry}
-            />
+          <ChatArea
+            messages={messages}
+            onSuggestionClick={handleSuggestionClick}
+            isAtBottom={isAtBottom}
+            setIsAtBottom={setIsAtBottom}
+            virtuosoRef={virtuosoRef}
+            onRetry={handleRetry}
+          />
 
           {!isAtBottom && messages.length > 0 && (
             <div className="absolute bottom-4 right-4 z-20">

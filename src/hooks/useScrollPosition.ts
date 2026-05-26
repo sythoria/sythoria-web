@@ -17,7 +17,9 @@ export function useScrollButton() {
       return;
     }
 
-    const el = document.querySelector("[data-chat-scroll]") as HTMLElement | null;
+    const el = document.querySelector(
+      "[data-chat-scroll]",
+    ) as HTMLElement | null;
     if (el) {
       el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
     }

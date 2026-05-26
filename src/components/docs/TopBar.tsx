@@ -12,7 +12,9 @@ export default function DocsTopBar() {
             className="flex items-center gap-2 text-text-primary hover:text-accent transition-colors"
           >
             <BookOpen size={18} className="text-accent" />
-            <span className="text-base font-semibold tracking-tight">Sythoria Docs</span>
+            <span className="text-base font-semibold tracking-tight">
+              Sythoria Docs
+            </span>
           </Link>
           <Link
             href="/"

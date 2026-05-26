@@ -1,12 +1,33 @@
 "use client";
 
-import { useState, useEffect, useRef, memo, useMemo, useCallback, forwardRef, useDeferredValue } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  memo,
+  useMemo,
+  useCallback,
+  forwardRef,
+  useDeferredValue,
+} from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
-import { Bot, Copy, Check, Search, Globe, Wrench, ChevronDown, Loader2, ExternalLink, Sparkles, RotateCw } from "lucide-react";
+import {
+  Bot,
+  Copy,
+  Check,
+  Search,
+  Globe,
+  Wrench,
+  ChevronDown,
+  Loader2,
+  ExternalLink,
+  Sparkles,
+  RotateCw,
+} from "lucide-react";
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import Link from "next/link";
 import type { Message } from "@/lib/types";
@@ -21,13 +42,22 @@ interface ChatAreaProps {
   onRetry: () => void;
 }
 
-function MessageContent({ content, isStreaming }: { content: string; isStreaming: boolean }) {
+function MessageContent({
+  content,
+  isStreaming,
+}: {
+  content: string;
+  isStreaming: boolean;
+}) {
   const deferredContent = useDeferredValue(content);
   const renderContent = isStreaming ? deferredContent : content;
 
   const markdown = useMemo(
     () => (
-      <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeKatex]}
+      >
         {renderContent}
       </ReactMarkdown>
     ),
@@ -37,7 +67,9 @@ function MessageContent({ content, isStreaming }: { content: string; isStreaming
   return (
     <>
       {markdown}
-      {isStreaming && <span className="cursor-blink" aria-label="Generating response" />}
+      {isStreaming && (
+        <span className="cursor-blink" aria-label="Generating response" />
+      )}
     </>
   );
 }
@@ -73,7 +105,11 @@ function MessageActions({
         aria-label={copied ? "Copied" : "Copy"}
         title={copied ? "Copied" : "Copy"}
       >
-        {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+        {copied ? (
+          <Check size={14} className="text-green-500" />
+        ) : (
+          <Copy size={14} />
+        )}
       </button>
       {!isUser && (
         <button
@@ -89,7 +125,11 @@ function MessageActions({
   );
 }
 
-function SourcesList({ sources }: { sources: { title: string; url: string }[] }) {
+function SourcesList({
+  sources,
+}: {
+  sources: { title: string; url: string }[];
+}) {
   const [expanded, setExpanded] = useState(false);
   const displaySources = expanded ? sources : sources.slice(0, 3);
 
@@ -112,7 +152,10 @@ function SourcesList({ sources }: { sources: { title: string; url: string }[] })
         ))}
       </div>
       {sources.length > 3 && !expanded && (
-        <button onClick={() => setExpanded(true)} className="text-[10px] text-text-muted hover:text-text-secondary mt-1">
+        <button
+          onClick={() => setExpanded(true)}
+          className="text-[10px] text-text-muted hover:text-text-secondary mt-1"
+        >
           +{sources.length - 3} more sources
         </button>
       )}
@@ -130,22 +173,35 @@ function ToolCallDisplay({ message }: { message: Message }) {
     <div className="flex items-start gap-2 animate-fade-in">
       <div
         className={`shrink-0 w-7 h-7 rounded-lg border flex items-center justify-center mt-0.5 ${
-          isCompleted ? "bg-green-500/10 border-green-500/20" : "bg-yellow-500/10 border-yellow-500/20"
+          isCompleted
+            ? "bg-green-500/10 border-green-500/20"
+            : "bg-yellow-500/10 border-yellow-500/20"
         }`}
         aria-hidden="true"
       >
         {isSearch ? (
-          <Search size={14} className={isCompleted ? "text-green-500" : "text-yellow-500"} />
+          <Search
+            size={14}
+            className={isCompleted ? "text-green-500" : "text-yellow-500"}
+          />
         ) : isFetch ? (
-          <Globe size={14} className={isCompleted ? "text-green-500" : "text-yellow-500"} />
+          <Globe
+            size={14}
+            className={isCompleted ? "text-green-500" : "text-yellow-500"}
+          />
         ) : (
-          <Wrench size={14} className={isCompleted ? "text-green-500" : "text-yellow-500"} />
+          <Wrench
+            size={14}
+            className={isCompleted ? "text-green-500" : "text-yellow-500"}
+          />
         )}
       </div>
       <div className="flex-1 min-w-0">
         <div
           className={`flex items-center gap-1.5 text-xs font-medium ${
-            isCompleted ? "text-green-600 dark:text-green-400" : "text-yellow-600 dark:text-yellow-400"
+            isCompleted
+              ? "text-green-600 dark:text-green-400"
+              : "text-yellow-600 dark:text-yellow-400"
           }`}
         >
           <span>
@@ -167,7 +223,11 @@ function ToolCallDisplay({ message }: { message: Message }) {
           <ToolResultContent message={message} />
         ) : (
           <p className="text-xs text-text-muted mt-0.5 font-mono truncate">
-            {isSearch && args.query ? `"${args.query}"` : isFetch && args.url ? args.url : JSON.stringify(args)}
+            {isSearch && args.query
+              ? `"${args.query}"`
+              : isFetch && args.url
+                ? args.url
+                : JSON.stringify(args)}
           </p>
         )}
       </div>
@@ -185,12 +245,17 @@ function ToolResultContent({ message }: { message: Message }) {
         className="text-text-muted hover:text-text-secondary text-xs flex items-center gap-1 mt-0.5"
         aria-label={expanded ? "Collapse" : "Expand"}
       >
-        <ChevronDown size={12} className={`transition-transform ${expanded ? "rotate-180" : ""}`} />
+        <ChevronDown
+          size={12}
+          className={`transition-transform ${expanded ? "rotate-180" : ""}`}
+        />
         {expanded ? "Hide details" : "Show details"}
       </button>
       {expanded && (
         <div className="mt-1 p-2 rounded-lg bg-input border border-input-border text-xs text-text-muted overflow-x-auto max-h-48 overflow-y-auto">
-          <pre className="whitespace-pre-wrap break-words font-mono text-[10px]">{message.content.slice(0, 2000)}</pre>
+          <pre className="whitespace-pre-wrap break-words font-mono text-[10px]">
+            {message.content.slice(0, 2000)}
+          </pre>
         </div>
       )}
     </div>
@@ -214,7 +279,11 @@ function LegacyToolResultDisplay({ message }: { message: Message }) {
         className="shrink-0 w-7 h-7 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center mt-0.5"
         aria-hidden="true"
       >
-        {isSearch ? <Search size={14} className="text-green-500" /> : <Globe size={14} className="text-green-500" />}
+        {isSearch ? (
+          <Search size={14} className="text-green-500" />
+        ) : (
+          <Globe size={14} className="text-green-500" />
+        )}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 text-xs font-medium text-green-600 dark:text-green-400">
@@ -224,22 +293,35 @@ function LegacyToolResultDisplay({ message }: { message: Message }) {
             className="text-text-muted hover:text-text-secondary"
             aria-label={expanded ? "Collapse" : "Expand"}
           >
-            <ChevronDown size={12} className={`transition-transform ${expanded ? "rotate-180" : ""}`} />
+            <ChevronDown
+              size={12}
+              className={`transition-transform ${expanded ? "rotate-180" : ""}`}
+            />
           </button>
         </div>
         {expanded ? (
           <div className="mt-1 p-2 rounded-lg bg-input border border-input-border text-xs text-text-muted overflow-x-auto max-h-48 overflow-y-auto">
-            <pre className="whitespace-pre-wrap break-words font-mono text-[10px]">{message.content.slice(0, 2000)}</pre>
+            <pre className="whitespace-pre-wrap break-words font-mono text-[10px]">
+              {message.content.slice(0, 2000)}
+            </pre>
           </div>
         ) : (
-          <p className="text-[10px] text-text-muted mt-0.5 truncate">{message.content.slice(0, 120)}...</p>
+          <p className="text-[10px] text-text-muted mt-0.5 truncate">
+            {message.content.slice(0, 120)}...
+          </p>
         )}
       </div>
     </div>
   );
 }
 
-function ReasoningBubble({ content, isStreaming }: { content: string; isStreaming?: boolean }) {
+function ReasoningBubble({
+  content,
+  isStreaming,
+}: {
+  content: string;
+  isStreaming?: boolean;
+}) {
   const [expanded, setExpanded] = useState(false);
   const hasContent = content.length > 0;
 
@@ -258,8 +340,13 @@ function ReasoningBubble({ content, isStreaming }: { content: string; isStreamin
           aria-label={expanded ? "Collapse reasoning" : "Expand reasoning"}
         >
           <span>Reasoning</span>
-          {isStreaming && <Loader2 size={12} className="animate-spin text-purple-500" />}
-          <ChevronDown size={12} className={`transition-transform ${expanded ? "rotate-180" : ""}`} />
+          {isStreaming && (
+            <Loader2 size={12} className="animate-spin text-purple-500" />
+          )}
+          <ChevronDown
+            size={12}
+            className={`transition-transform ${expanded ? "rotate-180" : ""}`}
+          />
         </button>
         {expanded ? (
           <div className="mt-1.5 p-2.5 rounded-lg bg-purple-500/5 border border-purple-500/15 text-xs text-text-secondary overflow-x-auto max-h-48 overflow-y-auto">
@@ -273,18 +360,30 @@ function ReasoningBubble({ content, isStreaming }: { content: string; isStreamin
             {content.length > 120 && "..."}
           </p>
         ) : (
-          <p className="text-[10px] text-text-muted mt-0.5 italic">Analyzing...</p>
+          <p className="text-[10px] text-text-muted mt-0.5 italic">
+            Analyzing...
+          </p>
         )}
       </div>
     </div>
   );
 }
 
-const MessageBubble = memo(function MessageBubble({ message, onRetry }: { message: Message; onRetry?: () => void }) {
+const MessageBubble = memo(function MessageBubble({
+  message,
+  onRetry,
+}: {
+  message: Message;
+  onRetry?: () => void;
+}) {
   const isUser = message.role === "user";
   const isTool = message.role === "tool";
   const isThought = message.role === "assistant" && !!message.thoughtProcess;
-  const hasReasoning = message.role === "assistant" && (message.content.includes("<reasoning>") || message.content.includes("<thinking>") || message.content.includes("<thought>"));
+  const hasReasoning =
+    message.role === "assistant" &&
+    (message.content.includes("<reasoning>") ||
+      message.content.includes("<thinking>") ||
+      message.content.includes("<thought>"));
   const [hovered, setHovered] = useState(false);
 
   if (isTool) {
@@ -301,7 +400,10 @@ const MessageBubble = memo(function MessageBubble({ message, onRetry }: { messag
           <Bot size={14} className="text-accent" />
         </div>
         <div className="max-w-[80%]">
-          <ReasoningBubble content={message.thoughtProcess!} isStreaming={message.isStreaming} />
+          <ReasoningBubble
+            content={message.thoughtProcess!}
+            isStreaming={message.isStreaming}
+          />
         </div>
       </div>
     );
@@ -340,7 +442,10 @@ const MessageBubble = memo(function MessageBubble({ message, onRetry }: { messag
     if (reasoningMatch) {
       reasoningContent = reasoningMatch[1].trim();
       displayContent = message.content
-        .replace(/<(?:reasoning|thinking|thought)>[\s\S]*?<\/(?:reasoning|thinking|thought)>/, "")
+        .replace(
+          /<(?:reasoning|thinking|thought)>[\s\S]*?<\/(?:reasoning|thinking|thought)>/,
+          "",
+        )
         .trim();
     } else {
       const openMatch =
@@ -349,7 +454,9 @@ const MessageBubble = memo(function MessageBubble({ message, onRetry }: { messag
         message.content.match(/<thought>([\s\S]*)/);
       if (openMatch) {
         reasoningContent = openMatch[1].trim();
-        displayContent = message.content.replace(/<(?:reasoning|thinking|thought)>[\s\S]*/, "").trim();
+        displayContent = message.content
+          .replace(/<(?:reasoning|thinking|thought)>[\s\S]*/, "")
+          .trim();
       }
     }
   }
@@ -364,7 +471,9 @@ const MessageBubble = memo(function MessageBubble({ message, onRetry }: { messag
     >
       <div
         className={`shrink-0 w-7 h-7 rounded-lg border flex items-center justify-center mt-0.5 ${
-          message.isStreaming ? "bg-accent/20 border-accent/30" : "bg-accent/10 border-accent/20"
+          message.isStreaming
+            ? "bg-accent/20 border-accent/30"
+            : "bg-accent/10 border-accent/20"
         }`}
         aria-hidden="true"
       >
@@ -375,32 +484,46 @@ const MessageBubble = memo(function MessageBubble({ message, onRetry }: { messag
         )}
       </div>
       <div className="relative max-w-[80%] text-sm text-text-primary leading-relaxed">
-        {hasReasoning && <ReasoningBubble content={reasoningContent} isStreaming={message.isStreaming} />}
-      <div className="markdown-body">
-        {message.isStreaming && displayContent.length === 0 && !hasReasoning ? (
-          <div className="flex items-center gap-2.5 py-1">
-            <Loader2 size={14} className="text-accent animate-spin" />
-            <div className="flex items-center gap-1.5 text-xs text-text-muted font-medium">
-              <span>Thinking</span>
-              <span className="generating-dots">
-                <span />
-                <span />
-                <span />
-              </span>
-            </div>
-          </div>
-        ) : displayContent.length > 0 ? (
-          <>
-            <MessageContent content={displayContent} isStreaming={!!message.isStreaming} />
-            {!message.isStreaming && (
-              <MessageActions content={displayContent} isUser={false} onRetry={onRetry} />
-            )}
-          </>
-        ) : null}
-      </div>
-        {message.sources && message.sources.length > 0 && !message.isStreaming && (
-          <SourcesList sources={message.sources} />
+        {hasReasoning && (
+          <ReasoningBubble
+            content={reasoningContent}
+            isStreaming={message.isStreaming}
+          />
         )}
+        <div className="markdown-body">
+          {message.isStreaming &&
+          displayContent.length === 0 &&
+          !hasReasoning ? (
+            <div className="flex items-center gap-2.5 py-1">
+              <Loader2 size={14} className="text-accent animate-spin" />
+              <div className="flex items-center gap-1.5 text-xs text-text-muted font-medium">
+                <span>Thinking</span>
+                <span className="generating-dots">
+                  <span />
+                  <span />
+                  <span />
+                </span>
+              </div>
+            </div>
+          ) : displayContent.length > 0 ? (
+            <>
+              <MessageContent
+                content={displayContent}
+                isStreaming={!!message.isStreaming}
+              />
+              {!message.isStreaming && (
+                <MessageActions
+                  content={displayContent}
+                  isUser={false}
+                  onRetry={onRetry}
+                />
+              )}
+            </>
+          ) : null}
+        </div>
+        {message.sources &&
+          message.sources.length > 0 &&
+          !message.isStreaming && <SourcesList sources={message.sources} />}
       </div>
     </div>
   );
@@ -408,7 +531,14 @@ const MessageBubble = memo(function MessageBubble({ message, onRetry }: { messag
 
 const VIRTUALIZED_THRESHOLD = 50;
 
-export default function ChatArea({ messages, onSuggestionClick, isAtBottom, setIsAtBottom, virtuosoRef, onRetry }: ChatAreaProps) {
+export default function ChatArea({
+  messages,
+  onSuggestionClick,
+  isAtBottom,
+  setIsAtBottom,
+  virtuosoRef,
+  onRetry,
+}: ChatAreaProps) {
   if (messages.length === 0) {
     return (
       <div
@@ -416,19 +546,26 @@ export default function ChatArea({ messages, onSuggestionClick, isAtBottom, setI
         role="region"
         aria-label="Empty chat — type a message to begin"
       >
-		<div className="flex flex-col items-center gap-4 px-4">
-		<Link href="/" className="flex flex-col items-center gap-4 px-4 hover:opacity-80 transition-opacity duration-200">
-			<div
-			className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center"
-			aria-hidden="true"
-			>
-			<Bot size={28} className="text-accent" />
-			</div>
-			<div className="text-center">
-			<h1 className="text-2xl font-bold tracking-tight text-text-primary">Sythoria</h1>
-			<p className="text-text-muted text-sm mt-1">Your intelligent AI assistant</p>
-			</div>
-		</Link>
+        <div className="flex flex-col items-center gap-4 px-4">
+          <Link
+            href="/"
+            className="flex flex-col items-center gap-4 px-4 hover:opacity-80 transition-opacity duration-200"
+          >
+            <div
+              className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center"
+              aria-hidden="true"
+            >
+              <Bot size={28} className="text-accent" />
+            </div>
+            <div className="text-center">
+              <h1 className="text-2xl font-bold tracking-tight text-text-primary">
+                Sythoria
+              </h1>
+              <p className="text-text-muted text-sm mt-1">
+                Your intelligent AI assistant
+              </p>
+            </div>
+          </Link>
           <button
             onClick={onSuggestionClick}
             className="mt-2 flex items-center gap-2.5 px-3.5 py-3 rounded-xl border border-border bg-surface/50 hover:bg-hover text-text-secondary hover:text-text-primary text-xs font-medium transition-all duration-150 text-left min-h-[44px]"
@@ -446,20 +583,31 @@ export default function ChatArea({ messages, onSuggestionClick, isAtBottom, setI
 
   if (messages.length >= VIRTUALIZED_THRESHOLD) {
     return (
-      <div className="flex-1 relative" role="log" aria-label="Chat messages" aria-live="polite">
+      <div
+        className="flex-1 relative"
+        role="log"
+        aria-label="Chat messages"
+        aria-live="polite"
+      >
         <Virtuoso
           ref={virtuosoRef}
           data={messages}
           atBottomStateChange={setIsAtBottom}
           atBottomThreshold={100}
-      itemContent={(index, msg) => (
-        <div className={index > 0 ? "mt-6" : ""}>
-          <MessageBubble message={msg} onRetry={onRetry} />
-        </div>
-      )}
+          itemContent={(index, msg) => (
+            <div className={index > 0 ? "mt-6" : ""}>
+              <MessageBubble message={msg} onRetry={onRetry} />
+            </div>
+          )}
           components={{
             List: forwardRef(function VirtuosoList(props, ref) {
-              return <div {...props} ref={ref} className="max-w-3xl mx-auto py-8 px-4 md:px-0" />;
+              return (
+                <div
+                  {...props}
+                  ref={ref}
+                  className="max-w-3xl mx-auto py-8 px-4 md:px-0"
+                />
+              );
             }),
           }}
           followOutput="smooth"
@@ -468,7 +616,14 @@ export default function ChatArea({ messages, onSuggestionClick, isAtBottom, setI
     );
   }
 
-  return <NonVirtualizedChatArea messages={messages} isAtBottom={isAtBottom} setIsAtBottom={setIsAtBottom} onRetry={onRetry} />;
+  return (
+    <NonVirtualizedChatArea
+      messages={messages}
+      isAtBottom={isAtBottom}
+      setIsAtBottom={setIsAtBottom}
+      onRetry={onRetry}
+    />
+  );
 }
 
 function NonVirtualizedChatArea({
@@ -490,7 +645,8 @@ function NonVirtualizedChatArea({
     const onScroll = () => {
       const target = scrollContainerRef.current;
       if (!target) return;
-      const atBottom = target.scrollHeight - target.scrollTop - target.clientHeight < 100;
+      const atBottom =
+        target.scrollHeight - target.scrollTop - target.clientHeight < 100;
       setIsAtBottom(atBottom);
     };
 

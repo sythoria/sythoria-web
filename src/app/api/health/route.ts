@@ -6,7 +6,10 @@ export async function POST(request: NextRequest) {
     const { apiBase, apiKey } = body;
 
     if (!apiBase) {
-      return Response.json({ error: "Missing required field: apiBase" }, { status: 400 });
+      return Response.json(
+        { error: "Missing required field: apiBase" },
+        { status: 400 },
+      );
     }
 
     const headers: Record<string, string> = {

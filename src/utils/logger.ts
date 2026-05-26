@@ -1,5 +1,7 @@
 export function logError(message: string, error?: unknown): void {
-  const detail = error ? ` | ${error instanceof Error ? error.message : String(error)}` : "";
+  const detail = error
+    ? ` | ${error instanceof Error ? error.message : String(error)}`
+    : "";
   console.error(`${message}${detail}`);
 }
 

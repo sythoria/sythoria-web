@@ -23,7 +23,10 @@ export const ModelConfigSchema = z.object({
 });
 
 export const SendMessageSchema = z.object({
-  text: z.string().min(1, "Message cannot be empty").max(10000, "Message exceeds 10,000 character limit"),
+  text: z
+    .string()
+    .min(1, "Message cannot be empty")
+    .max(10000, "Message exceeds 10,000 character limit"),
 });
 
 export const SearchApiConfigSchema = z.object({
@@ -45,7 +48,10 @@ export function validateSearchConfig(config: unknown) {
   return SearchApiConfigSchema.safeParse(config);
 }
 
-export function validateApiUrl(url: string): { valid: boolean; error?: string } {
+export function validateApiUrl(url: string): {
+  valid: boolean;
+  error?: string;
+} {
   try {
     const parsed = new URL(url);
     if (!["http:", "https:"].includes(parsed.protocol)) {
@@ -57,7 +63,10 @@ export function validateApiUrl(url: string): { valid: boolean; error?: string } 
   }
 }
 
-export function validateApiKey(key: string, provider?: string): { valid: boolean; warning?: string } {
+export function validateApiKey(
+  key: string,
+  provider?: string,
+): { valid: boolean; warning?: string } {
   const localProviders = ["Ollama (Local)", "Local"];
   if (localProviders.includes(provider ?? "")) {
     return { valid: true };
@@ -68,7 +77,10 @@ export function validateApiKey(key: string, provider?: string): { valid: boolean
   return { valid: true };
 }
 
-export function validateSearchApiKey(key: string | undefined, provider: string): { valid: boolean; warning?: string } {
+export function validateSearchApiKey(
+  key: string | undefined,
+  provider: string,
+): { valid: boolean; warning?: string } {
   const noKeyProviders = ["searxng", "custom"];
   if (noKeyProviders.includes(provider)) {
     return { valid: true };

@@ -69,7 +69,11 @@ export interface SearchApiConfig {
   enabled: boolean;
 }
 
-export type ConnectionStatus = "disconnected" | "connecting" | "connected" | "error";
+export type ConnectionStatus =
+  | "disconnected"
+  | "connecting"
+  | "connected"
+  | "error";
 
 export const STATUS_COLORS: Record<ConnectionStatus, string> = {
   disconnected: "bg-gray-400",

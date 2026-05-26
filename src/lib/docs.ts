@@ -34,9 +34,16 @@ export function getAllDocs(): DocContent[] {
     const docs: DocContent[] = [];
     for (const entry of entries) {
       if (entry.isDirectory()) {
-        docs.push(...walk(path.join(dir, entry.name), prefix ? `${prefix}/${entry.name}` : entry.name));
+        docs.push(
+          ...walk(
+            path.join(dir, entry.name),
+            prefix ? `${prefix}/${entry.name}` : entry.name,
+          ),
+        );
       } else if (entry.name.endsWith(".mdx")) {
-        const slug = prefix ? `${prefix}/${entry.name.replace(/\.mdx$/, "")}` : entry.name.replace(/\.mdx$/, "");
+        const slug = prefix
+          ? `${prefix}/${entry.name.replace(/\.mdx$/, "")}`
+          : entry.name.replace(/\.mdx$/, "");
         const doc = getDocBySlug(slug);
         if (doc) docs.push(doc);
       }

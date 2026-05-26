@@ -32,7 +32,7 @@ function useInView(threshold = 0.1) {
           obs.unobserve(el);
         }
       },
-      { threshold }
+      { threshold },
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -53,21 +53,37 @@ export default function CTA() {
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
 
           <div className="relative glass-panel rounded-3xl p-10 sm:p-16 text-center">
-            <div className={`animate-fade-in-up stagger-1 ${visible ? "" : "opacity-0"}`}>
-              <span className="text-xs font-medium uppercase tracking-widest text-accent">Get started</span>
+            <div
+              className={`animate-fade-in-up stagger-1 ${visible ? "" : "opacity-0"}`}
+            >
+              <span className="text-xs font-medium uppercase tracking-widest text-accent">
+                Get started
+              </span>
             </div>
 
-            <h2 className={`mt-6 text-3xl sm:text-4xl md:text-5xl font-bold text-text-primary tracking-tight animate-fade-in-up stagger-2 ${visible ? "" : "opacity-0"}`}>
+            <h2
+              className={`mt-6 text-3xl sm:text-4xl md:text-5xl font-bold text-text-primary tracking-tight animate-fade-in-up stagger-2 ${visible ? "" : "opacity-0"}`}
+            >
               Start chatting in{" "}
               <span className="landing-gradient-text">seconds</span>
             </h2>
 
-            <p className={`mt-5 text-text-secondary max-w-lg mx-auto text-lg leading-relaxed animate-fade-in-up stagger-3 ${visible ? "" : "opacity-0"}`}>
-              No sign-up, no subscription, no tracking. Just bring your API key and go.
+            <p
+              className={`mt-5 text-text-secondary max-w-lg mx-auto text-lg leading-relaxed animate-fade-in-up stagger-3 ${visible ? "" : "opacity-0"}`}
+            >
+              No sign-up, no subscription, no tracking. Just bring your API key
+              and go.
             </p>
 
-            <div className={`mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up stagger-4 ${visible ? "" : "opacity-0"}`}>
-              <Button variant="primary" size="lg" href="/chat" iconRight={<ArrowRight size={18} />}>
+            <div
+              className={`mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up stagger-4 ${visible ? "" : "opacity-0"}`}
+            >
+              <Button
+                variant="primary"
+                size="lg"
+                href="/chat"
+                iconRight={<ArrowRight size={18} />}
+              >
                 Open Sythoria
               </Button>
               <Button

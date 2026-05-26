@@ -1,7 +1,16 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Plus, Paperclip, ChevronDown, Check, Search, Square, Loader2 } from "lucide-react";
+import {
+  Send,
+  Plus,
+  Paperclip,
+  ChevronDown,
+  Check,
+  Search,
+  Square,
+  Loader2,
+} from "lucide-react";
 import { STATUS_COLORS, type ModelConfig } from "@/lib/types";
 import type { ModelStatuses } from "@/lib/types";
 import { MAX_INPUT_LENGTH, MAX_TEXTAREA_HEIGHT } from "@/lib/config";
@@ -51,7 +60,8 @@ export default function InputBar({
 
   const isOverLimit = value.length > MAX_INPUT_LENGTH;
   const trimmed = value.trim();
-  const canSend = trimmed.length > 0 && !isOverLimit && !disabled && !isStreaming;
+  const canSend =
+    trimmed.length > 0 && !isOverLimit && !disabled && !isStreaming;
 
   useEffect(() => {
     if (inputAutoFocus && textareaRef.current) {
@@ -68,19 +78,31 @@ export default function InputBar({
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      const newHeight = Math.min(textareaRef.current.scrollHeight, MAX_TEXTAREA_HEIGHT);
+      const newHeight = Math.min(
+        textareaRef.current.scrollHeight,
+        MAX_TEXTAREA_HEIGHT,
+      );
       textareaRef.current.style.height = newHeight + "px";
-      textareaRef.current.style.overflowY = textareaRef.current.scrollHeight > MAX_TEXTAREA_HEIGHT ? "auto" : "hidden";
+      textareaRef.current.style.overflowY =
+        textareaRef.current.scrollHeight > MAX_TEXTAREA_HEIGHT
+          ? "auto"
+          : "hidden";
     }
   }, [value]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
         setModelOpen(false);
         setFocusedIndex(-1);
       }
-      if (plusDropdownRef.current && !plusDropdownRef.current.contains(e.target as Node)) {
+      if (
+        plusDropdownRef.current &&
+        !plusDropdownRef.current.contains(e.target as Node)
+      ) {
         setPlusOpen(false);
       }
     }
@@ -161,7 +183,9 @@ export default function InputBar({
             <button
               onClick={() => setPlusOpen(!plusOpen)}
               className={`p-1.5 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center ${
-                isSearchEnabled ? "text-accent hover:bg-accent/10" : "text-text-muted hover:text-text-secondary hover:bg-hover"
+                isSearchEnabled
+                  ? "text-accent hover:bg-accent/10"
+                  : "text-text-muted hover:text-text-secondary hover:bg-hover"
               }`}
               aria-label="Attach or search"
               aria-expanded={plusOpen}
@@ -185,7 +209,9 @@ export default function InputBar({
                 >
                   <Paperclip size={16} className="text-text-muted" />
                   <span>Add File</span>
-                  <span className="ml-auto text-[10px] text-text-muted">Soon</span>
+                  <span className="ml-auto text-[10px] text-text-muted">
+                    Soon
+                  </span>
                 </button>
                 <button
                   onClick={() => {
@@ -200,9 +226,16 @@ export default function InputBar({
                   role="menuitemcheckbox"
                   aria-checked={isSearchEnabled}
                 >
-                  <Search size={16} className={isSearchEnabled ? "text-accent" : "text-text-muted"} />
+                  <Search
+                    size={16}
+                    className={
+                      isSearchEnabled ? "text-accent" : "text-text-muted"
+                    }
+                  />
                   <span>Web Search</span>
-                  {isSearchEnabled && <Check size={14} className="text-accent ml-auto" />}
+                  {isSearchEnabled && (
+                    <Check size={14} className="text-accent ml-auto" />
+                  )}
                 </button>
               </div>
             )}
@@ -293,7 +326,11 @@ export default function InputBar({
                         </span>
                       </div>
                       {selectedModel === model.id && (
-                        <Check size={14} className="text-accent shrink-0" aria-hidden="true" />
+                        <Check
+                          size={14}
+                          className="text-accent shrink-0"
+                          aria-hidden="true"
+                        />
                       )}
                     </button>
                   );
@@ -306,11 +343,17 @@ export default function InputBar({
             onClick={isStreaming ? onStop : handleSubmit}
             disabled={!isStreaming && !canSend}
             className={`shrink-0 p-2 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:shadow-lg min-w-[44px] min-h-[44px] flex items-center justify-center ${
-              isStreaming ? "bg-red-500/90 hover:bg-red-600 text-white" : "bg-accent hover:bg-accent-hover text-white"
+              isStreaming
+                ? "bg-red-500/90 hover:bg-red-600 text-white"
+                : "bg-accent hover:bg-accent-hover text-white"
             }`}
             aria-label={isStreaming ? "Stop generating" : "Send message"}
           >
-            {isStreaming ? <Square size={16} className="fill-current" /> : <Send size={16} />}
+            {isStreaming ? (
+              <Square size={16} className="fill-current" />
+            ) : (
+              <Send size={16} />
+            )}
           </button>
         </div>
 
@@ -320,7 +363,8 @@ export default function InputBar({
         >
           {isOverLimit ? (
             <span className="text-red-400" role="alert">
-              Message exceeds {MAX_INPUT_LENGTH.toLocaleString()} character limit
+              Message exceeds {MAX_INPUT_LENGTH.toLocaleString()} character
+              limit
             </span>
           ) : isStreaming ? (
             <span className="flex items-center justify-center gap-2 text-accent font-medium animate-generating-pulse">

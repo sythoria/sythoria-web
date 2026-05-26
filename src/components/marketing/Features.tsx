@@ -70,7 +70,7 @@ function useInView(threshold = 0.1) {
           obs.unobserve(el);
         }
       },
-      { threshold }
+      { threshold },
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -114,13 +114,17 @@ function FeatureCard({
     };
 
     const handleLeave = () => {
-      el.style.transform = "perspective(800px) rotateY(0deg) rotateX(0deg) scale(1)";
+      el.style.transform =
+        "perspective(800px) rotateY(0deg) rotateX(0deg) scale(1)";
     };
 
     el.addEventListener("mousemove", handleMove as unknown as EventListener);
     el.addEventListener("mouseleave", handleLeave);
     return () => {
-      el.removeEventListener("mousemove", handleMove as unknown as EventListener);
+      el.removeEventListener(
+        "mousemove",
+        handleMove as unknown as EventListener,
+      );
       el.removeEventListener("mouseleave", handleLeave);
     };
   }, []);
@@ -130,18 +134,23 @@ function FeatureCard({
       ref={cardRef}
       className={`preserve-3d transition-transform duration-500 ease-out animate-fade-in-up ${delay} ${visible ? "" : "opacity-0"}`}
     >
-    <Card variant="glass" padding="none" hover className="h-full group">
-      <div className="p-6 space-y-4 flex flex-col h-full">
+      <Card variant="glass" padding="none" hover className="h-full group">
+        <div className="p-6 space-y-4 flex flex-col h-full">
           <div className="flex items-start justify-between">
-            <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${accent} flex items-center justify-center shadow-lg shadow-black/5`}>
+            <div
+              className={`w-11 h-11 rounded-xl bg-gradient-to-br ${accent} flex items-center justify-center shadow-lg shadow-black/5`}
+            >
               <Icon size={20} className="text-white" />
             </div>
-            
           </div>
-        <div className="flex-1">
-          <h3 className="text-base font-semibold text-text-primary mb-1.5">{title}</h3>
-          <p className="text-sm text-text-secondary leading-relaxed">{description}</p>
-        </div>
+          <div className="flex-1">
+            <h3 className="text-base font-semibold text-text-primary mb-1.5">
+              {title}
+            </h3>
+            <p className="text-sm text-text-secondary leading-relaxed">
+              {description}
+            </p>
+          </div>
         </div>
       </Card>
     </div>
@@ -156,14 +165,23 @@ export default function Features() {
       <div className="landing-section-divider mb-24" />
       <div ref={ref} className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
-          <div className={`animate-fade-in-up stagger-1 ${visible ? "" : "opacity-0"}`}>
-            <span className="text-xs font-medium uppercase tracking-widest text-accent">Features</span>
+          <div
+            className={`animate-fade-in-up stagger-1 ${visible ? "" : "opacity-0"}`}
+          >
+            <span className="text-xs font-medium uppercase tracking-widest text-accent">
+              Features
+            </span>
           </div>
-<h2 className={`mt-4 text-3xl sm:text-4xl md:text-5xl font-semibold text-text-primary tracking-[-0.03em] animate-fade-in-up stagger-2 ${visible ? "" : "opacity-0"}`}>
-          One interface, every provider
-        </h2>
-        <p className={`mt-4 text-text-secondary max-w-xl mx-auto text-lg leading-[1.65] font-light tracking-[-0.01em] animate-fade-in-up stagger-3 ${visible ? "" : "opacity-0"}`}>
-            Sythoria unifies your AI workflows under a single, privacy-first interface.
+          <h2
+            className={`mt-4 text-3xl sm:text-4xl md:text-5xl font-semibold text-text-primary tracking-[-0.03em] animate-fade-in-up stagger-2 ${visible ? "" : "opacity-0"}`}
+          >
+            One interface, every provider
+          </h2>
+          <p
+            className={`mt-4 text-text-secondary max-w-xl mx-auto text-lg leading-[1.65] font-light tracking-[-0.01em] animate-fade-in-up stagger-3 ${visible ? "" : "opacity-0"}`}
+          >
+            Sythoria unifies your AI workflows under a single, privacy-first
+            interface.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">

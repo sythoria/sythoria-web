@@ -6,12 +6,16 @@ import { Search, X, FileText } from "lucide-react";
 import { docsNav } from "@/lib/docs-nav";
 
 const allDocs = docsNav.flatMap((g) =>
-  g.items.map((item) => ({ ...item, group: g.title }))
+  g.items.map((item) => ({ ...item, group: g.title })),
 );
 
 type SearchVariant = "minimal" | "full";
 
-export default function DocsSearch({ variant = "minimal" }: { variant?: SearchVariant }) {
+export default function DocsSearch({
+  variant = "minimal",
+}: {
+  variant?: SearchVariant;
+}) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -23,7 +27,7 @@ export default function DocsSearch({ variant = "minimal" }: { variant?: SearchVa
       (item) =>
         item.label.toLowerCase().includes(q) ||
         item.group.toLowerCase().includes(q) ||
-        item.slug.toLowerCase().includes(q)
+        item.slug.toLowerCase().includes(q),
     );
   }, [query]);
 
@@ -77,7 +81,10 @@ export default function DocsSearch({ variant = "minimal" }: { variant?: SearchVa
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-[12vh]">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={handleClose} />
+      <div
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={handleClose}
+      />
       <div className="relative w-full max-w-2xl mx-4 glass-panel rounded-2xl border border-border/50 shadow-2xl shadow-black/30 overflow-hidden">
         <div className="flex items-center gap-3 px-5 py-4 border-b border-border/30">
           <Search size={20} className="text-text-muted shrink-0" />
@@ -88,7 +95,10 @@ export default function DocsSearch({ variant = "minimal" }: { variant?: SearchVa
             placeholder="Search documentation..."
             className="flex-1 bg-transparent text-base text-text-primary placeholder:text-text-muted outline-none"
           />
-          <button onClick={handleClose} className="p-1 text-text-muted hover:text-text-secondary transition-colors">
+          <button
+            onClick={handleClose}
+            className="p-1 text-text-muted hover:text-text-secondary transition-colors"
+          >
             <X size={18} />
           </button>
         </div>
@@ -103,13 +113,17 @@ export default function DocsSearch({ variant = "minimal" }: { variant?: SearchVa
                 >
                   <FileText size={15} className="shrink-0 text-text-muted" />
                   <span className="flex-1">{item.label}</span>
-                  <span className="text-xs text-text-muted bg-surface border border-border/50 rounded-md px-2 py-0.5">{item.group}</span>
+                  <span className="text-xs text-text-muted bg-surface border border-border/50 rounded-md px-2 py-0.5">
+                    {item.group}
+                  </span>
                 </Link>
               </li>
             ))}
           </ul>
         ) : (
-          <div className="py-12 text-center text-sm text-text-muted">No results found</div>
+          <div className="py-12 text-center text-sm text-text-muted">
+            No results found
+          </div>
         )}
       </div>
     </div>

@@ -6,10 +6,15 @@ export async function POST(request: NextRequest) {
     const { apiBase, apiKey, model, messages, temperature, stream } = body;
 
     if (!apiBase || !model || !messages) {
-      return new Response(JSON.stringify({ error: "Missing required fields: apiBase, model, messages" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          error: "Missing required fields: apiBase, model, messages",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     }
 
     const headers: Record<string, string> = {
@@ -38,8 +43,8 @@ export async function POST(request: NextRequest) {
       });
     }
 
-  if (stream) {
-    const transformStream = new TransformStream({
+    if (stream) {
+      const transformStream = new TransformStream({
         async transform(chunk, controller) {
           controller.enqueue(chunk);
         },
@@ -73,7 +78,8 @@ export async function POST(request: NextRequest) {
     const data = await upstreamRes.json();
     return Response.json(data);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Internal server error";
+    const message =
+      err instanceof Error ? err.message : "Internal server error";
     return new Response(JSON.stringify({ error: message }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
