@@ -15,7 +15,7 @@ export const ModelConfigSchema = z.object({
           return false;
         }
       },
-      { message: "Must be a valid HTTP or HTTPS URL" },
+      { message: "Must be a valid HTTP or HTTPS URL" }
     ),
   apiKey: z.string(),
   modelId: z.string().min(1, "Model ID is required"),
@@ -65,7 +65,7 @@ export function validateApiUrl(url: string): {
 
 export function validateApiKey(
   key: string,
-  provider?: string,
+  provider?: string
 ): { valid: boolean; warning?: string } {
   const localProviders = ["Ollama (Local)", "Local"];
   if (localProviders.includes(provider ?? "")) {
@@ -79,7 +79,7 @@ export function validateApiKey(
 
 export function validateSearchApiKey(
   key: string | undefined,
-  provider: string,
+  provider: string
 ): { valid: boolean; warning?: string } {
   const noKeyProviders = ["searxng", "custom"];
   if (noKeyProviders.includes(provider)) {
