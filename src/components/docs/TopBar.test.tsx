@@ -1,0 +1,68 @@
+import { describe, it, expect, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import DocsTopBar from "./TopBar";
+
+function mockMatchMedia(matches: boolean) {
+  Object.defineProperty(window, "matchMedia", {
+    writable: true,
+    value: (query: string) => ({
+      matches,
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    }),
+  });
+}
+
+describe("DocsTopBar", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    mockMatchMedia(true);
+  });
+
+  it("renders the Sythoria Docs logo link", () => {
+    render(<DocsTopBar />);
+    const logo = screen.getByText("Sythoria Docs");
+    expect(logo).toBeInTheDocument();
+    expect(logo.closest("a")).toHaveAttribute("href", "/docs");
+  });
+
+  it("renders the Home link", () => {
+    render(<DocsTopBar />);
+    const homeLink = screen.getByText("Home");
+    expect(homeLink).toBeInTheDocument();
+    expect(homeLink.closest("a")).toHaveAttribute("href", "/");
+  });
+
+  it("renders the Chat link", () => {
+    render(<DocsTopBar />);
+    const chatLink = screen.getByText("Chat");
+    expect(chatLink).toBeInTheDocument();
+    expect(chatLink.closest("a")).toHaveAttribute("href", "/chat");
+  });
+
+  it("renders the theme toggle button", () => {
+    render(<DocsTopBar />);
+    const themeBtn = screen.getByRole("button", {
+      name: /switch to light mode|switch to dark mode/i,
+    });
+    expect(themeBtn).toBeInTheDocument();
+  });
+
+  it("renders the search docs button", () => {
+    render(<DocsTopBar />);
+    expect(
+      screen.getByRole("button", { name: /search docs/i })
+    ).toBeInTheDocument();
+  });
+
+  it("has the same height as the marketing navbar", () => {
+    const { container } = render(<DocsTopBar />);
+    const innerDiv = container.querySelector(".h-\\[4\\.0rem\\]");
+    expect(innerDiv).toBeInTheDocument();
+  });
+});
