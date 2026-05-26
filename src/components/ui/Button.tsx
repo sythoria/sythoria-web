@@ -58,7 +58,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
       children,
       ...props
     },
-    ref,
+    ref
   ) => {
     const classes = [
       "inline-flex items-center justify-center font-medium transition-all duration-300 ease-out select-none whitespace-nowrap relative overflow-hidden",
@@ -111,7 +111,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
         {content}
       </button>
     );
-  },
+  }
 );
 
 Button.displayName = "Button";
