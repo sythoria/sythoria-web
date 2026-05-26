@@ -14,7 +14,7 @@ const ScrollToBottomButton = forwardRef<
   ScrollToBottomButtonProps
 >(function ScrollToBottomButton(
   { onClick, hasNewMessages, className = "" },
-  ref,
+  ref
 ) {
   const label = useMemo(() => {
     return hasNewMessages
