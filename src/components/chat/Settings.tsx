@@ -113,7 +113,7 @@ const ModelCard = memo(function ModelCard({
                 value={model.provider || "Custom"}
                 onChange={(e) => {
                   const preset = PROVIDER_PRESETS.find(
-                    (p) => p.label === e.target.value,
+                    (p) => p.label === e.target.value
                   );
                   if (preset) {
                     onUpdate(model.id, {
@@ -307,7 +307,7 @@ const SearchApiCard = memo(function SearchApiCard({
                 onChange={(e) => {
                   const provider = e.target.value as SearchProvider;
                   const preset = SEARCH_PROVIDER_PRESETS.find(
-                    (p) => p.provider === provider,
+                    (p) => p.provider === provider
                   );
                   if (preset) {
                     onUpdate(config.id, {
@@ -497,7 +497,7 @@ export default function Settings() {
     useState(false);
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
   const [showSearchKeys, setShowSearchKeys] = useState<Record<string, boolean>>(
-    {},
+    {}
   );
   const tempToastRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -512,7 +512,7 @@ export default function Settings() {
   const effectiveModel = currentModel ?? models[0];
   const enabledSearchConfigs = searchConfigs.filter((c) => c.enabled);
   const activeSearchConfig = enabledSearchConfigs.find(
-    (c) => c.id === activeSearchId,
+    (c) => c.id === activeSearchId
   );
 
   const handleTemperatureChange = useCallback(
@@ -524,7 +524,7 @@ export default function Settings() {
         addToast(`Temperature set to ${t.toFixed(1)}`, "info");
       }, 800);
     },
-    [setTemperature, addToast],
+    [setTemperature, addToast]
   );
 
   useEffect(() => {
