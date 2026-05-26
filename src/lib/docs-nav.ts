@@ -53,7 +53,7 @@ export function getAllDocSlugs(): string[] {
 }
 
 export function getDocMeta(
-  slug: string,
+  slug: string
 ): { label: string; group: string } | null {
   for (const group of docsNav) {
     const item = group.items.find((i) => i.slug === slug);
