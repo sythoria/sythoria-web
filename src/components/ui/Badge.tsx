@@ -18,7 +18,7 @@ const variantClasses: Record<BadgeVariant, string> = {
 const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
   (
     { variant = "default", dot = false, className = "", children, ...props },
-    ref,
+    ref
   ) => {
     const classes = [
       "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium",
@@ -36,7 +36,7 @@ const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
         {children}
       </span>
     );
-  },
+  }
 );
 
 Badge.displayName = "Badge";
