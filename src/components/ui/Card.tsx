@@ -36,7 +36,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       children,
       ...props
     },
-    ref,
+    ref
   ) => {
     const classes = [
       "rounded-xl",
@@ -54,7 +54,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         {children}
       </div>
     );
-  },
+  }
 );
 
 Card.displayName = "Card";
