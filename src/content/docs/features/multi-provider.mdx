@@ -1,43 +1,66 @@
 ---
 title: Multi-Provider Chat
-description: Switch between AI providers seamlessly within a single interface.
+description: Switch between AI providers seamlessly within a single conversation.
 ---
 
 # Multi-Provider Chat
 
-Sythoria unifies multiple AI providers under a single interface. Switch between OpenAI, Anthropic, Gemini, Ollama, and more without switching tabs or apps.
+Sythoria unifies multiple AI providers under a single interface. Switch between OpenAI, Anthropic, Gemini, Ollama, and more — without switching tabs, apps, or accounts.
 
 ## Switching providers
 
-Use the **model dropdown** in the chat input bar to switch models at any time — even mid-conversation. Each message uses the currently selected model, so you can:
+Use the **model dropdown** in the chat input bar to switch models at any time — even mid-conversation. Each new message uses the currently selected model, so you can:
 
 - Start a conversation with GPT-4o, then switch to Claude for a second opinion
-- Use Ollama for offline work, then jump to Gemini for a web-connected query
-- Compare outputs from different models side by side
+- Use Ollama for offline work, then jump to Gemini for a complex query
+- Compare outputs from different models by asking the same question with different providers
+
+> Switching is instant. There's no loading, no reconnection — just select and send.
 
 ## Supported providers
 
-| Provider      | API Format        | Local/Cloud |
-| ------------- | ----------------- | ----------- |
-| OpenAI        | OpenAI API        | Cloud       |
-| Anthropic     | Anthropic API     | Cloud       |
-| Google Gemini | OpenAI-compatible | Cloud       |
-| Ollama        | OpenAI-compatible | Local       |
-| OpenRouter    | OpenAI API        | Cloud       |
-| NVIDIA NIM    | OpenAI API        | Cloud       |
-| Custom        | OpenAI-compatible | Any         |
+| Provider      | API format        | Local/Cloud | API key required |
+| ------------- | ----------------- | ----------- | ---------------- |
+| OpenAI        | OpenAI API        | Cloud       | Yes              |
+| Anthropic     | Anthropic API     | Cloud       | Yes              |
+| Google Gemini | OpenAI-compatible | Cloud       | Yes              |
+| Ollama        | OpenAI-compatible | Local       | No               |
+| OpenRouter    | OpenAI API        | Cloud       | Yes              |
+| NVIDIA NIM    | OpenAI API        | Cloud       | Yes              |
+| Custom        | OpenAI-compatible | Any         | Optional         |
+
+## Adding multiple models
+
+You can add as many model configurations as you want in **Settings**:
+
+1. Open **Settings** from the sidebar
+2. Click **Add Model**
+3. Choose a **Provider Preset** or set up a custom endpoint
+4. Enter the model details and API key
+5. Repeat for each model you want to use
+
+Each model gets its own connection indicator (green = connected, red = error, yellow = connecting).
 
 ## Custom providers
 
-Sythoria supports any OpenAI-compatible API. Select **Custom** from the provider list and enter:
+Sythoria supports any OpenAI-compatible API. Select **Custom** from the provider dropdown and enter:
 
-1. **API Base URL** — the endpoint (e.g., `https://my-llm.example.com/v1/chat/completions`)
-2. **API Key** — if required
-3. **Default Model** — the model identifier to use
+| Field            | What to enter          | Example                                          |
+| ---------------- | ---------------------- | ------------------------------------------------ |
+| **API Base URL** | The endpoint URL       | `https://my-llm.example.com/v1/chat/completions` |
+| **API Key**      | Your key (if required) | `sk-...`                                         |
+| **Model ID**     | The model identifier   | `my-model-v2`                                    |
 
-This works with services like Together AI, Groq, Fireworks AI, vLLM, and any other OpenAI-compatible server.
+This works with services like:
 
-## Provider-specific guides
+- **Together AI** — `https://api.together.xyz/v1/chat/completions`
+- **Groq** — `https://api.groq.com/openai/v1/chat/completions`
+- **Fireworks AI** — `https://api.fireworks.ai/inference/v1/chat/completions`
+- **vLLM** — your own server endpoint
+- **LM Studio** — `http://localhost:1234/v1/chat/completions`
+- Any other OpenAI-compatible server
+
+## Provider-specific setup guides
 
 - [OpenAI setup](/docs/providers/openai)
 - [Anthropic setup](/docs/providers/anthropic)
