@@ -15,7 +15,7 @@ export default function DocsLayout({
   return (
     <div className="min-h-screen bg-chat">
       <DocsTopBar />
-      <div className="max-w-6xl mx-auto px-6 pt-20 pb-16 flex gap-8">
+      <div className="max-w-6xl mx-auto px-6 pt-24 pb-16 flex gap-8">
         <DocsSidebar />
         <main className="flex-1 min-w-0 max-w-none prose-docs">{children}</main>
       </div>
