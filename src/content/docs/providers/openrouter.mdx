@@ -1,38 +1,80 @@
 ---
 title: OpenRouter
-description: Access hundreds of models through OpenRouter's unified API.
+description: Access hundreds of models through a single OpenRouter API key.
 ---
 
 # OpenRouter
 
-OpenRouter provides a unified API to hundreds of AI models from different providers. Use it to access models you might not have direct API access to.
+OpenRouter provides a unified API to hundreds of AI models from different providers — OpenAI, Anthropic, Google, Meta, Mistral, and more. Use it to access models you might not have direct API access to, all through a single key.
+
+## Prerequisites
+
+- An OpenRouter account
+- An API key from the OpenRouter dashboard
+- Credits in your OpenRouter account (some models are free)
 
 ## Setup
 
 1. Go to [openrouter.ai/keys](https://openrouter.ai/keys)
-2. Create an API key
-3. In Sythoria, select **OpenRouter** as the provider
-4. Paste your API key when prompted
+2. Click **Create Key** and copy it
+3. In Sythoria, open **Settings** from the sidebar
+4. Select **OpenRouter** from the **Provider Preset** dropdown — the API base URL and default model fill in automatically
+5. Paste your API key into the **API Key** field
+6. The connection indicator should turn **green** within a few seconds
+
+> Your API key is stored only in your browser's localStorage. It is never sent to Sythoria's servers. See [Privacy & Security](/docs/privacy).
 
 ## Default configuration
 
-- **API Base:** `https://openrouter.ai/api/v1/chat/completions`
-- **Default Model:** `anthropic/claude-3.5-sonnet`
+| Setting           | Value                                           |
+| ----------------- | ----------------------------------------------- |
+| **API Base**      | `https://openrouter.ai/api/v1/chat/completions` |
+| **Default Model** | `anthropic/claude-3.5-sonnet`                   |
+| **API Format**    | OpenAI Chat Completions                         |
+| **Streaming**     | Supported                                       |
 
 ## Available models
 
-OpenRouter supports models from OpenAI, Anthropic, Google, Meta, Mistral, and more. Browse the full list at [openrouter.ai/models](https://openrouter.ai/models).
+OpenRouter supports models from dozens of providers. Model IDs use the `provider/model-name` format:
 
-The model dropdown in Sythoria uses the OpenRouter model ID format (e.g., `anthropic/claude-3.5-sonnet`, `meta-llama/llama-3.1-70b-instruct`).
+| Model ID                            | Provider  | Notes                                |
+| ----------------------------------- | --------- | ------------------------------------ |
+| `anthropic/claude-3.5-sonnet`       | Anthropic | Balanced Claude model                |
+| `openai/gpt-4o`                     | OpenAI    | GPT-4o via OpenRouter                |
+| `meta-llama/llama-3.1-70b-instruct` | Meta      | Open-source, strong all-rounder      |
+| `mistralai/mistral-large`           | Mistral   | European provider, good multilingual |
+| `google/gemini-pro-1.5`             | Google    | Gemini via OpenRouter                |
+| `deepseek/deepseek-chat`            | DeepSeek  | Cost-effective, strong coding        |
 
-## Benefits
+Browse the full catalog at [openrouter.ai/models](https://openrouter.ai/models) with live pricing and availability.
 
-- **Single API key** for multiple providers
-- **Automatic fallback** if a provider is down
-- **Transparent pricing** — pay only for what you use
+## Model ID format
+
+OpenRouter uses a `provider/model-name` naming scheme. When entering a model in Sythoria's **Model ID** field, use the exact ID from [openrouter.ai/models](https://openrouter.ai/models). Examples:
+
+- `anthropic/claude-3.5-sonnet`
+- `meta-llama/llama-3.1-70b-instruct`
+- `google/gemini-2.5-pro-preview`
+
+## Why use OpenRouter?
+
+| Benefit                 | Description                                                    |
+| ----------------------- | -------------------------------------------------------------- |
+| **Single API key**      | One key for hundreds of models — no separate accounts needed   |
+| **Automatic fallback**  | If a provider is down, OpenRouter can route to an alternative  |
+| **Transparent pricing** | Pay only for what you use; see costs before you send           |
+| **Free models**         | Some models are free to use (rate-limited) — great for testing |
+
+## Pricing
+
+OpenRouter passes through provider pricing with a small markup. Some models are free (rate-limited). Check [openrouter.ai/models](https://openrouter.ai/models) for per-model pricing. Add credits at [openrouter.ai/credits](https://openrouter.ai/credits).
 
 ## Troubleshooting
 
-**401 Unauthorized:** Check your OpenRouter API key and account credits.
-
-**Model not available:** Some models require accepting provider terms on OpenRouter's website first.
+| Error                        | Cause                                              | Fix                                                                                              |
+| ---------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| **401 Unauthorized**         | Invalid API key or no credits                      | Check your key at [openrouter.ai/keys](https://openrouter.ai/keys) and add credits if needed     |
+| **403 Model not available**  | Some models require accepting provider terms first | Visit [openrouter.ai/models](https://openrouter.ai/models), find the model, and accept its terms |
+| **429 Rate Limit**           | Exceeded free tier or usage limits                 | Wait and retry, or upgrade your OpenRouter plan                                                  |
+| **Model not found**          | Incorrect model ID format                          | Use the exact `provider/model-name` ID from [openrouter.ai/models](https://openrouter.ai/models) |
+| **Connection indicator red** | Network issue or invalid configuration             | Verify the API base URL and key, then click **Refresh**                                          |
