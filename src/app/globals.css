@@ -410,6 +410,96 @@
   animation-delay: 0.375s;
 }
 
+.stagger-6 {
+  animation-delay: 0.45s;
+}
+
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 600ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-animate.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-animate.scroll-fade-in-up.stagger-1 {
+  transition-delay: 0.075s;
+}
+.scroll-animate.scroll-fade-in-up.stagger-2 {
+  transition-delay: 0.15s;
+}
+.scroll-animate.scroll-fade-in-up.stagger-3 {
+  transition-delay: 0.225s;
+}
+.scroll-animate.scroll-fade-in-up.stagger-4 {
+  transition-delay: 0.3s;
+}
+.scroll-animate.scroll-fade-in-up.stagger-5 {
+  transition-delay: 0.375s;
+}
+.scroll-animate.scroll-fade-in-up.stagger-6 {
+  transition-delay: 0.45s;
+}
+
+.scroll-animate.scroll-fade-in-scale {
+  transform: scale(0.92) translateY(16px);
+}
+
+.scroll-animate.scroll-fade-in-scale.in-view {
+  transform: scale(1) translateY(0);
+}
+
+.scroll-animate.scroll-fade-in-scale.stagger-1 {
+  transition-delay: 0.075s;
+}
+.scroll-animate.scroll-fade-in-scale.stagger-2 {
+  transition-delay: 0.15s;
+}
+.scroll-animate.scroll-fade-in-scale.stagger-3 {
+  transition-delay: 0.225s;
+}
+.scroll-animate.scroll-fade-in-scale.stagger-4 {
+  transition-delay: 0.3s;
+}
+.scroll-animate.scroll-fade-in-scale.stagger-5 {
+  transition-delay: 0.375s;
+}
+.scroll-animate.scroll-fade-in-scale.stagger-6 {
+  transition-delay: 0.45s;
+}
+
+.scroll-animate.scroll-tilt-in {
+  transform: perspective(800px) rotateX(4deg) translateY(20px);
+}
+
+.scroll-animate.scroll-tilt-in.in-view {
+  transform: perspective(800px) rotateX(0deg) translateY(0);
+}
+
+.scroll-animate.scroll-tilt-in.stagger-1 {
+  transition-delay: 0.075s;
+}
+.scroll-animate.scroll-tilt-in.stagger-2 {
+  transition-delay: 0.15s;
+}
+.scroll-animate.scroll-tilt-in.stagger-3 {
+  transition-delay: 0.225s;
+}
+.scroll-animate.scroll-tilt-in.stagger-4 {
+  transition-delay: 0.3s;
+}
+.scroll-animate.scroll-tilt-in.stagger-5 {
+  transition-delay: 0.375s;
+}
+.scroll-animate.scroll-tilt-in.stagger-6 {
+  transition-delay: 0.45s;
+}
+
 .glass-panel {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(12px);
@@ -1109,6 +1199,13 @@
     animation-iteration-count: 1 !important;
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  .scroll-animate {
+    opacity: 1 !important;
+    transform: none !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
   }
 
   .hero-terminal-overlay {
