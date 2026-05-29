@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sythoria
 
-## Getting Started
+A lightweight, privacy-first AI chat interface that connects to any OpenAI-compatible API. No accounts, no tracking — just pick a provider, add your key, and start chatting.
 
-First, run the development server:
+## Features
+
+- **Multi-provider support** — OpenAI, Anthropic, Google Gemini, Ollama, OpenRouter, NVIDIA NIM, and any custom OpenAI-compatible endpoint
+- **Streaming responses** — Real-time, token-by-token output via Server-Sent Events
+- **Privacy-first** — API keys stored only in your browser; zero telemetry; no server-side data
+- **Web search integration** — Augment responses with live search (Google, SearXNG, Firecrawl, or custom)
+- **System prompts** — Built-in presets for Code Help, Code Review, Debug, and Refactor, plus custom prompts
+- **Dark/light theme** — Toggle appearance in settings
+- **Free and open source** — No subscriptions, no paywalls, no feature gates
+
+## Quick Start
+
+### Use in your browser
+
+Go to [sythoria.app/chat](https://sythoria.app/chat) and start chatting.
+
+### Use as a desktop app
+
+Download the latest release from [GitHub Releases](https://github.com/sythoria/sythoria-desktop/releases).
+
+### Run locally for development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Supported Providers
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Provider | API Key Required | Type |
+|----------|-----------------|------|
+| OpenAI | Yes | Cloud |
+| Anthropic | Yes | Cloud |
+| Google Gemini | Yes | Cloud |
+| Ollama | No | Local |
+| OpenRouter | Yes | Cloud |
+| NVIDIA NIM | Yes | Cloud |
+| Custom | Optional | Any |
 
-## Learn More
+See the [full documentation](https://sythoria.app/docs/getting-started) for provider-specific setup guides.
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Lint, format check, and build for production |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run lint:fix` | Run ESLint with auto-fix |
+| `npm run format` | Format code with Prettier |
+| `npm run test` | Run tests with Vitest |
+| `npm run test:watch` | Run tests in watch mode |
+| `npm run check` | Full check: lint + format + test + build |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Documentation
 
-## Deploy on Vercel
+Full docs are available at [sythoria.app/docs](https://sythoria.app/docs):
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [Quickstart](https://sythoria.app/docs/getting-started)
+- [Streaming Responses](https://sythoria.app/docs/features/streaming)
+- [Multi-Provider Chat](https://sythoria.app/docs/features/multi-provider)
+- [Configuration](https://sythoria.app/docs/configuration)
+- [Privacy & Security](https://sythoria.app/docs/privacy)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+Open source. See [LICENSE](LICENSE) for details.
