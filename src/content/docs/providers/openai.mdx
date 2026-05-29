@@ -1,43 +1,67 @@
 ---
 title: OpenAI
-description: Connect Sythoria to OpenAI's GPT models.
+description: Connect Sythoria to OpenAI's GPT and o-series models.
 ---
 
 # OpenAI
 
-Connect Sythoria to OpenAI's API to use models like GPT-4o, GPT-4o Mini, o1, and more.
+Connect Sythoria to OpenAI's API to chat with GPT-4o, GPT-4o Mini, o1, and more. OpenAI offers the most widely-used commercial language models with strong general-purpose performance.
+
+## Prerequisites
+
+- An OpenAI account with billing enabled
+- An API key from the OpenAI dashboard
 
 ## Setup
 
 1. Go to [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
-2. Create a new API key
-3. In Sythoria, select **OpenAI** as the provider
-4. Paste your API key when prompted
+2. Click **Create new secret key** and copy it
+3. In Sythoria, open **Settings** from the sidebar
+4. Select **OpenAI** from the **Provider Preset** dropdown — the API base URL and default model fill in automatically
+5. Paste your API key into the **API Key** field
+6. The connection indicator should turn **green** within a few seconds
 
-Your key is stored locally in your browser and never sent to our servers.
+> Your API key is stored only in your browser's localStorage. It is never sent to Sythoria's servers. See [Privacy & Security](/docs/privacy).
 
 ## Default configuration
 
-- **API Base:** `https://api.openai.com/v1/chat/completions`
-- **Default Model:** `gpt-4o`
+| Setting           | Value                                        |
+| ----------------- | -------------------------------------------- |
+| **API Base**      | `https://api.openai.com/v1/chat/completions` |
+| **Default Model** | `gpt-4o`                                     |
+| **API Format**    | OpenAI Chat Completions                      |
+| **Streaming**     | Supported                                    |
 
 ## Available models
 
-The model dropdown auto-populates with models available to your API key. Common options include:
+The model dropdown auto-populates with models available to your API key. Common options:
 
-- `gpt-4o` — OpenAI's flagship multimodal model
-- `gpt-4o-mini` — Fast and cost-effective
-- `o1` — Reasoning model for complex tasks
-- `o1-mini` — Lightweight reasoning
+| Model ID       | Best for                                    | Context window |
+| -------------- | ------------------------------------------- | -------------- |
+| `gpt-4o`       | General-purpose tasks, multi-step reasoning | 128K           |
+| `gpt-4o-mini`  | Fast, cost-effective everyday use           | 128K           |
+| `o1`           | Complex reasoning, math, coding             | 200K           |
+| `o1-mini`      | Lightweight reasoning tasks                 | 128K           |
+| `gpt-4.1`      | Instruction following, agentic coding       | 1M             |
+| `gpt-4.1-mini` | Fast variant of GPT-4.1                     | 1M             |
+| `gpt-4.1-nano` | Cheapest, fastest GPT-4.1                   | 1M             |
+
+Check [platform.openai.com/models](https://platform.openai.com/models) for the full list and current availability.
 
 ## Pricing
 
-OpenAI charges per token. Check [openai.com/pricing](https://openai.com/pricing) for current rates.
+OpenAI charges per token. Rates vary by model. Check [openai.com/pricing](https://openai.com/pricing) for current rates.
+
+## Switching models mid-conversation
+
+You can switch to a different OpenAI model at any time using the model dropdown in the chat input bar. Each new message uses the currently selected model, so you can start with GPT-4o and switch to o1 for a harder question — all within the same conversation.
 
 ## Troubleshooting
 
-**401 Unauthorized:** Your API key is invalid or expired. Generate a new one.
-
-**429 Rate Limit:** You've exceeded your usage tier. Wait a moment or upgrade your OpenAI plan.
-
-**Model not found:** Ensure the model name is correct and available to your account.
+| Error                        | Cause                                                  | Fix                                                                                                                              |
+| ---------------------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| **401 Unauthorized**         | API key is invalid or expired                          | Generate a new key at [platform.openai.com/api-keys](https://platform.openai.com/api-keys)                                       |
+| **429 Rate Limit**           | Exceeded your usage tier's rate limit                  | Wait a moment, or upgrade your OpenAI plan at [platform.openai.com/account/billing](https://platform.openai.com/account/billing) |
+| **Model not found**          | Model name is incorrect or unavailable to your account | Verify the model ID at [platform.openai.com/models](https://platform.openai.com/models)                                          |
+| **402 Payment required**     | No billing method on file                              | Add a payment method at [platform.openai.com/account/billing](https://platform.openai.com/account/billing)                       |
+| **Connection indicator red** | Network issue or invalid API base                      | Check that the API base URL is `https://api.openai.com/v1/chat/completions` and try clicking **Refresh**                         |
