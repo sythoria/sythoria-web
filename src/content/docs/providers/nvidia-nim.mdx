@@ -1,36 +1,69 @@
 ---
 title: NVIDIA NIM
-description: Connect Sythoria to NVIDIA's NIM inference endpoints.
+description: Connect Sythoria to NVIDIA's NIM inference endpoints for GPU-optimized open-source models.
 ---
 
 # NVIDIA NIM
 
-NVIDIA NIM provides optimized inference endpoints for open-source models running on NVIDIA GPUs.
+NVIDIA NIM provides optimized inference endpoints for open-source models running on NVIDIA GPUs. Get production-quality performance from models like Llama, Mixtral, and Gemma without managing your own GPU infrastructure.
+
+## Prerequisites
+
+- An NVIDIA account
+- An API key from the NVIDIA build platform
 
 ## Setup
 
 1. Go to [build.nvidia.com](https://build.nvidia.com/)
-2. Sign in and get an API key
-3. In Sythoria, select **NVIDIA NIM** as the provider
-4. Paste your API key when prompted
+2. Sign in with your NVIDIA account
+3. Click **Get API Key** and copy it
+4. In Sythoria, open **Settings** from the sidebar
+5. Select **NVIDIA NIM** from the **Provider Preset** dropdown — the API base URL and default model fill in automatically
+6. Paste your API key into the **API Key** field
+7. The connection indicator should turn **green** within a few seconds
+
+> Your API key is stored only in your browser's localStorage. It is never sent to Sythoria's servers. See [Privacy & Security](/docs/privacy).
 
 ## Default configuration
 
-- **API Base:** `https://integrate.api.nvidia.com/v1/chat/completions`
-- **Default Model:** `meta/llama-3.3-70b-instruct`
+| Setting           | Value                                                  |
+| ----------------- | ------------------------------------------------------ |
+| **API Base**      | `https://integrate.api.nvidia.com/v1/chat/completions` |
+| **Default Model** | `meta/llama-3.3-70b-instruct`                          |
+| **API Format**    | OpenAI Chat Completions                                |
+| **Streaming**     | Supported                                              |
 
 ## Available models
 
-NVIDIA NIM hosts optimized versions of popular open-source models:
+NVIDIA NIM hosts optimized versions of popular open-source models. Model IDs use the `provider/model-name` format:
 
-- `meta/llama-3.3-70b-instruct` — Meta's Llama 3.3 70B
-- `mistralai/mixtral-8x22b-instruct-v0.1` — Mixtral 8x22B
-- `google/gemma-2-27b-it` — Gemma 2 27B
+| Model ID                                 | Base model    | Best for                                      |
+| ---------------------------------------- | ------------- | --------------------------------------------- |
+| `meta/llama-3.3-70b-instruct`            | Llama 3.3 70B | General-purpose, strong reasoning             |
+| `mistralai/mixtral-8x22b-instruct-v0.1`  | Mixtral 8x22B | Efficient mixture-of-experts, good throughput |
+| `google/gemma-2-27b-it`                  | Gemma 2 27B   | Conversation and instruction following        |
+| `nvidia/llama-3.1-nemotron-70b-instruct` | Nemotron 70B  | NVIDIA-tuned Llama, high accuracy             |
 
 Browse all available models at [build.nvidia.com/explore/discover](https://build.nvidia.com/explore/discover).
 
+## Model ID format
+
+NVIDIA NIM uses the `provider/model-name` naming scheme. When entering a model in Sythoria's **Model ID** field, use the exact ID from [build.nvidia.com/explore/discover](https://build.nvidia.com/explore/discover). Examples:
+
+- `meta/llama-3.3-70b-instruct`
+- `mistralai/mixtral-8x22b-instruct-v0.1`
+- `google/gemma-2-27b-it`
+
+## Pricing
+
+NVIDIA offers **free credits** for new accounts, with pay-per-token pricing afterward. Check [build.nvidia.com](https://build.nvidia.com/) for current rates and credit availability.
+
 ## Troubleshooting
 
-**401 Unauthorized:** Your NVIDIA API key is invalid or expired.
-
-**Model not found:** Ensure you're using the exact model ID from NVIDIA's catalog.
+| Error                        | Cause                                  | Fix                                                                                                        |
+| ---------------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **401 Unauthorized**         | API key is invalid or expired          | Generate a new key at [build.nvidia.com](https://build.nvidia.com/)                                        |
+| **404 Model not found**      | Incorrect model ID                     | Use the exact model ID from [build.nvidia.com/explore/discover](https://build.nvidia.com/explore/discover) |
+| **429 Rate Limit**           | Exceeded free tier or usage limits     | Wait and retry, or add credits to your account                                                             |
+| **503 Service unavailable**  | Model endpoint temporarily down        | Wait a moment and retry — NVIDIA scales endpoints dynamically                                              |
+| **Connection indicator red** | Network issue or invalid configuration | Verify the API base URL is `https://integrate.api.nvidia.com/v1/chat/completions` and click **Refresh**    |
