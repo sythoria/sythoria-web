@@ -1,5 +1,8 @@
+"use client";
+
 import { MessageSquare } from "lucide-react";
 import Link from "next/link";
+import { useScrollInView } from "@/hooks/useScrollInView";
 
 const footerLinks = [
   {
@@ -36,16 +39,24 @@ const footerLinks = [
 ];
 
 export default function Footer() {
+  const { ref, visible } = useScrollInView();
+
   return (
     <footer className="border-t border-border/50 pt-16 pb-8 px-6">
-      <div className="max-w-6xl mx-auto">
+      <div ref={ref} className="max-w-6xl mx-auto">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-10 mb-14">
-          <div className="col-span-2 sm:col-span-1">
+          <div
+            className={`col-span-2 sm:col-span-1 scroll-animate scroll-fade-in-up stagger-1 ${visible ? "in-view" : ""}`}
+          >
             <Link
               href="/"
               className="flex items-center gap-2 text-text-primary hover:text-accent transition-colors duration-300 mb-4"
             >
-              <MessageSquare size={18} className="text-accent" />
+              <MessageSquare
+                size={18}
+                className="text-accent"
+                strokeWidth={1.5}
+              />
               <span className="text-base font-semibold tracking-tight">
                 Sythoria
               </span>
@@ -56,8 +67,11 @@ export default function Footer() {
             </p>
           </div>
 
-          {footerLinks.map((group) => (
-            <div key={group.title}>
+          {footerLinks.map((group, i) => (
+            <div
+              key={group.title}
+              className={`scroll-animate scroll-fade-in-up stagger-${Math.min(i + 2, 5)} ${visible ? "in-view" : ""}`}
+            >
               <h4 className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-4">
                 {group.title}
               </h4>
@@ -79,7 +93,9 @@ export default function Footer() {
 
         <div className="landing-section-divider mb-6" />
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div
+          className={`flex flex-col sm:flex-row items-center justify-between gap-4 scroll-animate scroll-fade-in-up stagger-5 ${visible ? "in-view" : ""}`}
+        >
           <p className="text-xs text-text-muted">
             &copy; {new Date().getFullYear()} Sythoria. Privacy-first AI.
           </p>
