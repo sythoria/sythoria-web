@@ -1,8 +1,9 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment } from "react";
 import { Check, X } from "lucide-react";
 import { Card } from "@/components/ui";
+import { useScrollInView } from "@/hooks/useScrollInView";
 
 const comparisons = [
   { feature: "Open source", us: true, them: false },
@@ -16,31 +17,8 @@ const comparisons = [
   { feature: "Markdown rendering", us: true, them: true },
 ];
 
-function useInView(threshold = 0.1) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          obs.unobserve(el);
-        }
-      },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-
-  return { ref, visible };
-}
-
 export default function Comparison() {
-  const { ref, visible } = useInView();
+  const { ref, visible } = useScrollInView();
 
   return (
     <section className="py-24 px-6 relative">
@@ -48,19 +26,19 @@ export default function Comparison() {
       <div ref={ref} className="max-w-3xl mx-auto">
         <div className="text-center mb-16">
           <div
-            className={`animate-fade-in-up stagger-1 ${visible ? "" : "opacity-0"}`}
+            className={`scroll-animate scroll-fade-in-up stagger-1 ${visible ? "in-view" : ""}`}
           >
             <span className="text-xs font-medium uppercase tracking-widest text-accent">
               Why Sythoria
             </span>
           </div>
           <h2
-            className={`mt-4 text-3xl sm:text-4xl font-bold text-text-primary tracking-tight animate-fade-in-up stagger-2 ${visible ? "" : "opacity-0"}`}
+            className={`mt-4 text-3xl sm:text-4xl font-bold text-text-primary tracking-tight scroll-animate scroll-fade-in-up stagger-2 ${visible ? "in-view" : ""}`}
           >
             Privacy isn&apos;t a feature. It&apos;s the default.
           </h2>
           <p
-            className={`mt-4 text-text-secondary max-w-lg mx-auto text-lg animate-fade-in-up stagger-3 ${visible ? "" : "opacity-0"}`}
+            className={`mt-4 text-text-secondary max-w-lg mx-auto text-lg scroll-animate scroll-fade-in-up stagger-3 ${visible ? "in-view" : ""}`}
           >
             Unlike other AI chat interfaces, Sythoria never compromises your
             data.
@@ -70,7 +48,7 @@ export default function Comparison() {
         <Card
           variant="glass"
           padding="none"
-          className={`overflow-hidden animate-fade-in-up stagger-4 ${visible ? "" : "opacity-0"} transition-all duration-500`}
+          className={`overflow-hidden scroll-animate scroll-fade-in-up stagger-4 ${visible ? "in-view" : ""} transition-all duration-500`}
         >
           <div className="grid grid-cols-[1fr_auto_auto] gap-0">
             <div className="px-6 py-4 border-b border-border/30">
@@ -96,18 +74,31 @@ export default function Comparison() {
                 </div>
                 <div className="px-8 py-3.5 border-b border-border/20 bg-accent-soft/10 text-center">
                   {us ? (
-                    <Check size={16} className="text-accent mx-auto" />
+                    <Check
+                      size={16}
+                      className="text-accent mx-auto"
+                      strokeWidth={1.5}
+                    />
                   ) : (
-                    <X size={16} className="text-text-muted mx-auto" />
+                    <X
+                      size={16}
+                      className="text-text-muted mx-auto"
+                      strokeWidth={1.5}
+                    />
                   )}
                 </div>
                 <div className="px-8 py-3.5 border-b border-border/20 text-center">
                   {them ? (
-                    <Check size={16} className="text-text-muted mx-auto" />
+                    <Check
+                      size={16}
+                      className="text-text-muted mx-auto"
+                      strokeWidth={1.5}
+                    />
                   ) : (
                     <X
                       size={16}
                       className="text-text-muted/40 mx-auto opacity-30"
+                      strokeWidth={1.5}
                     />
                   )}
                 </div>
