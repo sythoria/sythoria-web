@@ -4,14 +4,15 @@ import { useEffect } from "react";
 import Settings from "@/components/chat/Settings";
 import { Spinner } from "@/components/chat/ui/Spinner";
 import { ToastContainer } from "@/components/chat/ui/Toast";
-import { useAppStore } from "@/lib/store";
+import { useChatStore } from "@/store/useChatStore";
+import { useUIStore } from "@/store/useUIStore";
 
 export default function SettingsPage() {
-  const isConfigLoaded = useAppStore((s) => s.isConfigLoaded);
-  const loading = useAppStore((s) => s.loading);
-  const toasts = useAppStore((s) => s.toasts);
-  const init = useAppStore((s) => s.init);
-  const dismissToast = useAppStore((s) => s.dismissToast);
+  const isConfigLoaded = useUIStore((s) => s.isConfigLoaded);
+  const loading = useUIStore((s) => s.loading);
+  const toasts = useUIStore((s) => s.toasts);
+  const init = useChatStore((s) => s.init);
+  const dismissToast = useUIStore((s) => s.dismissToast);
 
   useEffect(() => {
     init();
