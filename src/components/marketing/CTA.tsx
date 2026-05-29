@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui";
+import { useScrollInView } from "@/hooks/useScrollInView";
 
 function GithubIcon({ size = 18 }: { size?: number }) {
   return (
@@ -18,31 +18,8 @@ function GithubIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-function useInView(threshold = 0.1) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          obs.unobserve(el);
-        }
-      },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-
-  return { ref, visible };
-}
-
 export default function CTA() {
-  const { ref, visible } = useInView();
+  const { ref, visible } = useScrollInView();
 
   return (
     <section className="py-24 px-6 relative">
@@ -54,7 +31,7 @@ export default function CTA() {
 
           <div className="relative glass-panel rounded-3xl p-10 sm:p-16 text-center">
             <div
-              className={`animate-fade-in-up stagger-1 ${visible ? "" : "opacity-0"}`}
+              className={`scroll-animate scroll-fade-in-up stagger-1 ${visible ? "in-view" : ""}`}
             >
               <span className="text-xs font-medium uppercase tracking-widest text-accent">
                 Get started
@@ -62,27 +39,27 @@ export default function CTA() {
             </div>
 
             <h2
-              className={`mt-6 text-3xl sm:text-4xl md:text-5xl font-bold text-text-primary tracking-tight animate-fade-in-up stagger-2 ${visible ? "" : "opacity-0"}`}
+              className={`mt-6 text-3xl sm:text-4xl md:text-5xl font-bold text-text-primary tracking-tight scroll-animate scroll-fade-in-up stagger-2 ${visible ? "in-view" : ""}`}
             >
               Start chatting in{" "}
               <span className="landing-gradient-text">seconds</span>
             </h2>
 
             <p
-              className={`mt-5 text-text-secondary max-w-lg mx-auto text-lg leading-relaxed animate-fade-in-up stagger-3 ${visible ? "" : "opacity-0"}`}
+              className={`mt-5 text-text-secondary max-w-lg mx-auto text-lg leading-relaxed scroll-animate scroll-fade-in-up stagger-3 ${visible ? "in-view" : ""}`}
             >
               No sign-up, no subscription, no tracking. Just bring your API key
               and go.
             </p>
 
             <div
-              className={`mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up stagger-4 ${visible ? "" : "opacity-0"}`}
+              className={`mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 scroll-animate scroll-fade-in-up stagger-4 ${visible ? "in-view" : ""}`}
             >
               <Button
                 variant="primary"
                 size="lg"
                 href="/chat"
-                iconRight={<ArrowRight size={18} />}
+                iconRight={<ArrowRight size={18} strokeWidth={1.5} />}
               >
                 Open Sythoria
               </Button>
