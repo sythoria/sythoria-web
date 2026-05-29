@@ -1,34 +1,57 @@
 ---
 title: Quickstart
-description: Get Sythoria up and running in under a minute.
+description: Get Sythoria up and running in under a minute — in your browser or as a desktop app.
 ---
 
 # Quickstart
 
-Sythoria is a lightweight, privacy-first AI chat interface that works with any OpenAI-compatible API. No accounts, no tracking — just chat.
+Sythoria is a lightweight, privacy-first AI chat interface that connects to any OpenAI-compatible API. No accounts, no tracking — just pick a provider, add your key, and start chatting.
 
-## 1. Open Sythoria
+## Choose how to use Sythoria
 
-Navigate to [sythoria.app/chat](/chat) or run the app locally.
+### In your browser
 
-## 2. Enter your API key
+1. Go to [sythoria.app/chat](/chat)
+2. Click **Start** on the welcome screen
+3. Open **Settings** (gear icon in the sidebar) and configure your first model
+4. You're ready to chat
 
-On first launch, you'll be prompted to enter an API key. Your key is stored **only in your browser** — it never touches our servers.
+### As a desktop app
 
-- For **OpenAI**, use an API key from [platform.openai.com](https://platform.openai.com/api-keys)
-- For **Anthropic**, use a key from [console.anthropic.com](https://console.anthropic.com/)
-- For **Ollama**, no key is needed — just have Ollama running locally on port 11434
+1. Download the latest release from [GitHub](https://github.com/sythoria/sythoria-desktop/releases)
+2. Install and launch Sythoria
+3. Click **Start** on the welcome screen
+4. Open **Settings** and configure your first model
+5. You're ready to chat
 
-## 3. Select a model
+> Both versions work identically. Your data stays local in either case — the desktop app just gives you a dedicated window and OS integration.
 
-Pick a model from the dropdown in the chat input bar. Sythoria auto-detects available models based on your provider.
+## Add your first model
 
-## 4. Start chatting
+When you open Settings for the first time, a default OpenAI model is pre-filled. You can keep it, switch providers, or add more. For each model you need a provider preset and an API key — the rest fills in automatically.
 
-That's it. Type a message and hit Enter. Responses stream in real-time.
+| Provider      | Setup guide                                              | Where to get your key                                                | Key? |
+| ------------- | -------------------------------------------------------- | -------------------------------------------------------------------- | ---- |
+| OpenAI        | [/docs/providers/openai](/docs/providers/openai)         | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) | Yes  |
+| Anthropic     | [/docs/providers/anthropic](/docs/providers/anthropic)   | [console.anthropic.com](https://console.anthropic.com/)              | Yes  |
+| Google Gemini | [/docs/providers/gemini](/docs/providers/gemini)         | [aistudio.google.com/apikey](https://aistudio.google.com/apikey)     | Yes  |
+| Ollama        | [/docs/providers/ollama](/docs/providers/ollama)         | None — just run `ollama server`                                      | No   |
+| OpenRouter    | [/docs/providers/openrouter](/docs/providers/openrouter) | [openrouter.ai/keys](https://openrouter.ai/keys)                     | Yes  |
+| NVIDIA NIM    | [/docs/providers/nvidia-nim](/docs/providers/nvidia-nim) | [build.nvidia.com](https://build.nvidia.com/)                        | Yes  |
+
+Your API key is stored **only in your browser's localStorage** — it never touches Sythoria's servers. See [Privacy & Security](/docs/privacy) for the full breakdown.
+
+## Start chatting
+
+1. Pick a model from the **dropdown in the chat input bar**
+2. Type a message and press `Enter`
+3. Responses stream in real-time, token by token
+
+That's it. You're running Sythoria.
 
 ## What's next?
 
-- [Streaming Responses](/docs/features/streaming) — how real-time streaming works
-- [Multi-Provider Chat](/docs/features/multi-provider) — switching between providers
-- [Privacy](/docs/privacy) — how your data stays safe
+- [Streaming Responses](/docs/features/streaming) — how real-time streaming works under the hood
+- [Multi-Provider Chat](/docs/features/multi-provider) — switch between providers mid-conversation
+- [Configuration](/docs/configuration) — temperature, system prompts, keyboard shortcuts, and more
+- [Privacy & Security](/docs/privacy) — how your data stays safe
