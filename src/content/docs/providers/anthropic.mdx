@@ -1,38 +1,62 @@
 ---
 title: Anthropic
-description: Connect Sythoria to Anthropic's Claude models.
+description: Connect Sythoria to Anthropic's Claude models for nuanced, thoughtful responses.
 ---
 
 # Anthropic
 
-Connect Sythoria to Anthropic's API to use Claude models.
+Connect Sythoria to Anthropic's API to chat with the Claude family of models. Claude excels at nuanced reasoning, long-context understanding, and careful instruction following.
+
+## Prerequisites
+
+- An Anthropic Console account
+- An API key from the Anthropic dashboard
 
 ## Setup
 
 1. Go to [console.anthropic.com](https://console.anthropic.com/)
-2. Create an API key
-3. In Sythoria, select **Anthropic** as the provider
-4. Paste your API key when prompted
+2. Click **Create Key** and copy it
+3. In Sythoria, open **Settings** from the sidebar
+4. Select **Anthropic** from the **Provider Preset** dropdown — the API base URL and default model fill in automatically
+5. Paste your API key into the **API Key** field
+6. The connection indicator should turn **green** within a few seconds
 
-Your key is stored locally in your browser and never sent to our servers.
+> Your API key is stored only in your browser's localStorage. It is never sent to Sythoria's servers. See [Privacy & Security](/docs/privacy).
 
 ## Default configuration
 
-- **API Base:** `https://api.anthropic.com/v1/messages`
-- **Default Model:** `claude-sonnet-4-20250514`
+| Setting           | Value                                                               |
+| ----------------- | ------------------------------------------------------------------- |
+| **API Base**      | `https://api.anthropic.com/v1/messages`                             |
+| **Default Model** | `claude-sonnet-4-20250514`                                          |
+| **API Format**    | Anthropic Messages API (Sythoria handles translation automatically) |
+| **Streaming**     | Supported                                                           |
 
 ## Available models
 
-- `claude-sonnet-4-20250514` — Latest Sonnet, balanced performance
-- `claude-3-5-haiku-20241022` — Fast and lightweight
-- `claude-opus-4-20250514` — Most capable model
+| Model ID                    | Best for                                                   | Context window |
+| --------------------------- | ---------------------------------------------------------- | -------------- |
+| `claude-sonnet-4-20250514`  | Balanced performance — everyday tasks, coding, analysis    | 200K           |
+| `claude-3-5-haiku-20241022` | Fast, lightweight responses — quick Q&A, simple tasks      | 200K           |
+| `claude-opus-4-20250514`    | Most capable — complex reasoning, research, long documents | 200K           |
 
-## Notes
+## Important: API format differences
 
-Anthropic uses a different API format from OpenAI. Sythoria handles the translation automatically — you don't need to worry about message formatting differences.
+Anthropic uses a different API format from OpenAI (the Messages API vs. Chat Completions). Sythoria **handles this translation automatically** — you don't need to worry about message formatting, role mapping, or streaming protocol differences. Just select Anthropic as your provider and chat as normal.
+
+## Pricing
+
+Anthropic charges per token based on input and output size. Check [anthropic.com/pricing](https://www.anthropic.com/pricing) for current rates. New accounts often receive free credits to get started.
+
+## Switching models mid-conversation
+
+Use the model dropdown in the chat input bar to switch between Claude Sonnet, Haiku, and Opus without losing your conversation. Each new message uses the currently selected model.
 
 ## Troubleshooting
 
-**401 Unauthorized:** Your API key is invalid. Generate a new one from the Anthropic console.
-
-**429 Rate Limit:** You've hit your usage limit. Check your console for rate limit details.
+| Error                        | Cause                             | Fix                                                                                           |
+| ---------------------------- | --------------------------------- | --------------------------------------------------------------------------------------------- |
+| **401 Unauthorized**         | API key is invalid or expired     | Generate a new key at [console.anthropic.com](https://console.anthropic.com/)                 |
+| **429 Rate Limit**           | Hit your usage tier's rate limit  | Check your console for limits, or wait a moment and retry                                     |
+| **400 Bad Request**          | Message format issue              | Sythoria handles formatting automatically — if this persists, try starting a new conversation |
+| **Connection indicator red** | Network issue or invalid API base | Verify the API base URL is `https://api.anthropic.com/v1/messages` and click **Refresh**      |
