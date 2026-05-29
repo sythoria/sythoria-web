@@ -1,61 +1,82 @@
 ---
 title: Privacy & Security
-description: How Sythoria keeps your data and API keys safe.
+description: How Sythoria keeps your data and API keys safe — by design, not by policy.
 ---
 
 # Privacy & Security
 
-Privacy isn't a feature in Sythoria — it's the foundation. Here's exactly how your data is handled.
+Privacy isn't a feature in Sythoria — it's the foundation. Here's exactly how your data is handled, where it goes, and where it doesn't.
 
 ## API keys stay local
 
 Your API keys are stored **exclusively in your browser's localStorage**. They are:
 
-- ❌ Never sent to our servers
-- ❌ Never included in analytics or logs
-- ❌ Never shared with third parties
-- ✅ Only used to authenticate directly with your chosen AI provider
+- Never sent to Sythoria's servers for storage
+- Never included in analytics, logs, or error reports
+- Never shared with third parties
+- Only used to authenticate directly with your chosen AI provider
+
+When you send a message, your API key is included in the request to the AI provider's API — that's how authentication works. But the key never persists on any Sythoria infrastructure.
 
 ## No server-side storage
 
 Sythoria's backend is a thin proxy that forwards requests to AI provider APIs. We do not:
 
-- Store your conversations
+- Store your conversations on any server
 - Log your prompts or responses
-- Retain any personal data
+- Retain any personal data or usage history
 
-Conversations exist only in your browser's local state. Closing the tab or clearing storage removes them entirely.
+Conversations exist only in your browser's local state. Closing the tab, clearing localStorage, or using "Clear All Chats" removes them entirely.
 
 ## Zero telemetry
 
 Sythoria does not collect any usage data, analytics, or tracking information. There are no:
 
-- Analytics scripts
+- Analytics scripts (no Google Analytics, no Plausible, nothing)
 - Tracking cookies
 - Error reporting services that phone home
+- Session recordings or fingerprinting
 
 ## Comparison with other tools
 
-| Feature             | Sythoria | Others |
-| ------------------- | -------- | ------ |
-| API keys stay local | ✅       | ❌     |
-| No account required | ✅       | ❌     |
-| Zero telemetry      | ✅       | ❌     |
-| No server-side data | ✅       | ❌     |
-| Open source         | ✅       | ❌     |
+| Feature             | Sythoria | Typical chat UI                 |
+| ------------------- | -------- | ------------------------------- |
+| API keys stay local | Yes      | Often stored server-side        |
+| No account required | Yes      | Usually requires signup         |
+| Zero telemetry      | Yes      | Analytics by default            |
+| No server-side data | Yes      | Conversations stored on servers |
+| Open source         | Yes      | Usually proprietary             |
 
 ## Open source verification
 
-Sythoria is fully open source. You can audit every line of code to verify these claims:
+Sythoria is fully open source. You don't have to take our word for any of this — audit every line of code yourself:
 
 - [GitHub Repository](https://github.com/sythoria/sythoria-desktop)
 
-## Local models
+## Local models for maximum privacy
 
-For maximum privacy, use Sythoria with **Ollama** or any local model server. With local models:
+For absolute privacy, use Sythoria with **Ollama** or any local model server. With local models:
 
 - No data leaves your machine
 - No API key is needed
 - No network connection required (after model download)
 
-See the [Ollama setup guide](/docs/providers/ollama) to get started.
+See the [Ollama setup guide](/docs/providers/ollama) to get started with local models.
+
+## What about the proxy?
+
+Sythoria uses a backend proxy to forward API requests. This proxy:
+
+- **Does not store** requests or responses — they pass through in real-time
+- **Does not log** API keys, prompts, or model outputs
+- **Exists only** to handle CORS restrictions that browsers enforce on cross-origin API calls
+
+The proxy is stateless. Each request is independent, and no data persists after the response is sent.
+
+## Desktop app security
+
+The desktop version of Sythoria has the same privacy guarantees as the web version:
+
+- API keys are stored in the app's local storage (equivalent to browser localStorage)
+- No additional telemetry is added
+- No OS-level data collection beyond what the app needs to function
