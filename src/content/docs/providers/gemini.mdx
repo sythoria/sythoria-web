@@ -1,34 +1,59 @@
 ---
 title: Google Gemini
-description: Connect Sythoria to Google's Gemini models.
+description: Connect Sythoria to Google's Gemini models for long-context reasoning and multimodal tasks.
 ---
 
 # Google Gemini
 
-Connect Sythoria to Google's Gemini API.
+Connect Sythoria to Google's Gemini API to chat with Google's most capable models. Gemini offers large context windows and strong performance on reasoning, code, and multilingual tasks.
+
+## Prerequisites
+
+- A Google account
+- An API key from Google AI Studio
 
 ## Setup
 
 1. Go to [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
-2. Create an API key
-3. In Sythoria, select **Google Gemini** as the provider
-4. Paste your API key when prompted
+2. Click **Create API Key** and copy it
+3. In Sythoria, open **Settings** from the sidebar
+4. Select **Google Gemini** from the **Provider Preset** dropdown — the API base URL and default model fill in automatically
+5. Paste your API key into the **API Key** field
+6. The connection indicator should turn **green** within a few seconds
+
+> Your API key is stored only in your browser's localStorage. It is never sent to Sythoria's servers. See [Privacy & Security](/docs/privacy).
 
 ## Default configuration
 
-- **API Base:** `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`
-- **Default Model:** `gemini-2.5-pro`
+| Setting           | Value                                                                      |
+| ----------------- | -------------------------------------------------------------------------- |
+| **API Base**      | `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions` |
+| **Default Model** | `gemini-2.5-pro`                                                           |
+| **API Format**    | OpenAI-compatible (Google's compatibility layer)                           |
+| **Streaming**     | Supported                                                                  |
 
 ## Available models
 
-- `gemini-2.5-pro` — Most capable Gemini model
-- `gemini-2.5-flash` — Fast and efficient
-- `gemini-2.0-flash` — Previous generation flash model
+| Model ID           | Best for                                                        | Context window |
+| ------------------ | --------------------------------------------------------------- | -------------- |
+| `gemini-2.5-pro`   | Most capable — complex reasoning, long documents, deep analysis | 1M             |
+| `gemini-2.5-flash` | Fast and efficient — everyday tasks, quick Q&A                  | 1M             |
+| `gemini-2.0-flash` | Previous generation flash — general-purpose, cost-effective     | 1M             |
 
-## Notes
+## How it works: OpenAI-compatible endpoint
 
-Sythoria uses Google's OpenAI-compatible endpoint, so the experience is identical to using OpenAI's API.
+Sythoria uses Google's **OpenAI-compatible endpoint** (`/v1beta/openai/chat/completions`). This means the experience is identical to using OpenAI's API — same request format, same streaming protocol, same response structure. No special configuration needed.
+
+## Pricing
+
+Google offers a **free tier** with rate limits for development and light use. For production workloads, see [ai.google.dev/pricing](https://ai.google.dev/pricing) for pay-per-token pricing.
 
 ## Troubleshooting
 
-**403 Forbidden:** Your API key may not have access to the requested model. Check your Google Cloud project settings.
+| Error                        | Cause                                       | Fix                                                                                    |
+| ---------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **403 Forbidden**            | API key lacks access to the requested model | Check your Google Cloud project settings and enable the Generative Language API        |
+| **400 Invalid API key**      | Key is malformed or revoked                 | Generate a new key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
+| **429 Rate Limit**           | Exceeded free tier quota                    | Wait and retry, or upgrade to a paid plan                                              |
+| **Model not found**          | Model ID is incorrect                       | Use the exact model IDs from the table above                                           |
+| **Connection indicator red** | Network issue or invalid API base           | Verify the API base URL is the OpenAI-compatible endpoint and click **Refresh**        |
