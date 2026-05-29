@@ -226,10 +226,10 @@ export default function Hero({
         <h1
           className={`mt-8 animate-fade-in-scale stagger-2 ${visible ? "" : "opacity-0"}`}
         >
-          <span className="block text-5xl sm:text-6xl md:text-7xl font-semibold text-text-primary leading-[1.08] tracking-[-0.035em]">
+          <span className="block text-5xl sm:text-6xl md:text-7xl font-bold text-text-primary leading-[1.08] tracking-[-0.035em]">
             One interface.
           </span>
-          <span className="block text-5xl sm:text-6xl md:text-7xl font-semibold leading-[1.08] tracking-[-0.035em] mt-2 landing-gradient-text">
+          <span className="block text-5xl sm:text-6xl md:text-7xl font-extrabold leading-[1.08] tracking-[-0.035em] mt-2 landing-gradient-text">
             Every AI model.
           </span>
         </h1>
