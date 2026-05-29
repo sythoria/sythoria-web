@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useRef, type MouseEvent } from "react";
 import { Download, Feather, Lock, Zap, Cpu } from "lucide-react";
 import { Button, Badge } from "@/components/ui";
+import { useScrollInView } from "@/hooks/useScrollInView";
 
 function GithubIcon({
   size = 18,
@@ -36,29 +37,6 @@ const floatingOrbs = [
   { size: 300, top: "20%", right: "5%", delay: 2, duration: 10 },
   { size: 250, bottom: "10%", left: "30%", delay: 4, duration: 12 },
 ];
-
-function useInView(threshold = 0.15) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          obs.unobserve(el);
-        }
-      },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-
-  return { ref, visible };
-}
 
 function useTilt() {
   const ref = useRef<HTMLDivElement>(null);
@@ -157,7 +135,7 @@ export default function Hero({
 }: {
   latestVersion: string | null;
 }) {
-  const { ref, visible } = useInView();
+  const { ref, visible } = useScrollInView();
   const tiltRef = useTilt();
 
   return (
@@ -218,13 +196,13 @@ export default function Hero({
 
       <div ref={ref} className="max-w-4xl mx-auto text-center">
         <div
-          className={`animate-fade-in-up stagger-1 ${visible ? "" : "opacity-0"}`}
+          className={`scroll-animate scroll-fade-in-up stagger-1 ${visible ? "in-view" : ""}`}
         >
           <Badge dot>Open source · Privacy-first</Badge>
         </div>
 
         <h1
-          className={`mt-8 animate-fade-in-scale stagger-2 ${visible ? "" : "opacity-0"}`}
+          className={`mt-8 scroll-animate scroll-fade-in-scale stagger-2 ${visible ? "in-view" : ""}`}
         >
           <span className="block text-5xl sm:text-6xl md:text-7xl font-bold text-text-primary leading-[1.08] tracking-[-0.035em]">
             One interface.
@@ -235,7 +213,7 @@ export default function Hero({
         </h1>
 
         <p
-          className={`mt-8 text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto leading-[1.65] font-light tracking-[-0.01em] animate-fade-in-up stagger-3 ${visible ? "" : "opacity-0"}`}
+          className={`mt-8 text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto leading-[1.65] font-light tracking-[-0.01em] scroll-animate scroll-fade-in-up stagger-3 ${visible ? "in-view" : ""}`}
         >
           Sythoria is a lightweight, free chat interface for OpenAI, Anthropic,
           Gemini, Ollama, and any OpenAI-compatible API. No accounts. No
@@ -243,7 +221,7 @@ export default function Hero({
         </p>
 
         <div
-          className={`mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up stagger-4 ${visible ? "" : "opacity-0"}`}
+          className={`mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 scroll-animate scroll-fade-in-up stagger-4 ${visible ? "in-view" : ""}`}
         >
           <a
             href="https://github.com/sythoria/sythoria-desktop/releases"
@@ -271,15 +249,15 @@ export default function Hero({
         </div>
 
         <div
-          className={`mt-16 flex items-center justify-center gap-8 sm:gap-14 animate-fade-in-up stagger-5 ${visible ? "" : "opacity-0"}`}
+          className={`mt-16 flex items-center justify-center gap-8 sm:gap-14 scroll-animate scroll-fade-in-up stagger-5 ${visible ? "in-view" : ""}`}
         >
           {highlights.map(({ icon: Icon, label, sub }) => (
             <div
               key={label}
               className="flex flex-col items-center gap-2 text-center"
             >
-              <div className="w-12 h-12 rounded-xl bg-accent-soft border border-accent/10 flex items-center justify-center">
-                <Icon size={20} className="text-accent" />
+              <div className="w-10 h-10 rounded-lg bg-accent-soft/60 border border-accent/10 flex items-center justify-center">
+                <Icon size={18} className="text-accent" strokeWidth={1.5} />
               </div>
               <span className="text-sm font-semibold text-text-primary">
                 {label}
@@ -290,7 +268,7 @@ export default function Hero({
         </div>
 
         <div
-          className={`mt-20 animate-tilt-in stagger-5 ${visible ? "" : "opacity-0"}`}
+          className={`mt-20 scroll-animate scroll-tilt-in stagger-5 ${visible ? "in-view" : ""}`}
         >
           <div
             ref={tiltRef}
@@ -352,7 +330,7 @@ export default function Hero({
         </div>
 
         <div
-          className={`mt-16 animate-fade-in-up stagger-5 ${visible ? "" : "opacity-0"}`}
+          className={`mt-16 scroll-animate scroll-fade-in-up stagger-6 ${visible ? "in-view" : ""}`}
         >
           <p className="text-xs text-text-muted uppercase tracking-widest mb-6 font-medium">
             Works with your favorite providers
