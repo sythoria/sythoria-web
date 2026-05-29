@@ -10,7 +10,10 @@ import ScrollToBottomButton from "@/components/chat/ui/ScrollToBottomButton";
 import { RenameChatModal } from "@/components/chat/ui/Modal";
 import { Spinner } from "@/components/chat/ui/Spinner";
 import { ToastContainer } from "@/components/chat/ui/Toast";
-import { useAppStore } from "@/lib/store";
+import { useChatStore } from "@/store/useChatStore";
+import { useModelStore } from "@/store/useModelStore";
+import { useUIStore, type LoadingKey } from "@/store/useUIStore";
+import { useSearchStore } from "@/store/useSearchStore";
 import { useScrollButton } from "@/hooks/useScrollPosition";
 import { useShallow } from "zustand/react/shallow";
 
@@ -18,71 +21,105 @@ export default function ChatPage() {
   const {
     conversations,
     activeId,
-    models,
-    selectedModel,
-    sidebarOpen,
     isStreaming,
-    modelStatuses,
-    isConfigLoaded,
-    hasStarted,
-    showRenameModal,
-    renameCurrentTitle,
-    loading,
-    toasts,
-    isSearchEnabled,
-  } = useAppStore(
+    generationState,
+    generationLabel,
+  } = useChatStore(
     useShallow((s) => ({
       conversations: s.conversations,
       activeId: s.activeId,
-      models: s.models,
-      selectedModel: s.selectedModel,
-      sidebarOpen: s.sidebarOpen,
       isStreaming: s.isStreaming,
-      modelStatuses: s.modelStatuses,
-      isConfigLoaded: s.isConfigLoaded,
-      hasStarted: s.hasStarted,
-      showRenameModal: s.showRenameModal,
-      renameCurrentTitle: s.renameCurrentTitle,
-      loading: s.loading,
-      toasts: s.toasts,
-      isSearchEnabled: s.isSearchEnabled,
+      generationState: s.generationState,
+      generationLabel: s.generationLabel,
     }))
   );
 
   const {
     init,
     setActiveId,
-    setSidebarOpen,
-    setSelectedModel,
     newChat,
     deleteChat,
-    openRenameModal,
     confirmRename,
-    closeRenameModal,
-    sendMessage,
-    retryLastMessage,
     stopStreaming,
     exportChat,
-    dismissToast,
-    setHasStarted,
-    toggleSearchEnabled,
-  } = useAppStore(
+    sendMessage,
+    retryLastMessage,
+  } = useChatStore(
     useShallow((s) => ({
       init: s.init,
       setActiveId: s.setActiveId,
-      setSidebarOpen: s.setSidebarOpen,
-      setSelectedModel: s.setSelectedModel,
       newChat: s.newChat,
       deleteChat: s.deleteChat,
-      openRenameModal: s.openRenameModal,
       confirmRename: s.confirmRename,
-      closeRenameModal: s.closeRenameModal,
-      sendMessage: s.sendMessage,
-      retryLastMessage: s.retryLastMessage,
       stopStreaming: s.stopStreaming,
       exportChat: s.exportChat,
+      sendMessage: s.sendMessage,
+      retryLastMessage: s.retryLastMessage,
+    }))
+  );
+
+  const { models, selectedModel, modelStatuses } = useModelStore(
+    useShallow((s) => ({
+      models: s.models,
+      selectedModel: s.selectedModel,
+      modelStatuses: s.modelStatuses,
+    }))
+  );
+
+  const { setSelectedModel } = useModelStore(
+    useShallow((s) => ({
+      setSelectedModel: s.setSelectedModel,
+    }))
+  );
+
+  const {
+    sidebarOpen,
+    isConfigLoaded,
+    hasStarted,
+    showRenameModal,
+    renameCurrentTitle,
+    loading,
+    toasts,
+    systemPromptId,
+  } = useUIStore(
+    useShallow((s) => ({
+      sidebarOpen: s.sidebarOpen,
+      isConfigLoaded: s.isConfigLoaded,
+      hasStarted: s.hasStarted,
+      showRenameModal: s.showRenameModal,
+      renameCurrentTitle: s.renameCurrentTitle,
+      loading: s.loading,
+      toasts: s.toasts,
+      systemPromptId: s.systemPromptId,
+    }))
+  );
+
+  const {
+    setSidebarOpen,
+    openRenameModal,
+    closeRenameModal,
+    dismissToast,
+    setHasStarted,
+    setSystemPromptId,
+  } = useUIStore(
+    useShallow((s) => ({
+      setSidebarOpen: s.setSidebarOpen,
+      openRenameModal: s.openRenameModal,
+      closeRenameModal: s.closeRenameModal,
       dismissToast: s.dismissToast,
       setHasStarted: s.setHasStarted,
+      setSystemPromptId: s.setSystemPromptId,
+    }))
+  );
+
+  const { isSearchEnabled } = useSearchStore(
+    useShallow((s) => ({
+      isSearchEnabled: s.isSearchEnabled,
+    }))
+  );
+
+  const { toggleSearchEnabled } = useSearchStore(
+    useShallow((s) => ({
       toggleSearchEnabled: s.toggleSearchEnabled,
     }))
   );
@@ -101,10 +138,10 @@ export default function ChatPage() {
   }, [init]);
 
   useEffect(() => {
-    const conv = useAppStore
+    const conv = useChatStore
       .getState()
       .conversations.find((c) => c.id === activeId);
-    useAppStore.getState().setSystemPromptId(conv?.systemPromptId ?? null);
+    useUIStore.getState().setSystemPromptId(conv?.systemPromptId ?? null);
   }, [activeId]);
 
   useEffect(() => {
@@ -119,7 +156,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     return () => {
-      useAppStore.getState().cleanup();
+      useChatStore.getState().cleanup();
     };
   }, []);
 
