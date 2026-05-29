@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { getDocBySlug } from "@/lib/docs";
@@ -49,7 +50,10 @@ export default async function DocPage({
         </span>
       )}
       <div className="markdown-body mt-2">
-        <MDXRemote source={doc.content} />
+        <MDXRemote
+          source={doc.content}
+          options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+        />
       </div>
 
       <div className="mt-16 pt-8 border-t border-border/50 grid grid-cols-2 gap-4">
