@@ -23,9 +23,14 @@ export interface AppState {
   conversations: Conversation[];
   activeId: string | null;
   isStreaming: boolean;
-  loading: Record<LoadingKey, boolean>;
-  addToast: (message: string, variant?: "error" | "success" | "info") => void;
-  persistConversations: () => void;
+  generationState:
+    | "idle"
+    | "thinking"
+    | "searching"
+    | "fetching"
+    | "responding"
+    | "error";
+  generationLabel: string;
 }
 
 export const TOOL_DEFINITIONS = [
@@ -144,11 +149,14 @@ export async function sendWithToolLoop(
     apiKey: string
   ) => Promise<SearchResult[]>,
   fetchUrlContent: (url: string) => Promise<UrlContent>,
+  addToast: (message: string, variant?: "error" | "success" | "info") => void,
+  persistConversations: () => void,
   abortSignal?: AbortSignal
 ) {
   set((state) => ({
     isStreaming: true,
-    loading: { ...state.loading, sendMessage: true, toolExecution: false },
+    generationState: "thinking" as AppState["generationState"],
+    generationLabel: "Thinking",
   }));
 
   const collectedSources: { title: string; url: string }[] = [];
@@ -173,7 +181,10 @@ export async function sendWithToolLoop(
 
     for (let step = 0; step < MAX_TOOL_STEPS; step++) {
       if (abortSignal?.aborted) break;
-      set((state) => ({ loading: { ...state.loading, toolExecution: true } }));
+      set((state) => ({
+        generationState: "searching" as AppState["generationState"],
+        generationLabel: "Searching",
+      }));
 
       const response = await chatCompletionTools({
         apiBase: apiUrl,
@@ -283,6 +294,10 @@ export async function sendWithToolLoop(
           let resultContent = "";
 
           if (fnName === "search_query") {
+            set((state) => ({
+              generationState: "searching" as AppState["generationState"],
+              generationLabel: `Searching: ${fnArgs.query}`,
+            }));
             const results = await performSearch(
               fnArgs.query!,
               searchConfig,
@@ -318,6 +333,10 @@ export async function sendWithToolLoop(
               ),
             }));
           } else if (fnName === "fetch_url") {
+            set((state) => ({
+              generationState: "fetching" as AppState["generationState"],
+              generationLabel: `Fetching: ${fnArgs.url}`,
+            }));
             const urlContent = await fetchUrlContent(fnArgs.url!);
             resultContent = JSON.stringify(urlContent);
             if (urlContent.status === "ok") {
@@ -380,14 +399,11 @@ export async function sendWithToolLoop(
             (msgs) => [...msgs, assistantMsg]
           ),
           isStreaming: false,
-          loading: {
-            ...state.loading,
-            sendMessage: false,
-            toolExecution: false,
-          },
+          generationState: "idle" as AppState["generationState"],
+          generationLabel: "",
         }));
 
-        get().persistConversations();
+        persistConversations();
         return;
       }
     }
@@ -408,18 +424,20 @@ export async function sendWithToolLoop(
         (msgs) => [...msgs, maxStepsMsg]
       ),
       isStreaming: false,
-      loading: { ...state.loading, sendMessage: false, toolExecution: false },
+      generationState: "idle" as AppState["generationState"],
+      generationLabel: "",
     }));
 
-    get().persistConversations();
+    persistConversations();
   } catch (err) {
     const friendlyMessage = parseApiError(err);
     set((state) => ({
       conversations: setAssistantError(state.conversations, convId, err),
       isStreaming: false,
-      loading: { ...state.loading, sendMessage: false, toolExecution: false },
+      generationState: "error" as AppState["generationState"],
+      generationLabel: `Tool loop failed: ${parseApiError(err)}`,
     }));
-    get().addToast(friendlyMessage, "error");
+    addToast(friendlyMessage, "error");
     logError("Tool loop failed", err);
   }
 }
