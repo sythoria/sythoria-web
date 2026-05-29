@@ -1,44 +1,94 @@
 ---
 title: Ollama (Local)
-description: Run local models with Ollama — no API key needed.
+description: Run AI models locally with Ollama — no API key, no cloud, no tracking.
 ---
 
 # Ollama (Local)
 
-Use Sythoria with locally-running models through Ollama. No API key, no cloud dependency, no tracking.
+Use Sythoria with models running locally through Ollama. No API key, no cloud dependency, no data leaving your machine — just fast, private AI on your own hardware.
+
+## Prerequisites
+
+- [Ollama](https://ollama.com) installed on your machine
+- At least one model pulled locally
 
 ## Setup
 
-1. Install Ollama from [ollama.com](https://ollama.com)
-2. Pull a model: `ollama pull llama3.1`
-3. Start the Ollama server: `ollama serve`
-4. In Sythoria, select **Ollama (Local)** as the provider
+1. Install Ollama from [ollama.com](https://ollama.com) (or via Homebrew: `brew install ollama`)
+2. Pull a model:
 
-No API key is needed for Ollama.
+   ```bash
+   ollama pull llama3.1
+   ```
+
+3. Start the Ollama server:
+
+   ```bash
+   ollama serve
+   ```
+
+4. In Sythoria, open **Settings** from the sidebar
+5. Select **Ollama (Local)** from the **Provider Preset** dropdown — the API base URL and default model fill in automatically
+6. Leave the **API Key** field empty (Ollama doesn't require one)
+7. The connection indicator should turn **green** once Ollama is detected
+
+> Ollama must be running while you chat. If you close the Ollama server, Sythoria will show a red connection indicator.
 
 ## Default configuration
 
-- **API Base:** `http://localhost:11434/v1/chat/completions`
-- **Default Model:** `llama3.1`
+| Setting           | Value                                        |
+| ----------------- | -------------------------------------------- |
+| **API Base**      | `http://localhost:11434/v1/chat/completions` |
+| **Default Model** | `llama3.1`                                   |
+| **API Format**    | OpenAI-compatible                            |
+| **Streaming**     | Supported                                    |
+| **API Key**       | None required                                |
 
 ## Popular models
 
-| Model      | Size           | Command                 |
-| ---------- | -------------- | ----------------------- |
-| Llama 3.1  | 8B / 70B       | `ollama pull llama3.1`  |
-| Mistral    | 7B             | `ollama pull mistral`   |
-| Code Llama | 7B / 13B / 34B | `ollama pull codellama` |
-| Phi-3      | 3.8B           | `ollama pull phi3`      |
-| Gemma 2    | 2B / 9B / 27B  | `ollama pull gemma2`    |
+| Model       | Size                 | Pull command              | Best for                                   |
+| ----------- | -------------------- | ------------------------- | ------------------------------------------ |
+| Llama 3.1   | 8B / 70B             | `ollama pull llama3.1`    | General-purpose, strong all-rounder        |
+| Mistral     | 7B                   | `ollama pull mistral`     | Fast, efficient reasoning                  |
+| Code Llama  | 7B / 13B / 34B       | `ollama pull codellama`   | Code generation and analysis               |
+| Phi-3       | 3.8B                 | `ollama pull phi3`        | Lightweight, runs on minimal hardware      |
+| Gemma 2     | 2B / 9B / 27B        | `ollama pull gemma2`      | Google's open model, good for conversation |
+| Qwen 2.5    | 7B / 14B / 32B / 72B | `ollama pull qwen2.5`     | Strong multilingual and coding performance |
+| DeepSeek R1 | 8B / 14B / 32B / 70B | `ollama pull deepseek-r1` | Reasoning and math                         |
+
+Browse all available models at [ollama.com/library](https://ollama.com/library).
 
 ## Model auto-detection
 
-Sythoria queries Ollama's local API to list available models. Any model you've pulled appears in the dropdown automatically.
+Sythoria queries Ollama's local API (`/api/tags`) to discover available models. Any model you've pulled appears in the dropdown automatically — no manual configuration needed.
+
+## Hardware recommendations
+
+Local model performance depends entirely on your hardware. As a rough guide:
+
+| Model size | Minimum RAM | Recommended RAM | GPU                           |
+| ---------- | ----------- | --------------- | ----------------------------- |
+| 3B–7B      | 8 GB        | 16 GB           | Optional (CPU works)          |
+| 13B–14B    | 16 GB       | 32 GB           | Recommended                   |
+| 32B–34B    | 32 GB       | 64 GB           | Strongly recommended          |
+| 70B+       | 64 GB       | 128 GB          | Required for acceptable speed |
+
+> **Tip:** Use quantized models (Q4_K_M) for better performance on consumer hardware. Ollama downloads quantized versions by default.
+
+## Running Ollama on a different port
+
+If you've configured Ollama to listen on a non-default port, update the **API Base URL** in Sythoria's settings:
+
+```
+http://localhost:<your-port>/v1/chat/completions
+```
 
 ## Troubleshooting
 
-**Connection refused:** Ensure Ollama is running on port 11434. Run `ollama serve` in a terminal.
-
-**Model not found:** Pull the model first with `ollama pull <model-name>`.
-
-**Slow responses:** Local model speed depends on your hardware. Larger models require more RAM/VRAM.
+| Error                        | Cause                                   | Fix                                                             |
+| ---------------------------- | --------------------------------------- | --------------------------------------------------------------- |
+| **Connection refused**       | Ollama isn't running                    | Run `ollama serve` in a terminal, or start the Ollama app       |
+| **Model not found**          | Model hasn't been pulled yet            | Run `ollama pull <model-name>` to download it                   |
+| **Slow responses**           | Hardware too limited for the model size | Try a smaller model or a quantized variant                      |
+| **Out of memory**            | Model exceeds available RAM/VRAM        | Switch to a smaller model (e.g., 7B instead of 70B)             |
+| **Connection indicator red** | Can't reach `localhost:11434`           | Ensure Ollama is running and no firewall is blocking port 11434 |
