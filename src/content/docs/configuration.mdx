@@ -1,58 +1,90 @@
 ---
 title: Configuration
-description: Customize Sythoria's behavior with models, temperature, system prompts, and more.
+description: Customize Sythoria with model selection, temperature, system prompts, web search, and more.
 ---
 
 # Configuration
 
-Sythoria is designed to work out of the box, but offers several customization options.
+Sythoria works out of the box, but offers several customization options to tailor the experience to your workflow.
 
 ## Model selection
 
-Choose your model from the dropdown in the chat input bar. Available models depend on your selected provider and API key.
+Choose your active model from the **dropdown in the chat input bar**. Available models are the ones you've configured in Settings. To add or remove models:
+
+1. Open **Settings** from the sidebar
+2. Add models with the **Add Model** button, or delete existing ones with the trash icon
+3. Each model shows a live connection indicator — green means ready
+
+See [Multi-Provider Chat](/docs/features/multi-provider) for details on managing multiple providers.
 
 ## Temperature
 
-Control the randomness of responses via the **Temperature** slider in settings:
+Control the randomness of responses via the **Temperature** slider in Settings:
 
-- **0.0** — Deterministic, focused outputs
-- **0.7** — Balanced creativity (default)
-- **2.0** — Maximum randomness
+| Value   | Behavior                       | Best for                                 |
+| ------- | ------------------------------ | ---------------------------------------- |
+| **0.0** | Deterministic, focused outputs | Factual tasks, data extraction, coding   |
+| **0.7** | Balanced creativity (default)  | General conversation, writing, analysis  |
+| **2.0** | Maximum randomness             | Brainstorming, creative writing, variety |
 
-Lower temperatures are better for factual tasks. Higher temperatures work well for creative writing.
+Lower temperatures produce more consistent, predictable responses. Higher temperatures introduce more variation and creativity.
 
-## System prompts
+## Web search
 
-Sythoria includes built-in system prompts you can select, or write your own:
+Sythoria can augment chat responses with live web search results. When enabled, the AI can search the web and read web pages to provide up-to-date information.
 
-1. Open **Settings** from the sidebar
-2. Navigate to the **System Prompt** section
-3. Choose a preset or write a custom prompt
+### Supported search providers
 
-System prompts set the behavior and personality for the AI assistant in each conversation.
+| Provider                 | Requires        | Best for                               |
+| ------------------------ | --------------- | -------------------------------------- |
+| **Google Custom Search** | API key + CX ID | High-quality results, widely available |
+| **SearXNG**              | Base URL only   | Self-hosted, privacy-preserving        |
+| **Firecrawl**            | API key         | Web scraping and search combined       |
+| **Custom**               | Varies          | Any OpenAI-compatible search API       |
 
-## Provider configuration
+### Setting up web search
 
-Switch providers at any time from the chat input bar. Each provider may have specific settings:
-
-- **API Base URL** — The endpoint for API calls
-- **API Key** — Your authentication key (stored locally only)
-- **Default Model** — The model to use when creating new conversations
-
-See the [Providers](/docs/providers/openai) section for provider-specific guides.
+1. Open **Settings** and scroll to **Web Search APIs**
+2. Click **Add Search API**
+3. Choose a provider and enter your credentials
+4. Enable the search API with the toggle switch
+5. Use the search toggle in the chat interface to enable/disable search per conversation
 
 ## Keyboard shortcuts
 
-| Shortcut      | Action           |
-| ------------- | ---------------- |
-| `Enter`       | Send message     |
-| `Shift+Enter` | New line         |
-| `Escape`      | Stop streaming   |
-| `⌘K / Ctrl+K` | Search (in docs) |
+| Shortcut        | Action           |
+| --------------- | ---------------- |
+| `Enter`         | Send message     |
+| `Shift+Enter`   | Insert new line  |
+| `Escape`        | Stop streaming   |
+| `⌘K` / `Ctrl+K` | Search (in docs) |
 
 ## Data management
 
-All data is stored in your browser. You can:
+All data is stored locally in your browser. You can:
 
-- **Export conversations** — Click the export button in the sidebar menu
-- **Clear all data** — Clear browser storage for the site to reset everything
+| Action                           | How                                                                           |
+| -------------------------------- | ----------------------------------------------------------------------------- |
+| **Export a conversation**        | Click the export button in the sidebar conversation menu — saves as Markdown  |
+| **Clear all conversations**      | Use **Clear All Chats** in the sidebar, or clear browser storage for the site |
+| **Delete a single conversation** | Click the trash icon on the conversation in the sidebar                       |
+
+> Clearing browser data for sythoria.app resets everything — conversations, API keys, and settings.
+
+## Appearance
+
+Toggle between light and dark mode in **Settings** under **Appearance**. Your preference is saved automatically and persists across sessions.
+
+## Provider configuration
+
+Each model in Settings has these fields:
+
+| Field               | Description                                                              |
+| ------------------- | ------------------------------------------------------------------------ |
+| **Name**            | A display name for your reference (e.g., "Work GPT-4o")                  |
+| **Provider Preset** | Auto-fills the API base URL and default model                            |
+| **API Base URL**    | The endpoint for API calls (auto-filled by presets)                      |
+| **Model ID**        | The model identifier to use (e.g., `gpt-4o`, `claude-sonnet-4-20250514`) |
+| **API Key**         | Your authentication key (stored locally only)                            |
+
+See the [Providers](/docs/providers/openai) section for provider-specific setup guides.
