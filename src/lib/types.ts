@@ -83,3 +83,11 @@ export const STATUS_COLORS: Record<ConnectionStatus, string> = {
 };
 
 export type ModelStatuses = Record<string, ConnectionStatus>;
+
+export type GenerationState =
+  | "idle"
+  | "thinking"
+  | "searching"
+  | "fetching"
+  | "responding"
+  | "error";
