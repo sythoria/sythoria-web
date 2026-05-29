@@ -1,45 +1,61 @@
 ---
 title: Streaming Responses
-description: How Sythoria delivers real-time, token-by-token responses using SSE.
+description: How Sythoria delivers real-time, token-by-token responses using Server-Sent Events.
 ---
 
 # Streaming Responses
 
-Sythoria uses **Server-Sent Events (SSE)** to stream responses token by token, exactly as the upstream APIs intended. No polling, no batching — just real-time text as it's generated.
+Sythoria uses **Server-Sent Events (SSE)** to stream responses token by token as they're generated. No polling, no batching, no waiting for the full response — you see text appear the moment the model produces it.
 
 ## How it works
 
-1. You send a message
-2. Sythoria opens an SSE connection to the provider API
-3. Tokens arrive incrementally and render in the chat immediately
-4. The connection closes when the response is complete
+```
+You send a message
+       ↓
+Sythoria opens an SSE connection to the provider
+       ↓
+Tokens arrive incrementally and render immediately
+       ↓
+Connection closes when the response is complete
+```
+
+1. You type a message and press `Enter`
+2. Sythoria opens a streaming connection to your chosen provider's API
+3. Each token is rendered in the chat as it arrives — typically within milliseconds of generation
+4. The stream ends when the model signals completion (`data: [DONE]`)
 
 ## Benefits
 
-- **Lower perceived latency** — you see the first tokens within milliseconds, not after the entire response finishes
-- **Native API compatibility** — we pass through the streaming protocol as-is, so behavior matches the provider's SDK
-- **Cancellation support** — you can stop generation mid-stream with the stop button
+| Benefit                      | What it means for you                                                                        |
+| ---------------------------- | -------------------------------------------------------------------------------------------- |
+| **Lower perceived latency**  | First tokens appear in milliseconds, not after the entire response finishes                  |
+| **Native API compatibility** | Sythoria passes through the streaming protocol as-is, so behavior matches the provider's SDK |
+| **Cancellation support**     | Stop generation mid-stream with the stop button or `Escape`                                  |
+| **No added overhead**        | Sythoria's backend proxy forwards the SSE stream directly — no buffering or transformation   |
 
 ## Supported providers
 
 All providers support streaming:
 
-| Provider      | Streaming |
-| ------------- | --------- |
-| OpenAI        | ✅        |
-| Anthropic     | ✅        |
-| Google Gemini | ✅        |
-| Ollama        | ✅        |
-| OpenRouter    | ✅        |
-| NVIDIA NIM    | ✅        |
+| Provider      | Streaming | Protocol     |
+| ------------- | --------- | ------------ |
+| OpenAI        | Supported | SSE          |
+| Anthropic     | Supported | SSE          |
+| Google Gemini | Supported | SSE          |
+| Ollama        | Supported | SSE (NDJSON) |
+| OpenRouter    | Supported | SSE          |
+| NVIDIA NIM    | Supported | SSE          |
 
 ## Stopping a stream
 
-Click the **Stop** button (or press `Escape`) during generation to cancel the response. The partial text remains in the conversation.
+Click the **Stop** button that appears during generation, or press `Escape`. The partial text remains in your conversation so you can pick up where you left off.
 
 ## Technical details
 
-Sythoria's backend proxy forwards the SSE stream from the provider directly to the client. We don't buffer or transform the stream — it's a pure passthrough, which means:
+Sythoria's backend proxy forwards the SSE stream from the provider directly to your browser. There is no buffering or transformation — it's a pure passthrough:
 
-- No added latency beyond the provider's first-token time
-- Full compatibility with provider-specific streaming features (e.g., Anthropic's content blocks, OpenAI's function calling)
+- **No added latency** beyond the provider's first-token time
+- **Full compatibility** with provider-specific streaming features (e.g., Anthropic's content blocks, OpenAI's function calling)
+- **Automatic reconnection** is handled by the browser's native SSE implementation
+
+For developers: the streaming uses the standard OpenAI streaming format (`data: {...}` lines terminated by `data: [DONE]`). Anthropic's native format is translated to this standard format by Sythoria's proxy layer.
