@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useSyncExternalStore, useState } from "react";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui";
 import DocsSearch from "@/components/docs/Search";
 
+/* ── Theme store (unchanged) ── */
 let themeListeners: Array<() => void> = [];
 function emitThemeChange() {
   for (const l of themeListeners) l();
@@ -28,7 +29,10 @@ function getServerSnapshot(): true {
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [iconKey, setIconKey] = useState(0);
+
   const dark = useSyncExternalStore(
     subscribeTheme,
     getThemeSnapshot,
@@ -50,49 +54,133 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
+      const total = document.body.scrollHeight - window.innerHeight;
+      setScrollProgress(total > 0 ? window.scrollY / total : 0);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
+  const closeMobile = useCallback(() => setMobileOpen(false), []);
+
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-xl ${
-        scrolled
-          ? "glass-panel border-b border-border/50 shadow-sm shadow-black/5"
-          : "bg-background/70 border-b border-transparent"
-      }`}
-    >
-      <div className="max-w-6xl mx-auto px-6 h-[4.4rem] flex items-center justify-between">
-        <Link
-          href="/"
-          className="flex items-center gap-3 text-text-primary hover:text-accent transition-colors"
+    <>
+      <div className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+        <nav
+          className={`pointer-events-auto relative transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+            scrolled
+              ? "py-2 px-4 rounded-full bg-landing-card backdrop-blur-2xl border border-white/10 dark:border-white/5 shadow-2xl shadow-black/10 dark:shadow-black/40 scale-100"
+              : "py-3 px-6 rounded-full bg-transparent border border-transparent scale-105"
+          }`}
         >
-          <img src="/logonobg.png" alt="Sythoria" className="w-10 h-10" />
-          <span className="text-xl font-semibold tracking-tight">Sythoria</span>
-        </Link>
-        <div className="flex items-center gap-5">
-          <DocsSearch variant="full" />
-          <button
-            onClick={toggleTheme}
-            className="p-3 rounded-lg text-text-muted hover:text-text-secondary hover:bg-hover transition-colors"
-            aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-          >
-            <span key={iconKey} className="theme-icon-rotate">
-              {dark ? <Sun size={20} /> : <Moon size={20} />}
-            </span>
-          </button>
-          <Link
-            href="/docs"
-            className="hidden sm:inline-flex text-[1.05rem] text-text-secondary hover:text-text-primary transition-colors duration-300 px-4 py-2.5 relative after:absolute after:bottom-0.5 after:left-4 after:right-4 after:h-px after:bg-accent/40 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100"
-          >
+          <div className="flex items-center gap-6">
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-text-primary hover:text-accent transition-colors"
+            >
+              <img src="/logonobg.png" alt="Sythoria" className="w-8 h-8" />
+              <span className="text-lg font-medium tracking-tight">
+                Sythoria
+              </span>
+            </Link>
+
+            {/* Desktop links */}
+            <div className="hidden md:flex items-center gap-1">
+              <Link
+                href="/docs"
+                className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-white/10 dark:hover:bg-white/5"
+              >
+                Docs
+              </Link>
+              <Link
+                href="https://github.com/sythoria/sythoria-web"
+                target="_blank"
+                className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-white/10 dark:hover:bg-white/5"
+              >
+                GitHub
+              </Link>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:block">
+                <DocsSearch variant="full" />
+              </div>
+
+              {/* Theme toggle */}
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-full text-text-muted hover:text-text-primary hover:bg-white/10 dark:hover:bg-white/5 transition-colors"
+                aria-label={
+                  dark ? "Switch to light mode" : "Switch to dark mode"
+                }
+              >
+                <span
+                  key={iconKey}
+                  className="theme-icon-rotate flex items-center justify-center"
+                >
+                  {dark ? <Sun size={18} /> : <Moon size={18} />}
+                </span>
+              </button>
+
+              {/* Desktop open app */}
+              <Link
+                href="/chat"
+                className="hidden md:block relative group overflow-hidden rounded-full p-[1px]"
+              >
+                <span className="absolute inset-0 bg-gradient-to-r from-chrome-glow via-white to-chrome-glow opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full" />
+                <div className="relative bg-text-primary text-surface px-4 py-1.5 rounded-full text-sm font-medium transition-transform group-hover:scale-[0.98]">
+                  Open App
+                </div>
+              </Link>
+
+              {/* Mobile hamburger */}
+              <button
+                onClick={() => setMobileOpen((o) => !o)}
+                className="md:hidden p-2 rounded-full text-text-muted hover:text-text-primary hover:bg-white/10 dark:hover:bg-white/5 transition-colors"
+                aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              >
+                {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+            </div>
+          </div>
+        </nav>
+      </div>
+
+      {/* Mobile nav overlay */}
+      <div className={`mobile-nav-overlay ${mobileOpen ? "open" : ""}`}>
+        <div className="flex flex-col items-center justify-center h-full gap-2 px-8">
+          <Link href="/" onClick={closeMobile} className="mobile-nav-link">
+            Home
+          </Link>
+          <Link href="/docs" onClick={closeMobile} className="mobile-nav-link">
             Docs
           </Link>
-          <Button variant="primary" size="md" href="/chat">
-            Try it out
-          </Button>
+          <a
+            href="https://github.com/sythoria/sythoria-web"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={closeMobile}
+            className="mobile-nav-link"
+          >
+            GitHub
+          </a>
+          <Link href="/chat" onClick={closeMobile} className="mobile-nav-link">
+            Open App
+          </Link>
         </div>
       </div>
-    </nav>
+    </>
   );
 }

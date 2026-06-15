@@ -33,14 +33,16 @@ describe("Navbar", () => {
 
   it("renders the Docs link", () => {
     render(<Navbar />);
-    const docsLink = screen.getByText("Docs");
-    expect(docsLink).toBeInTheDocument();
-    expect(docsLink.closest("a")).toHaveAttribute("href", "/docs");
+    const docsLinks = screen.getAllByText("Docs");
+    expect(docsLinks.length).toBeGreaterThan(0);
+    expect(docsLinks[0].closest("a")).toHaveAttribute("href", "/docs");
   });
 
-  it("renders the Try it out button", () => {
+  it("renders the Open App button", () => {
     render(<Navbar />);
-    expect(screen.getByText("Try it out")).toBeInTheDocument();
+    const buttons = screen.getAllByText("Open App");
+    expect(buttons.length).toBeGreaterThan(0);
+    expect(buttons[0]).toBeInTheDocument();
   });
 
   it("renders the theme toggle button", () => {
