@@ -17,6 +17,7 @@
     "check": "npm run lint:check && npm run format:check && npm run test && next build"
   },
   "dependencies": {
+    "canvas-confetti": "^1.9.4",
     "framer-motion": "^12.40.0",
     "gray-matter": "^4.0.3",
     "katex": "^0.17.0",
@@ -39,6 +40,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
+    "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
