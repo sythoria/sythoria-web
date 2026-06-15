@@ -9,7 +9,7 @@ Use **npm**: `npm install`, `npm run dev`
 At the end of a session/task, always stage and commit changed files individually. Use the dedicated python skill to automate this:
 
 ```bash
-python3 .agents/skills/commit_individual.py --auto
+python3 /home/denys/.agents/skills/commit-individual/commit_individual.py --auto
 ```
 
 Do not include any `Co-Authored-By` attribution in the commit messages.
