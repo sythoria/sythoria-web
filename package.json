@@ -17,6 +17,7 @@
     "check": "npm run lint:check && npm run format:check && npm run test && next build"
   },
   "dependencies": {
+    "framer-motion": "^12.40.0",
     "gray-matter": "^4.0.3",
     "katex": "^0.17.0",
     "lucide-react": "^1.16.0",
