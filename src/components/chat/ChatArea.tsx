@@ -89,6 +89,17 @@ function MessageActions({
     try {
       await navigator.clipboard.writeText(content);
       setCopied(true);
+
+      // Dynamic import to keep initial bundle size lightweight
+      const confetti = (await import("canvas-confetti")).default;
+      confetti({
+        particleCount: 35,
+        spread: 45,
+        colors: ["#8E9DCC", "#D9DBF1", "#8E9DCC"],
+        origin: { y: 0.8 },
+        disableForReducedMotion: true,
+      });
+
       setTimeout(() => setCopied(false), 2000);
     } catch {
       /* clipboard not available */
