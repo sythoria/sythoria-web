@@ -1,7 +1,22 @@
-<!-- BEGIN:nextjs-agent-rules -->
+# Agent Instructions
 
-# This is NOT the Next.js you know
+## Package Manager
+Use **npm**: `npm install`, `npm run dev`
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+## Commit Attribution
+AI commits MUST include:
+```
+Co-Authored-By: Antigravity <noreply@google.com>
+```
 
-<!-- END:nextjs-agent-rules -->
+## File-Scoped Commands
+| Task | Command |
+|------|---------|
+| Lint | `npx eslint path/to/file.ts` |
+| Format | `npx prettier --write path/to/file.ts` |
+| Test | `npx vitest run path/to/file.test.ts` |
+
+## Stack & Conventions
+- **Next.js 16** (App Router assumed) - Read `node_modules/next/dist/docs/` for breaking changes.
+- **Styling**: Tailwind CSS v4 or Vanilla CSS.
+- **State**: Zustand
