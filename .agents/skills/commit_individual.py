@@ -14,19 +14,28 @@ def run_command(cmd, input_data=None):
     )
     return result.returncode, result.stdout.strip(), result.stderr.strip()
 
+def run_command_raw(cmd):
+    result = subprocess.run(
+        cmd,
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
+    return result.returncode, result.stdout, result.stderr
+
 def get_git_status():
-    # Get unstaged (modified) and untracked files
-    _, stdout, _ = run_command("git status --porcelain")
+    # Get unstaged (modified) and untracked files with raw stdout
+    _, stdout, _ = run_command_raw("git status --porcelain")
     if not stdout:
         return []
     
     files = []
     for line in stdout.split("\n"):
-        if not line.strip():
+        if not line or len(line) < 4:
             continue
         status = line[:2]
         filepath = line[3:]
-        # Treat both modified/deleted and untracked files
         files.append((status, filepath))
     return files
 
