@@ -15,7 +15,6 @@ const categories = [
     title: "Getting Started",
     description: "Get up and running with Sythoria in under a minute.",
     href: "/docs/getting-started",
-    accent: "from-amber-500 to-orange-500",
   },
   {
     icon: MessageSquare,
@@ -23,14 +22,12 @@ const categories = [
     description:
       "Streaming, multi-provider support, and everything in between.",
     href: "/docs/features/streaming",
-    accent: "from-indigo-500 to-indigo-600",
   },
   {
     icon: BookOpen,
     title: "Providers",
     description: "Connect to OpenAI, Anthropic, Gemini, Ollama, and more.",
     href: "/docs/providers/openai",
-    accent: "from-blue-500 to-blue-600",
   },
   {
     icon: Settings,
@@ -38,14 +35,12 @@ const categories = [
     description:
       "Customize models, temperature, system prompts, and other settings.",
     href: "/docs/configuration",
-    accent: "from-pink-500 to-rose-500",
   },
   {
     icon: Shield,
     title: "Privacy & Security",
     description: "How Sythoria keeps your API keys and data safe.",
     href: "/docs/privacy",
-    accent: "from-emerald-500 to-emerald-600",
   },
 ];
 
@@ -63,14 +58,12 @@ export default function DocsLanding() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {categories.map(({ icon: Icon, title, description, href, accent }) => (
+        {categories.map(({ icon: Icon, title, description, href }) => (
           <Link key={title} href={href} className="group">
             <Card variant="glass" padding="md" hover className="h-full">
               <div className="flex items-start gap-4">
-                <div
-                  className={`w-10 h-10 rounded-xl bg-gradient-to-br ${accent} flex items-center justify-center shrink-0 shadow-lg shadow-black/5`}
-                >
-                  <Icon size={18} className="text-white" />
+                <div className="w-10 h-10 rounded-xl bg-accent-soft border border-accent/20 flex items-center justify-center shrink-0">
+                  <Icon size={18} className="text-accent" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
