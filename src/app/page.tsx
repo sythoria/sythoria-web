@@ -1,8 +1,12 @@
 import Navbar from "@/components/marketing/Navbar";
 import Hero from "@/components/marketing/Hero";
+import TerminalShowcase from "@/components/marketing/TerminalShowcase";
 import Features from "@/components/marketing/Features";
 import Comparison from "@/components/marketing/Comparison";
+import CTA from "@/components/marketing/CTA";
 import Footer from "@/components/marketing/Footer";
+import SpatialCanvas from "@/components/marketing/SpatialCanvas";
+import RefractiveBackground from "@/components/marketing/RefractiveBackground";
 
 async function getLatestRelease() {
   try {
@@ -28,12 +32,17 @@ export default async function LandingPage() {
   const latestVersion = await getLatestRelease();
 
   return (
-    <div className="min-h-screen bg-chat overflow-y-auto">
+    <div className="min-h-screen bg-transparent overflow-x-hidden">
+      <RefractiveBackground />
       <Navbar />
-      <Hero latestVersion={latestVersion} />
-      <Features />
-      <Comparison />
-      <Footer />
+      <SpatialCanvas>
+        <Hero latestVersion={latestVersion} />
+        <TerminalShowcase />
+        <Features />
+        <Comparison />
+        <CTA />
+        <Footer />
+      </SpatialCanvas>
     </div>
   );
 }
