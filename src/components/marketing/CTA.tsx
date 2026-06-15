@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui";
 import { useScrollInView } from "@/hooks/useScrollInView";
@@ -18,61 +19,82 @@ function GithubIcon({ size = 18 }: { size?: number }) {
   );
 }
 
+// Seeded pseudo-random to avoid hydration mismatch
+function seededRandom(seed: number) {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
 export default function CTA() {
   const { ref, visible } = useScrollInView();
 
+  const particles = useMemo(() => {
+    return Array.from({ length: 10 }, (_, i) => ({
+      id: i,
+      left: `${seededRandom(i * 7 + 1) * 100}%`,
+      top: `${seededRandom(i * 13 + 3) * 100}%`,
+      duration: `${6 + seededRandom(i * 11 + 5) * 6}s`,
+      delay: `${seededRandom(i * 17 + 9) * 5}s`,
+    }));
+  }, []);
+
   return (
-    <section className="py-24 px-6 relative">
-      <div className="landing-section-divider mb-24" />
-      <div ref={ref} className="max-w-4xl mx-auto">
-        <div className="relative rounded-3xl overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent pointer-events-none" />
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+    <section className="relative py-32 px-6 overflow-hidden cta-gradient-bg">
+      {/* Floating particles */}
+      {particles.map((p) => (
+        <div
+          key={p.id}
+          className="particle"
+          style={
+            {
+              left: p.left,
+              top: p.top,
+              "--particle-duration": p.duration,
+              "--particle-delay": p.delay,
+            } as React.CSSProperties
+          }
+        />
+      ))}
 
-          <div className="relative glass-panel rounded-3xl p-10 sm:p-16 text-center">
-            <div
-              className={`scroll-animate scroll-fade-in-up stagger-1 ${visible ? "in-view" : ""}`}
-            >
-              <span className="text-xs font-medium uppercase tracking-widest text-accent">
-                Get started
-              </span>
-            </div>
+      <div ref={ref} className="relative z-10 max-w-3xl mx-auto text-center">
+        <h2
+          className={`text-5xl sm:text-7xl font-bold tracking-[-0.04em] gradient-text-hero scroll-animate scroll-fade-in-up stagger-1 ${visible ? "in-view" : ""}`}
+        >
+          Start now.
+        </h2>
 
-            <h2
-              className={`mt-6 text-3xl sm:text-4xl md:text-5xl font-bold text-text-primary tracking-tight scroll-animate scroll-fade-in-up stagger-2 ${visible ? "in-view" : ""}`}
-            >
-              Start chatting in{" "}
-              <span className="landing-gradient-text">seconds</span>
-            </h2>
+        <p
+          className={`mt-6 text-text-secondary text-lg sm:text-xl max-w-xl mx-auto leading-relaxed scroll-animate scroll-fade-in-up stagger-2 ${visible ? "in-view" : ""}`}
+        >
+          No sign-up, no subscription, no tracking. Just bring your API key and
+          go.
+        </p>
 
-            <p
-              className={`mt-5 text-text-secondary max-w-lg mx-auto text-lg leading-relaxed scroll-animate scroll-fade-in-up stagger-3 ${visible ? "in-view" : ""}`}
-            >
-              No sign-up, no subscription, no tracking. Just bring your API key
-              and go.
-            </p>
+        <div
+          className={`mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 scroll-animate scroll-fade-in-up stagger-3 ${visible ? "in-view" : ""}`}
+        >
+          <Button
+            variant="primary"
+            size="xl"
+            href="/chat"
+            iconRight={<ArrowRight size={18} strokeWidth={1.5} />}
+          >
+            Open Sythoria
+          </Button>
+        </div>
 
-            <div
-              className={`mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 scroll-animate scroll-fade-in-up stagger-4 ${visible ? "in-view" : ""}`}
-            >
-              <Button
-                variant="primary"
-                size="lg"
-                href="/chat"
-                iconRight={<ArrowRight size={18} strokeWidth={1.5} />}
-              >
-                Open Sythoria
-              </Button>
-              <Button
-                variant="secondary"
-                size="lg"
-                href="https://github.com/sythoria/sythoria-desktop"
-                icon={<GithubIcon size={18} />}
-              >
-                Star on GitHub
-              </Button>
-            </div>
-          </div>
+        <div
+          className={`mt-6 scroll-animate scroll-fade-in-up stagger-4 ${visible ? "in-view" : ""}`}
+        >
+          <a
+            href="https://github.com/sythoria/sythoria-desktop"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors duration-300"
+          >
+            <GithubIcon size={16} />
+            <span>Star on GitHub</span>
+          </a>
         </div>
       </div>
     </section>
