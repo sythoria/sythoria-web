@@ -59,12 +59,18 @@ export default function DocsSidebar() {
   const currentSlug = pathname.replace("/docs/", "").replace("/docs", "");
 
   return (
-    <aside className="w-60 shrink-0 hidden lg:block">
-      <nav className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto scrollbar-none pr-4">
-        {docsNav.map((group) => (
-          <NavGroup key={group.title} group={group} currentSlug={currentSlug} />
-        ))}
-      </nav>
+    <aside className="w-64 shrink-0 hidden lg:block">
+      <div className="sticky top-28 bg-surface/60 backdrop-blur-3xl border border-border/50 rounded-3xl p-5 shadow-2xl shadow-black/5 dark:shadow-black/20 max-h-[calc(100vh-8rem)] flex flex-col">
+        <nav className="overflow-y-auto scrollbar-none pr-2">
+          {docsNav.map((group) => (
+            <NavGroup
+              key={group.title}
+              group={group}
+              currentSlug={currentSlug}
+            />
+          ))}
+        </nav>
+      </div>
     </aside>
   );
 }
