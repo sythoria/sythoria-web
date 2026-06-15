@@ -56,45 +56,61 @@ export default function DocsTopBar() {
   }, []);
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-xl ${
-        scrolled
-          ? "glass-panel border-b border-border/50 shadow-sm shadow-black/5"
-          : "bg-background/70 border-b border-transparent"
-      }`}
-    >
-      <div className="max-w-6xl mx-auto px-6 h-[4.4rem] flex items-center justify-between">
-        <Link
-          href="/docs"
-          className="flex items-center gap-3 text-text-primary hover:text-accent transition-colors"
-        >
-          <img src="/logonobg.png" alt="Sythoria" className="w-10 h-10" />
-          <span className="text-xl font-semibold tracking-tight">
-            Sythoria Docs
-          </span>
-        </Link>
-        <div className="flex items-center gap-5">
-          <DocsSearch variant="full" />
-          <button
-            onClick={toggleTheme}
-            className="p-3 rounded-lg text-text-muted hover:text-text-secondary hover:bg-hover transition-colors"
-            aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-          >
-            <span key={iconKey} className="theme-icon-rotate">
-              {dark ? <Sun size={20} /> : <Moon size={20} />}
-            </span>
-          </button>
+    <div className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+      <nav
+        className={`pointer-events-auto relative transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+          scrolled
+            ? "py-2 px-4 rounded-full bg-surface/80 backdrop-blur-3xl border border-border/50 shadow-2xl shadow-black/5 dark:shadow-black/40 scale-100"
+            : "py-3 px-6 rounded-full bg-transparent border border-transparent scale-105"
+        }`}
+      >
+        <div className="flex items-center gap-6">
           <Link
-            href="/"
-            className="hidden sm:inline-flex text-[1.05rem] text-text-secondary hover:text-text-primary transition-colors duration-300 px-4 py-2.5 relative after:absolute after:bottom-0.5 after:left-4 after:right-4 after:h-px after:bg-accent/40 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100"
+            href="/docs"
+            className="flex items-center gap-2 text-text-primary hover:text-accent transition-colors"
           >
-            Home
+            <img src="/logonobg.png" alt="Sythoria" className="w-8 h-8" />
+            <span className="text-lg font-medium tracking-tight hidden sm:block">
+              Sythoria Docs
+            </span>
           </Link>
-          <Button variant="primary" size="md" href="/chat">
-            Chat
-          </Button>
+
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="hidden md:block">
+              <DocsSearch variant="full" />
+            </div>
+
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full text-text-muted hover:text-text-primary hover:bg-hover transition-colors"
+              aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              <span
+                key={iconKey}
+                className="theme-icon-rotate flex items-center justify-center"
+              >
+                {dark ? <Sun size={18} /> : <Moon size={18} />}
+              </span>
+            </button>
+
+            <Link
+              href="/"
+              className="hidden sm:block text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-hover"
+            >
+              Home
+            </Link>
+
+            <Button
+              variant="primary"
+              size="sm"
+              href="/chat"
+              className="rounded-full"
+            >
+              Chat
+            </Button>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 }

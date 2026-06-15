@@ -59,10 +59,4 @@ describe("DocsTopBar", () => {
       screen.getByRole("button", { name: /search docs/i })
     ).toBeInTheDocument();
   });
-
-  it("has the same height as the marketing navbar", () => {
-    const { container } = render(<DocsTopBar />);
-    const innerDiv = container.querySelector(".h-\\[4\\.0rem\\]");
-    expect(innerDiv).toBeInTheDocument();
-  });
 });
