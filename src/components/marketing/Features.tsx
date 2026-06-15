@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useScrollInView } from "@/hooks/useScrollInView";
 import BentoCard from "./BentoCard";
-import ProviderOrbit from "./ProviderOrbit";
+import InteractiveGlowSphere from "./InteractiveGlowSphere";
 
 /* ════════════════════════════════════════════
    Data-flow (key → lock) privacy animation
@@ -161,7 +161,7 @@ export default function Features() {
               interface.
             </p>
             <div className="flex-1 flex items-center justify-center">
-              <ProviderOrbit />
+              <InteractiveGlowSphere />
             </div>
           </BentoCard>
 
