@@ -4,7 +4,10 @@ import Link from "next/link";
 import { useScrollInView } from "@/hooks/useScrollInView";
 
 const navLinks = [
-  { label: "Chat", href: "/chat" },
+  {
+    label: "Download",
+    href: "https://github.com/sythoria/sythoria-desktop/releases/latest",
+  },
   { label: "Docs", href: "/docs" },
   {
     label: "GitHub",
