@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useRef } from "react";
 import {
   motion,
   useScroll,
@@ -8,20 +8,6 @@ import {
   useReducedMotion,
 } from "framer-motion";
 import { useScrollInView } from "@/hooks/useScrollInView";
-
-/* ── Static data ──────────────────────────────────── */
-
-const MODELS = ["Claude 4", "GPT-4o", "Gemini 2.5"] as const;
-const ACTIVE_MODEL = "Claude 4";
-
-const USER_PROMPT = "Explain quantum computing in simple terms";
-
-const AI_RESPONSE =
-  "Quantum computing uses qubits that can exist in multiple states simultaneously — unlike classical bits which are either 0 or 1. This 'superposition' lets quantum computers explore many solutions at once, making them powerful for specific problems like cryptography and drug discovery.";
-
-const TYPING_SPEED_MS = 18; // ms per character
-
-/* ── Component ────────────────────────────────────── */
 
 export default function TerminalShowcase() {
   const shouldReduceMotion = useReducedMotion();
@@ -36,55 +22,6 @@ export default function TerminalShowcase() {
 
   const rotateX = useTransform(scrollYProgress, [0, 0.5, 1], [6, 0, -4]);
   const tiltY = useTransform(scrollYProgress, [0, 1], [10, -10]);
-
-  /* ── Typewriter state ──────────────────────────── */
-  const [typedCount, setTypedCount] = useState(0);
-  const [showPrompt, setShowPrompt] = useState(false);
-  const [typingStarted, setTypingStarted] = useState(false);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  // Start the animation sequence once in view
-  useEffect(() => {
-    if (!sectionVisible || typingStarted) return;
-
-    // Brief pause, then show the prompt
-    const promptTimer = setTimeout(() => {
-      setTypingStarted(true);
-      setShowPrompt(true);
-    }, 400);
-
-    return () => clearTimeout(promptTimer);
-  }, [sectionVisible, typingStarted]);
-
-  // Start the typewriter once the prompt is visible
-  useEffect(() => {
-    if (!showPrompt) return;
-
-    // Wait a beat after the prompt, then start typing
-    const startTimer = setTimeout(() => {
-      intervalRef.current = setInterval(
-        () => {
-          setTypedCount((prev) => {
-            if (prev >= AI_RESPONSE.length) {
-              if (intervalRef.current) clearInterval(intervalRef.current);
-              return prev;
-            }
-            return prev + 1;
-          });
-        },
-        shouldReduceMotion ? 0 : TYPING_SPEED_MS
-      );
-    }, 600);
-
-    return () => {
-      clearTimeout(startTimer);
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [showPrompt, shouldReduceMotion]);
-
-  const isTyping = typedCount < AI_RESPONSE.length && showPrompt;
-
-  /* ── Render ────────────────────────────────────── */
 
   return (
     <section
@@ -119,7 +56,7 @@ export default function TerminalShowcase() {
       {/* ── Terminal wrapper (3D perspective) ───── */}
       <div
         ref={terminalWrapperRef}
-        className="relative mx-auto max-w-3xl"
+        className="relative mx-auto max-w-4xl"
         style={{ perspective: 1200 }}
       >
         <motion.div
@@ -130,14 +67,14 @@ export default function TerminalShowcase() {
         >
           {/* ── Floating labels ──────────────────── */}
           <div className="terminal-label terminal-label-left -right-2 top-12 md:-right-6 z-20 hidden sm:block">
-            Real-time Streaming
+            Real-time Demonstration
           </div>
           <div className="terminal-label terminal-label-right -left-2 bottom-16 md:-left-6 z-20 hidden sm:block">
-            Markdown Support
+            High Precision Interface
           </div>
 
           {/* ── Terminal frame ────────────────────── */}
-          <div className="terminal-frame">
+          <div className="terminal-frame overflow-hidden">
             {/* Header (traffic lights) */}
             <div className="terminal-header">
               <span className="terminal-dot terminal-dot-red" />
@@ -148,71 +85,20 @@ export default function TerminalShowcase() {
               </span>
             </div>
 
-            {/* Terminal body */}
-            <div className="terminal-body">
-              {/* ── Model switcher bar ──────────── */}
-              <ModelSwitcher />
-
-              {/* ── Conversation ───────────────── */}
-              <div className="mt-5 space-y-4">
-                {/* User message */}
-                {showPrompt && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.4,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                  >
-                    <span className="terminal-prompt">❯ </span>
-                    <span className="text-text-primary">{USER_PROMPT}</span>
-                  </motion.div>
-                )}
-
-                {/* AI response */}
-                {showPrompt && typedCount > 0 && (
-                  <div className="terminal-response pl-4 border-l border-border/50">
-                    {AI_RESPONSE.slice(0, typedCount)}
-                    {isTyping && <span className="terminal-cursor-block" />}
-                  </div>
-                )}
-              </div>
+            {/* Terminal body with video */}
+            <div className="terminal-body !p-0 overflow-hidden rounded-b-xl aspect-video bg-black flex items-center justify-center">
+              <video
+                src="/demo.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
         </motion.div>
       </div>
     </section>
-  );
-}
-
-/* ── Model switcher sub-component ─────────────────── */
-
-function ModelSwitcher() {
-  const [active, setActive] = useState<string>(ACTIVE_MODEL);
-
-  const handleClick = useCallback((model: string) => {
-    setActive(model);
-  }, []);
-
-  return (
-    <div className="flex items-center gap-2 border-b border-border/50 pb-4">
-      {MODELS.map((model) => {
-        const isActive = model === active;
-        return (
-          <button
-            key={model}
-            onClick={() => handleClick(model)}
-            className={`rounded-full px-3 py-1 font-mono text-[11px] font-medium transition-all duration-200 ${
-              isActive
-                ? "bg-accent/20 text-accent shadow-sm shadow-accent/10"
-                : "text-text-secondary hover:text-text-primary hover:bg-hover"
-            }`}
-          >
-            {model}
-          </button>
-        );
-      })}
-    </div>
   );
 }
