@@ -76,10 +76,10 @@ export default function CTA() {
           <Button
             variant="primary"
             size="xl"
-            href="/chat"
+            href="https://github.com/sythoria/sythoria-desktop/releases/latest"
             iconRight={<ArrowRight size={18} strokeWidth={1.5} />}
           >
-            Open Sythoria
+            Download Desktop App
           </Button>
         </div>
 
