@@ -14,13 +14,9 @@ A lightweight, privacy-first AI chat interface that connects to any OpenAI-compa
 
 ## Quick Start
 
-### Use in your browser
+### Download the desktop app
 
-Go to [sythoria.app/chat](https://sythoria.app/chat) and start chatting.
-
-### Use as a desktop app
-
-Download the latest release from [GitHub Releases](https://github.com/sythoria/sythoria-desktop/releases).
+Download the latest release from [GitHub Releases](https://github.com/sythoria/sythoria-desktop/releases/latest).
 
 ### Run locally for development
 
