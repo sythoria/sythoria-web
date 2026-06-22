@@ -52,20 +52,17 @@ function TerminalTeaser() {
       <div className="terminal-body !min-h-0 !p-5 space-y-2 text-[12px] leading-relaxed">
         <p>
           <span className="terminal-prompt">{"> "}</span>
-          <span className="text-accent">
-            sythoria connect --provider anthropic
-          </span>
+          <span className="text-accent">sythoria launch</span>
         </p>
-        <p className="text-[#22c55e]">✓ Connected to Claude 4 Opus</p>
+        <p className="text-text-muted">Initializing Sythoria Desktop...</p>
+        <p className="text-[#22c55e]">✓ Local secure storage loaded</p>
+        <p className="text-[#22c55e]">✓ Connected to local model (Ollama)</p>
         <p>
           <span className="terminal-prompt">{"> "}</span>
-          <span className="text-accent">
-            ask &quot;What makes you unique?&quot;
+          <span className="terminal-response">
+            Ready. Ask anything...
+            <span className="terminal-cursor-block" />
           </span>
-        </p>
-        <p className="terminal-response">
-          I can engage in nuanced reasoning&hellip;
-          <span className="terminal-cursor-block" />
         </p>
       </div>
     </div>
