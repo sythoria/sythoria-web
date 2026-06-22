@@ -19,15 +19,15 @@ export default function InteractiveGlowSphere() {
     if (!ctx) return;
 
     let animationFrameId: number;
-    let width = (canvas.width = 450);
-    let height = (canvas.height = 450);
+    canvas.width = 450;
+    canvas.height = 450;
 
     // Handle high DPI screens
     const resize = () => {
       const rect = container.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
-      width = canvas.width = rect.width * dpr;
-      height = canvas.height = rect.height * dpr;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
       canvas.style.width = `${rect.width}px`;
       canvas.style.height = `${rect.height}px`;
       ctx.scale(dpr, dpr);
@@ -165,9 +165,9 @@ export default function InteractiveGlowSphere() {
           p.baseRadius + morph + pulse * 30 * Math.sin(p.theta * 5);
 
         // Spherical to 3D Cartesian coordinates
-        let x = radius * Math.sin(p.theta) * Math.cos(p.phi);
-        let y = radius * Math.sin(p.theta) * Math.sin(p.phi);
-        let z = radius * Math.cos(p.theta);
+        const x = radius * Math.sin(p.theta) * Math.cos(p.phi);
+        const y = radius * Math.sin(p.theta) * Math.sin(p.phi);
+        const z = radius * Math.cos(p.theta);
 
         // Rotate on X axis
         const cosX = Math.cos(currentRotX);
