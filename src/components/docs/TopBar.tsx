@@ -103,10 +103,10 @@ export default function DocsTopBar() {
             <Button
               variant="primary"
               size="sm"
-              href="/chat"
+              href="https://github.com/sythoria/sythoria-desktop/releases/latest"
               className="rounded-full"
             >
-              Chat
+              Download
             </Button>
           </div>
         </div>
