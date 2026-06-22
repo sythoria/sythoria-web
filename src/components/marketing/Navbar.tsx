@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useSyncExternalStore, useState } from "react";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui";
 import DocsSearch from "@/components/docs/Search";
 
 /* ── Theme store (unchanged) ── */
@@ -29,7 +28,6 @@ function getServerSnapshot(): true {
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [iconKey, setIconKey] = useState(0);
 
@@ -54,8 +52,6 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
-      const total = document.body.scrollHeight - window.innerHeight;
-      setScrollProgress(total > 0 ? window.scrollY / total : 0);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -134,16 +130,18 @@ export default function Navbar() {
                 </span>
               </button>
 
-              {/* Desktop open app */}
-              <Link
-                href="/chat"
+              {/* Desktop download app */}
+              <a
+                href="https://github.com/sythoria/sythoria-desktop/releases/latest"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="hidden md:block relative group overflow-hidden rounded-full p-[1px]"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-chrome-glow via-white to-chrome-glow opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full" />
                 <div className="relative bg-text-primary text-surface px-4 py-1.5 rounded-full text-sm font-medium transition-transform group-hover:scale-[0.98]">
-                  Open App
+                  Download
                 </div>
-              </Link>
+              </a>
 
               {/* Mobile hamburger */}
               <button
@@ -176,9 +174,15 @@ export default function Navbar() {
           >
             GitHub
           </a>
-          <Link href="/chat" onClick={closeMobile} className="mobile-nav-link">
-            Open App
-          </Link>
+          <a
+            href="https://github.com/sythoria/sythoria-desktop/releases/latest"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={closeMobile}
+            className="mobile-nav-link"
+          >
+            Download
+          </a>
         </div>
       </div>
     </>
