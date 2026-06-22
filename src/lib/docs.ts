@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import matter from "gray-matter";
 
 const CONTENT_DIR = path.join(process.cwd(), "src/content/docs");
 
@@ -12,12 +11,34 @@ export interface DocContent {
   frontmatter: Record<string, unknown>;
 }
 
+function parseFrontmatter(raw: string) {
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
+  if (!match) {
+    return { data: {}, content: raw };
+  }
+  const yamlContent = match[1];
+  const content = match[2];
+
+  const data: Record<string, string> = {};
+  const lines = yamlContent.split(/\r?\n/);
+  for (const line of lines) {
+    const colonIndex = line.indexOf(":");
+    if (colonIndex !== -1) {
+      const key = line.slice(0, colonIndex).trim();
+      const value = line.slice(colonIndex + 1).trim();
+      // Remove surrounding quotes if any
+      data[key] = value.replace(/^['"]|['"]$/g, "");
+    }
+  }
+  return { data, content };
+}
+
 export function getDocBySlug(slug: string): DocContent | null {
   const filePath = path.join(CONTENT_DIR, `${slug}.mdx`);
   if (!fs.existsSync(filePath)) return null;
 
   const raw = fs.readFileSync(filePath, "utf-8");
-  const { data, content } = matter(raw);
+  const { data, content } = parseFrontmatter(raw);
 
   return {
     slug,
