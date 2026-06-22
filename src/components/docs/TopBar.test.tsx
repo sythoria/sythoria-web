@@ -38,11 +38,14 @@ describe("DocsTopBar", () => {
     expect(homeLink.closest("a")).toHaveAttribute("href", "/");
   });
 
-  it("renders the Chat link", () => {
+  it("renders the Download link", () => {
     render(<DocsTopBar />);
-    const chatLink = screen.getByText("Chat");
-    expect(chatLink).toBeInTheDocument();
-    expect(chatLink.closest("a")).toHaveAttribute("href", "/chat");
+    const downloadLink = screen.getByText("Download");
+    expect(downloadLink).toBeInTheDocument();
+    expect(downloadLink.closest("a")).toHaveAttribute(
+      "href",
+      "https://github.com/sythoria/sythoria-desktop/releases/latest"
+    );
   });
 
   it("renders the theme toggle button", () => {
