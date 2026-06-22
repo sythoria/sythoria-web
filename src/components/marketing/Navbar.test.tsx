@@ -38,9 +38,9 @@ describe("Navbar", () => {
     expect(docsLinks[0].closest("a")).toHaveAttribute("href", "/docs");
   });
 
-  it("renders the Open App button", () => {
+  it("renders the Download button", () => {
     render(<Navbar />);
-    const buttons = screen.getAllByText("Open App");
+    const buttons = screen.getAllByText("Download");
     expect(buttons.length).toBeGreaterThan(0);
     expect(buttons[0]).toBeInTheDocument();
   });
