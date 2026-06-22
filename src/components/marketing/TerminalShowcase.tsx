@@ -65,14 +65,6 @@ export default function TerminalShowcase() {
           }
           className="relative"
         >
-          {/* ── Floating labels ──────────────────── */}
-          <div className="terminal-label terminal-label-left -right-2 top-12 md:-right-6 z-20 hidden sm:block">
-            Real-time Demonstration
-          </div>
-          <div className="terminal-label terminal-label-right -left-2 bottom-16 md:-left-6 z-20 hidden sm:block">
-            High Precision Interface
-          </div>
-
           {/* ── Terminal frame ────────────────────── */}
           <div className="terminal-frame overflow-hidden">
             {/* Header (traffic lights) */}
