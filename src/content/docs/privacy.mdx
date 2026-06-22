@@ -9,7 +9,7 @@ Privacy isn't a feature in Sythoria — it's the foundation. Here's exactly how 
 
 ## API keys stay local
 
-Your API keys are stored **exclusively in your browser's localStorage**. They are:
+Your API keys are stored **exclusively in the desktop application's local storage**. They are:
 
 - Never sent to Sythoria's servers for storage
 - Never included in analytics, logs, or error reports
@@ -26,7 +26,7 @@ Sythoria's backend is a thin proxy that forwards requests to AI provider APIs. W
 - Log your prompts or responses
 - Retain any personal data or usage history
 
-Conversations exist only in your browser's local state. Closing the tab, clearing localStorage, or using "Clear All Chats" removes them entirely.
+Conversations exist only in the desktop application's local state. Closing the application, clearing the application's storage, or using "Clear All Chats" removes them entirely.
 
 ## Zero telemetry
 
@@ -69,14 +69,14 @@ Sythoria uses a backend proxy to forward API requests. This proxy:
 
 - **Does not store** requests or responses — they pass through in real-time
 - **Does not log** API keys, prompts, or model outputs
-- **Exists only** to handle CORS restrictions that browsers enforce on cross-origin API calls
+- **Exists only** to handle CORS restrictions that web environments enforce on cross-origin API calls
 
 The proxy is stateless. Each request is independent, and no data persists after the response is sent.
 
 ## Desktop app security
 
-The desktop version of Sythoria has the same privacy guarantees as the web version:
+The desktop version of Sythoria is designed with maximum privacy guarantees:
 
-- API keys are stored in the app's local storage (equivalent to browser localStorage)
+- API keys are stored securely in the desktop application's local storage
 - No additional telemetry is added
 - No OS-level data collection beyond what the app needs to function
