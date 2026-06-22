@@ -19,7 +19,7 @@ function GithubIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-// Seeded pseudo-random to avoid hydration mismatch
+// Seeded pseudo-random for deterministic particle positions
 function seededRandom(seed: number) {
   const x = Math.sin(seed) * 10000;
   return x - Math.floor(x);
@@ -40,11 +40,13 @@ export default function CTA() {
 
   return (
     <section className="relative py-32 px-6 overflow-hidden cta-gradient-bg">
-      {/* Floating particles */}
+      {/* Floating particles — suppressHydrationWarning handles minor
+          floating-point string differences between SSR and client */}
       {particles.map((p) => (
         <div
           key={p.id}
           className="particle"
+          suppressHydrationWarning
           style={
             {
               left: p.left,
