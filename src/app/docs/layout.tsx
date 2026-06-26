@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import DocsTopBar from "@/components/docs/TopBar";
 import DocsSidebar from "@/components/docs/Sidebar";
+import DocsMobileDrawer from "@/components/docs/MobileDrawer";
 import RefractiveBackground from "@/components/marketing/RefractiveBackground";
 
 export const metadata: Metadata = {
@@ -25,6 +26,7 @@ export default function DocsLayout({
           </div>
         </main>
       </div>
+      <DocsMobileDrawer />
     </div>
   );
 }
