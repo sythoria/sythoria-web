@@ -75,10 +75,10 @@ export default function Navbar() {
     <>
       <div className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
         <nav
-          className={`pointer-events-auto relative transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+          className={`pointer-events-auto relative transition-[padding,background-color,border-color,box-shadow] duration-300 ease-out ${
             scrolled
-              ? "py-2 px-4 rounded-full bg-landing-card backdrop-blur-2xl border border-white/10 dark:border-white/5 shadow-2xl shadow-black/10 dark:shadow-black/40 scale-100"
-              : "py-3 px-6 rounded-full bg-transparent border border-transparent scale-105"
+              ? "py-2 px-4 rounded-full bg-landing-card backdrop-blur-2xl border border-white/10 dark:border-white/5 shadow-2xl shadow-black/10 dark:shadow-black/40"
+              : "py-3 px-6 rounded-full bg-transparent border border-transparent"
           }`}
         >
           <div className="flex items-center gap-6">
@@ -86,7 +86,11 @@ export default function Navbar() {
               href="/"
               className="flex items-center gap-2 text-text-primary hover:text-accent transition-colors"
             >
-              <img src="/logonobg.png" alt="Sythoria" className="w-8 h-8" />
+              <img
+                src="/logonobg.png"
+                alt="Sythoria - Privacy-focused desktop AI client logo"
+                className="w-8 h-8"
+              />
               <span className="text-lg font-medium tracking-tight">
                 Sythoria
               </span>
