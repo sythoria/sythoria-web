@@ -1,13 +1,8 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef } from "react";
 import { Download } from "lucide-react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useReducedMotion,
-} from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 
 /* ────────────────────────────────────────── */
@@ -79,39 +74,6 @@ export default function Hero({
   latestVersion: string | null;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const shouldReduceMotion = useReducedMotion();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  /* ── Scroll-driven parallax ── */
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
-  const noMotion = isMobile || shouldReduceMotion;
-  const yText = useTransform(scrollYProgress, [0, 1], [0, noMotion ? 0 : 120]);
-  const yTerminal = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [0, noMotion ? 0 : -80]
-  );
-  const yCircle = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [0, noMotion ? 0 : 200]
-  );
-  const opacity = useTransform(
-    scrollYProgress,
-    [0, 0.7],
-    [1, shouldReduceMotion ? 1 : 0]
-  );
 
   /* ── Entrance animation variants ── */
   const ease = [0.16, 1, 0.3, 1] as const;
@@ -125,25 +87,24 @@ export default function Hero({
 
       {/* Large circle — top-right */}
       <motion.div
-        style={{ y: yCircle, opacity }}
-        className="pointer-events-none absolute -top-20 -right-20 w-64 h-64 rounded-full border border-border/20 bg-gradient-to-br from-glow-primary/30 to-transparent opacity-40 blur-sm"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 0.4, scale: 1 }}
+        transition={{ delay: 0.2, duration: 1.2 }}
+        className="pointer-events-none absolute -top-20 -right-20 w-64 h-64 rounded-full border border-border/20 bg-gradient-to-br from-glow-primary/30 to-transparent blur-sm"
         aria-hidden
       />
 
       {/* Horizontal accent lines */}
-      <motion.div
-        style={{ opacity }}
-        className="pointer-events-none absolute top-[30%] left-0 w-full h-px bg-gradient-to-r from-transparent via-border/40 to-transparent"
+      <div
+        className="pointer-events-none absolute top-[30%] left-0 w-full h-px bg-gradient-to-r from-transparent via-border/40 to-transparent opacity-60"
         aria-hidden
       />
-      <motion.div
-        style={{ opacity }}
-        className="pointer-events-none absolute top-[65%] left-0 w-full h-px bg-gradient-to-r from-transparent via-border/20 to-transparent"
+      <div
+        className="pointer-events-none absolute top-[65%] left-0 w-full h-px bg-gradient-to-r from-transparent via-border/20 to-transparent opacity-40"
         aria-hidden
       />
-      <motion.div
-        style={{ opacity }}
-        className="pointer-events-none absolute top-[85%] left-0 w-full h-px bg-gradient-to-r from-transparent via-border/10 to-transparent"
+      <div
+        className="pointer-events-none absolute top-[85%] left-0 w-full h-px bg-gradient-to-r from-transparent via-border/10 to-transparent opacity-20"
         aria-hidden
       />
 
@@ -151,7 +112,9 @@ export default function Hero({
       <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center gap-12 lg:gap-8 z-10">
         {/* ═══ LEFT — typography (60%) ═══ */}
         <motion.div
-          style={{ y: yText, opacity }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease }}
           className="flex-[3] flex flex-col items-start text-left"
         >
           {/* Version badge */}
@@ -166,7 +129,7 @@ export default function Hero({
           </motion.div>
 
           {/* Kinetic headline */}
-          <h1 className="tracking-tighter leading-[0.92] mb-6">
+          <h1 className="tracking-tighter leading-[1.15] sm:leading-[1.1] md:leading-[1.0] lg:leading-[0.95] mb-6">
             <SplitLine
               delay={0.1}
               className="text-5xl sm:text-7xl font-bold text-text-primary"
@@ -175,7 +138,7 @@ export default function Hero({
             </SplitLine>
             <SplitLine
               delay={0.3}
-              className="text-6xl sm:text-8xl font-bold gradient-text-accent"
+              className="text-6xl sm:text-8xl font-bold text-accent"
             >
               interface
             </SplitLine>
@@ -222,7 +185,6 @@ export default function Hero({
 
         {/* ═══ RIGHT — terminal teaser (40%) ═══ */}
         <motion.div
-          style={{ y: yTerminal }}
           initial={{ opacity: 0, x: 40, rotateY: -8 }}
           animate={{ opacity: 1, x: 0, rotateY: -5 }}
           transition={{ delay: 0.5, duration: 1.2, ease }}
