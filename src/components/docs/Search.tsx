@@ -31,6 +31,23 @@ export default function DocsSearch({
     );
   }, [query]);
 
+  const groupedResults = useMemo(() => {
+    const groups: Record<string, typeof results> = {};
+    results.forEach((item) => {
+      if (!groups[item.group]) {
+        groups[item.group] = [];
+      }
+      groups[item.group].push(item);
+    });
+
+    return docsNav
+      .map((g) => ({
+        title: g.title,
+        items: groups[g.title] || [],
+      }))
+      .filter((g) => g.items.length > 0);
+  }, [results]);
+
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
@@ -102,24 +119,33 @@ export default function DocsSearch({
             <X size={18} />
           </button>
         </div>
-        {results.length > 0 ? (
-          <ul className="max-h-80 overflow-y-auto py-2 px-2">
-            {results.map((item) => (
-              <li key={item.slug}>
-                <Link
-                  href={`/docs/${item.slug}`}
-                  onClick={handleClose}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-secondary hover:text-text-primary hover:bg-hover transition-colors"
-                >
-                  <FileText size={15} className="shrink-0 text-text-muted" />
-                  <span className="flex-1">{item.label}</span>
-                  <span className="text-xs text-text-muted bg-surface border border-border/50 rounded-md px-2 py-0.5">
-                    {item.group}
-                  </span>
-                </Link>
-              </li>
+        {groupedResults.length > 0 ? (
+          <div className="max-h-80 overflow-y-auto py-3 px-3 space-y-4">
+            {groupedResults.map((group) => (
+              <div key={group.title} className="space-y-1.5">
+                <div className="px-3 text-[11px] font-semibold text-text-muted tracking-wider uppercase">
+                  {group.title}
+                </div>
+                <ul className="space-y-0.5">
+                  {group.items.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/docs/${item.slug}`}
+                        onClick={handleClose}
+                        className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-text-secondary hover:text-text-primary hover:bg-hover transition-colors"
+                      >
+                        <FileText
+                          size={15}
+                          className="shrink-0 text-text-muted"
+                        />
+                        <span className="flex-1">{item.label}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </ul>
+          </div>
         ) : (
           <div className="py-12 text-center text-sm text-text-muted">
             No results found
