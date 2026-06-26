@@ -60,7 +60,7 @@ export default function CTA() {
 
       <div ref={ref} className="relative z-10 max-w-3xl mx-auto text-center">
         <h2
-          className={`text-5xl sm:text-7xl font-bold tracking-[-0.04em] gradient-text-hero scroll-animate scroll-fade-in-up stagger-1 ${visible ? "in-view" : ""}`}
+          className={`text-4xl sm:text-6xl font-bold tracking-[-0.04em] text-text-primary scroll-animate scroll-fade-in-up stagger-1 ${visible ? "in-view" : ""}`}
         >
           Start now.
         </h2>
