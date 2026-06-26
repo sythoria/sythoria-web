@@ -1,27 +1,12 @@
 "use client";
 
 import { useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useReducedMotion,
-} from "framer-motion";
+import { motion } from "framer-motion";
 import { useScrollInView } from "@/hooks/useScrollInView";
 
 export default function TerminalShowcase() {
-  const shouldReduceMotion = useReducedMotion();
   const { ref: sectionRef, visible: sectionVisible } = useScrollInView(0.15);
-
-  /* ── 3D tilt on scroll ─────────────────────────── */
   const terminalWrapperRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: terminalWrapperRef,
-    offset: ["start end", "end start"],
-  });
-
-  const rotateX = useTransform(scrollYProgress, [0, 0.5, 1], [6, 0, -4]);
-  const tiltY = useTransform(scrollYProgress, [0, 1], [10, -10]);
 
   return (
     <section
@@ -60,9 +45,9 @@ export default function TerminalShowcase() {
         style={{ perspective: 1200 }}
       >
         <motion.div
-          style={
-            shouldReduceMotion ? undefined : { rotateX, translateY: tiltY }
-          }
+          initial={{ opacity: 0, y: 30 }}
+          animate={sectionVisible ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="relative"
         >
           {/* ── Terminal frame ────────────────────── */}
