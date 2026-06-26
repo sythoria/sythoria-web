@@ -142,7 +142,7 @@ export default function Comparison() {
                 {rowsRevealed && (
                   <div
                     className="score-bar"
-                    style={{ "--score-width": "100%" } as React.CSSProperties}
+                    style={{ "--score-scale": "1" } as React.CSSProperties}
                   />
                 )}
               </div>
@@ -159,7 +159,7 @@ export default function Comparison() {
                 {rowsRevealed && (
                   <div
                     className="score-bar"
-                    style={{ "--score-width": "22%" } as React.CSSProperties}
+                    style={{ "--score-scale": "0.22" } as React.CSSProperties}
                   />
                 )}
               </div>
