@@ -53,10 +53,10 @@ function PrivacyVisualization() {
       {/* Inline keyframe for data flow */}
       <style>{`
         @keyframes data-flow {
-          0%   { left: 12%; opacity: 0; }
+          0%   { transform: translateX(20px); opacity: 0; }
           10%  { opacity: 0.8; }
           90%  { opacity: 0.8; }
-          100% { left: 82%; opacity: 0; }
+          100% { transform: translateX(165px); opacity: 0; }
         }
       `}</style>
     </div>
@@ -72,7 +72,6 @@ interface SmallFeature {
   description: string;
   code: string;
   accentColor: string;
-  num: string;
 }
 
 const smallFeatures: SmallFeature[] = [
@@ -83,7 +82,6 @@ const smallFeatures: SmallFeature[] = [
       "Real-time streaming with SSE — watch responses arrive token by token, just like the API intended.",
     code: "stream: true  // SSE token-by-token",
     accentColor: "#f43f5e",
-    num: "03",
   },
   {
     icon: Server,
@@ -92,7 +90,6 @@ const smallFeatures: SmallFeature[] = [
       "Works with local models via Ollama out of the box. No sign-up, no cloud dependency.",
     code: "ollama.connect('localhost:11434')",
     accentColor: "#f59e0b",
-    num: "04",
   },
   {
     icon: Minimize2,
@@ -101,7 +98,6 @@ const smallFeatures: SmallFeature[] = [
       "Minimal footprint, instant load. No Electron, no heavy frameworks — just a lean web app.",
     code: "bundle_size: '< 200kb'  // no electron",
     accentColor: "#10b981",
-    num: "05",
   },
   {
     icon: Heart,
@@ -110,7 +106,6 @@ const smallFeatures: SmallFeature[] = [
       "No subscriptions, no paywalls, no feature gates. Fully open source under a permissive license.",
     code: "license: 'MIT'  // free forever",
     accentColor: "#8b5cf6",
-    num: "06",
   },
 ];
 
@@ -190,12 +185,8 @@ export default function Features() {
                 accentColor={feat.accentColor}
                 delay={0.15 + i * 0.08}
               >
-                {/* Header: number · icon · title */}
+                {/* Header: icon · title */}
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="text-[11px] font-mono text-text-muted tabular-nums">
-                    {feat.num}
-                  </span>
-                  <div className="w-px h-4 bg-border/30" />
                   <div
                     className="w-8 h-8 rounded-full border flex items-center justify-center shrink-0"
                     style={{
