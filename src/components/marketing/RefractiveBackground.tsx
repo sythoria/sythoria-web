@@ -4,25 +4,18 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 export default function RefractiveBackground() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scrollY, setScrollY] = useState(0);
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (shouldReduceMotion) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-
     const handleScroll = () => {
       setScrollY(window.scrollY);
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("scroll", handleScroll);
     };
   }, [shouldReduceMotion]);
@@ -91,28 +84,6 @@ export default function RefractiveBackground() {
           ease: "linear",
         }}
       />
-
-      {/* Mouse + scroll following interactive orb */}
-      {!shouldReduceMotion && (
-        <motion.div
-          className="absolute w-[350px] h-[350px] rounded-full blur-[80px]"
-          style={{
-            background:
-              "radial-gradient(circle, var(--color-glow-primary), transparent 70%)",
-            opacity: 0.2,
-          }}
-          animate={{
-            x: mousePosition.x - 175,
-            y: mousePosition.y + scrollY * 0.1 - 175,
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 40,
-            damping: 25,
-            mass: 2,
-          }}
-        />
-      )}
 
       {/* Noise overlay for texture */}
       <div
