@@ -69,13 +69,20 @@ export default function DocsTopBar() {
             href="/docs"
             className="flex items-center gap-2 text-text-primary hover:text-accent transition-colors"
           >
-            <img src="/logonobg.png" alt="Sythoria" className="w-8 h-8" />
+            <img
+              src="/logonobg.png"
+              alt="Sythoria - Privacy-focused desktop AI client logo"
+              className="w-8 h-8"
+            />
             <span className="text-lg font-medium tracking-tight hidden sm:block">
               Sythoria Docs
             </span>
           </Link>
 
           <div className="flex items-center gap-3 sm:gap-4">
+            <div className="md:hidden">
+              <DocsSearch variant="minimal" />
+            </div>
             <div className="hidden md:block">
               <DocsSearch variant="full" />
             </div>
