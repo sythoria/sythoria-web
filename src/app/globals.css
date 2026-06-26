@@ -22,8 +22,16 @@
   --color-chrome-glow: var(--theme-chrome-glow);
   --color-glow-primary: var(--theme-glow-primary);
   --color-glow-secondary: var(--theme-glow-secondary);
-  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+
+  /* Semantic z-index Scale */
+  --z-below: -1;
+  --z-base: 1;
+  --z-raised: 10;
+  --z-overlay: 40;
+  --z-sticky: 50;
+  --z-modal: 100;
 }
 
 @layer base {
@@ -32,13 +40,13 @@
     --theme-chat: #f5f5f7;
     --theme-input: #ffffff;
     --theme-input-border: #d2d2d7;
-    --theme-accent: #8e9dcc;
-    --theme-accent-hover: #7b8abb;
-    --theme-accent-soft: rgba(142, 157, 204, 0.15);
+    --theme-accent: #4f5f9f; /* WCAG AA Indigo Accent for Light Mode */
+    --theme-accent-hover: #3d4c82;
+    --theme-accent-soft: rgba(79, 95, 159, 0.1);
     --theme-accent-secondary: #d9dbf1;
     --theme-text-primary: #1d1d1f;
-    --theme-text-secondary: #86868b;
-    --theme-text-muted: #d2d2d7;
+    --theme-text-secondary: #515154; /* WCAG AA High legibility light mode secondary text */
+    --theme-text-muted: #8e8e93; /* WCAG AA High legibility light mode muted text */
     --theme-user-bubble: #d9dbf1;
     --theme-hover: #e8e8ed;
     --theme-border: #d2d2d7;
@@ -46,8 +54,8 @@
     --theme-landing-bg: #f5f5f7;
     --theme-landing-card: rgba(255, 255, 255, 0.8);
     --theme-chrome-base: #e8e8ed;
-    --theme-chrome-glow: rgba(142, 157, 204, 0.1);
-    --theme-glow-primary: rgba(142, 157, 204, 0.2);
+    --theme-chrome-glow: rgba(79, 95, 159, 0.1);
+    --theme-glow-primary: rgba(79, 95, 159, 0.15);
     --theme-glow-secondary: rgba(217, 219, 241, 0.2);
   }
 
@@ -56,13 +64,13 @@
     --theme-chat: #000000;
     --theme-input: #1c1c1e;
     --theme-input-border: #38383a;
-    --theme-accent: #8e9dcc;
-    --theme-accent-hover: #a5b4e3;
-    --theme-accent-soft: rgba(142, 157, 204, 0.2);
+    --theme-accent: #9aa8d6; /* Elevated contrast accent for dark mode */
+    --theme-accent-hover: #b4c0e6;
+    --theme-accent-soft: rgba(154, 168, 214, 0.15);
     --theme-accent-secondary: #d9dbf1;
     --theme-text-primary: #f5f5f7;
-    --theme-text-secondary: #86868b;
-    --theme-text-muted: #636366;
+    --theme-text-secondary: #a1a1a6; /* WCAG AA High contrast secondary text in dark mode */
+    --theme-text-muted: #76767c; /* WCAG AA High contrast muted text in dark mode */
     --theme-user-bubble: #1c1c1e;
     --theme-hover: #2c2c2e;
     --theme-border: #38383a;
@@ -70,8 +78,8 @@
     --theme-landing-bg: #000000;
     --theme-landing-card: rgba(28, 28, 30, 0.6);
     --theme-chrome-base: #1c1c1e;
-    --theme-chrome-glow: rgba(142, 157, 204, 0.1);
-    --theme-glow-primary: rgba(142, 157, 204, 0.25);
+    --theme-chrome-glow: rgba(154, 168, 214, 0.1);
+    --theme-glow-primary: rgba(154, 168, 214, 0.25);
     --theme-glow-secondary: rgba(217, 219, 241, 0.2);
   }
 
@@ -365,7 +373,10 @@
     0 0 0 1px rgba(0, 0, 0, 0.03),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .dark .terminal-frame {
@@ -597,7 +608,9 @@
 .comparison-row {
   opacity: 0;
   transform: translateX(-20px);
-  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .comparison-row.revealed {
@@ -612,12 +625,16 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  transition: all 0.4s ease;
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease,
+    color 0.4s ease,
+    opacity 0.4s ease;
 }
 
 .comparison-check-yes {
   background: rgba(34, 197, 94, 0.12);
-  color: #22c55e;
+  color: #16a34a;
   border: 1px solid rgba(34, 197, 94, 0.2);
 }
 
@@ -631,6 +648,7 @@
 .dark .comparison-check-yes {
   background: rgba(34, 197, 94, 0.15);
   border-color: rgba(34, 197, 94, 0.25);
+  color: #22c55e;
 }
 
 .dark .comparison-check-no {
@@ -641,15 +659,17 @@
 /* Score counter animation */
 @keyframes score-fill {
   from {
-    width: 0%;
+    transform: scaleX(0);
   }
   to {
-    width: var(--score-width, 100%);
+    transform: scaleX(var(--score-scale, 1));
   }
 }
 
 .score-bar {
   height: 4px;
+  width: 100%;
+  transform-origin: left;
   border-radius: 2px;
   background: linear-gradient(
     90deg,
@@ -754,7 +774,9 @@
   background: var(--color-landing-bg);
   opacity: 0;
   visibility: hidden;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .mobile-nav-overlay.open {
@@ -770,7 +792,9 @@
   padding: 0.75rem 0;
   opacity: 0;
   transform: translateY(20px);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .mobile-nav-overlay.open .mobile-nav-link {
@@ -1245,14 +1269,13 @@
 }
 
 .markdown-body blockquote {
-  border-left: 3px solid var(--color-accent);
-  padding-left: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
   margin: 0.75rem 0;
   color: var(--color-text-secondary);
   font-style: italic;
   background: var(--color-accent-soft);
-  border-radius: 0 8px 8px 0;
-  padding: 0.75rem 1rem;
+  padding: 1rem 1.25rem;
 }
 
 .markdown-body a {
@@ -1332,8 +1355,6 @@
   margin-bottom: 0.75rem;
   line-height: 1.3;
   letter-spacing: -0.02em;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--color-border);
 }
 
 .prose-docs h3 {
@@ -1443,12 +1464,12 @@
 }
 
 .prose-docs blockquote {
-  border-left: 4px solid var(--color-accent);
-  padding: 1rem 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
   margin: 1.5rem 0;
   color: var(--color-text-secondary);
   background: var(--color-accent-soft);
-  border-radius: 0 12px 12px 0;
   font-style: italic;
 }
 
