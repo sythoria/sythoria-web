@@ -13,7 +13,6 @@ const navLinks = [
     label: "GitHub",
     href: "https://github.com/sythoria/sythoria-desktop",
   },
-  { label: "Discord", href: "#" },
 ];
 
 export default function Footer() {
@@ -39,7 +38,11 @@ export default function Footer() {
             href="/"
             className="flex items-center gap-2.5 text-text-primary hover:text-accent transition-colors duration-300"
           >
-            <img src="/logonobg.png" alt="" className="w-8 h-8" />
+            <img
+              src="/logonobg.png"
+              alt="Sythoria - Privacy-focused desktop AI client logo"
+              className="w-8 h-8"
+            />
             <span className="text-base font-semibold tracking-tight">
               Sythoria
             </span>
