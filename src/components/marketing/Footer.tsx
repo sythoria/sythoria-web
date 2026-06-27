@@ -1,17 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useScrollInView } from "@/hooks/useScrollInView";
+import { GITHUB_OWNER, GITHUB_REPO } from "@/lib/changelog";
 
 const navLinks = [
   {
     label: "Download",
-    href: "https://github.com/sythoria/sythoria-desktop/releases/latest",
+    href: `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`,
   },
   { label: "Docs", href: "/docs" },
   {
     label: "GitHub",
-    href: "https://github.com/sythoria/sythoria-desktop",
+    href: `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}`,
   },
 ];
 
@@ -38,9 +40,11 @@ export default function Footer() {
             href="/"
             className="flex items-center gap-2.5 text-text-primary hover:text-accent transition-colors duration-300"
           >
-            <img
+            <Image
               src="/logonobg.png"
               alt="Sythoria - Privacy-focused desktop AI client logo"
+              width={32}
+              height={32}
               className="w-8 h-8"
             />
             <span className="text-base font-semibold tracking-tight">
