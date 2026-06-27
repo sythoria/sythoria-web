@@ -21,14 +21,14 @@ Connect Sythoria to Google's Gemini API to chat with Google's most capable model
 5. Paste your API key into the **API Key** field
 6. The connection indicator should turn **green** within a few seconds
 
-> Your API key is stored only in your browser's localStorage. It is never sent to Sythoria's servers. See [Privacy & Security](/docs/privacy).
+> Your API key is stored only in the application's local storage. It is never sent to Sythoria's servers. See [Privacy & Security](/docs/privacy).
 
 ## Default configuration
 
 | Setting           | Value                                                                      |
 | ----------------- | -------------------------------------------------------------------------- |
 | **API Base**      | `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions` |
-| **Default Model** | `gemini-2.5-pro`                                                           |
+| **Default Model** | `gemini-1.5-pro`                                                           |
 | **API Format**    | OpenAI-compatible (Google's compatibility layer)                           |
 | **Streaming**     | Supported                                                                  |
 
@@ -36,9 +36,9 @@ Connect Sythoria to Google's Gemini API to chat with Google's most capable model
 
 | Model ID           | Best for                                                        | Context window |
 | ------------------ | --------------------------------------------------------------- | -------------- |
-| `gemini-2.5-pro`   | Most capable — complex reasoning, long documents, deep analysis | 1M             |
-| `gemini-2.5-flash` | Fast and efficient — everyday tasks, quick Q&A                  | 1M             |
-| `gemini-2.0-flash` | Previous generation flash — general-purpose, cost-effective     | 1M             |
+| `gemini-1.5-pro`   | Most capable — complex reasoning, long documents, deep analysis | 1M             |
+| `gemini-2.0-flash` | Fast and efficient — everyday tasks, quick Q&A                  | 1M             |
+| `gemini-1.5-flash` | Previous generation flash — general-purpose, cost-effective     | 1M             |
 
 ## How it works: OpenAI-compatible endpoint
 
