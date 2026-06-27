@@ -58,8 +58,14 @@ describe("DocsTopBar", () => {
 
   it("renders the search docs button", () => {
     render(<DocsTopBar />);
-    expect(
-      screen.getByRole("button", { name: /search docs/i })
-    ).toBeInTheDocument();
+    const searchBtns = screen.getAllByRole("button", { name: /search docs/i });
+    expect(searchBtns.length).toBeGreaterThan(0);
+  });
+
+  it("renders the Changelog link", () => {
+    render(<DocsTopBar />);
+    const changelogLink = screen.getByText("Changelog");
+    expect(changelogLink).toBeInTheDocument();
+    expect(changelogLink.closest("a")).toHaveAttribute("href", "/changelog");
   });
 });
