@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import DocsSidebar from "./Sidebar";
+import Image from "next/image";
 
 export default function DocsMobileDrawer() {
   const [isOpen, setIsOpen] = useState(false);
@@ -58,7 +59,13 @@ export default function DocsMobileDrawer() {
         {/* Drawer Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-2">
-            <img src="/logonobg.png" alt="Sythoria" className="w-7 h-7" />
+            <Image
+              src="/logonobg.png"
+              alt="Sythoria"
+              width={28}
+              height={28}
+              className="w-7 h-7"
+            />
             <span className="text-base font-semibold text-text-primary">
               Docs Navigation
             </span>
