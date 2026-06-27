@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useSyncExternalStore, useState } from "react";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import DocsSearch from "@/components/docs/Search";
+import { GITHUB_OWNER, GITHUB_REPO } from "@/lib/changelog";
 
 /* ── Theme store (unchanged) ── */
 let themeListeners: Array<() => void> = [];
@@ -86,9 +88,11 @@ export default function Navbar() {
               href="/"
               className="flex items-center gap-2 text-text-primary hover:text-accent transition-colors"
             >
-              <img
+              <Image
                 src="/logonobg.png"
                 alt="Sythoria - Privacy-focused desktop AI client logo"
+                width={32}
+                height={32}
                 className="w-8 h-8"
               />
               <span className="text-lg font-medium tracking-tight">
@@ -100,14 +104,20 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-1">
               <Link
                 href="/docs"
-                className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-white/10 dark:hover:bg-white/5"
+                className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-hover"
               >
                 Docs
               </Link>
               <Link
+                href="/changelog"
+                className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-hover"
+              >
+                Changelog
+              </Link>
+              <Link
                 href="https://github.com/sythoria/sythoria-web"
                 target="_blank"
-                className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-white/10 dark:hover:bg-white/5"
+                className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-hover"
               >
                 GitHub
               </Link>
@@ -121,7 +131,7 @@ export default function Navbar() {
               {/* Theme toggle */}
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-full text-text-muted hover:text-text-primary hover:bg-white/10 dark:hover:bg-white/5 transition-colors"
+                className="p-2 rounded-full text-text-muted hover:text-text-primary hover:bg-hover transition-colors"
                 aria-label={
                   dark ? "Switch to light mode" : "Switch to dark mode"
                 }
@@ -136,7 +146,7 @@ export default function Navbar() {
 
               {/* Desktop download app */}
               <a
-                href="https://github.com/sythoria/sythoria-desktop/releases/latest"
+                href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden md:block relative group overflow-hidden rounded-full p-[1px]"
@@ -169,6 +179,13 @@ export default function Navbar() {
           <Link href="/docs" onClick={closeMobile} className="mobile-nav-link">
             Docs
           </Link>
+          <Link
+            href="/changelog"
+            onClick={closeMobile}
+            className="mobile-nav-link"
+          >
+            Changelog
+          </Link>
           <a
             href="https://github.com/sythoria/sythoria-web"
             target="_blank"
@@ -179,7 +196,7 @@ export default function Navbar() {
             GitHub
           </a>
           <a
-            href="https://github.com/sythoria/sythoria-desktop/releases/latest"
+            href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`}
             target="_blank"
             rel="noopener noreferrer"
             onClick={closeMobile}
