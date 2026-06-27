@@ -95,7 +95,7 @@ const smallFeatures: SmallFeature[] = [
     icon: Minimize2,
     title: "Lightweight",
     description:
-      "Minimal footprint, instant load. No Electron, no heavy frameworks — just a lean web app.",
+      "Minimal footprint, instant load. No Electron, no heavy frameworks — just a lean desktop app.",
     code: "bundle_size: '< 200kb'  // no electron",
     accentColor: "#10b981",
   },
@@ -166,7 +166,7 @@ export default function Features() {
               Your Keys, Your Control
             </h3>
             <p className="text-sm text-text-secondary font-light leading-relaxed mb-4">
-              API keys stay in your browser. No server-side storage, no
+              API keys stay on your local device. No server-side storage, no
               third-party access, no telemetry. Your data never leaves your
               device.
             </p>
