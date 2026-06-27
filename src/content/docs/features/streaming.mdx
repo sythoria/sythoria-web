@@ -26,12 +26,12 @@ Connection closes when the response is complete
 
 ## Benefits
 
-| Benefit                      | What it means for you                                                                        |
-| ---------------------------- | -------------------------------------------------------------------------------------------- |
-| **Lower perceived latency**  | First tokens appear in milliseconds, not after the entire response finishes                  |
-| **Native API compatibility** | Sythoria passes through the streaming protocol as-is, so behavior matches the provider's SDK |
-| **Cancellation support**     | Stop generation mid-stream with the stop button or `Escape`                                  |
-| **No added overhead**        | Sythoria's backend proxy forwards the SSE stream directly — no buffering or transformation   |
+| Benefit                      | What it means for you                                                                          |
+| ---------------------------- | ---------------------------------------------------------------------------------------------- |
+| **Lower perceived latency**  | First tokens appear in milliseconds, not after the entire response finishes                    |
+| **Native API compatibility** | Sythoria passes through the streaming protocol as-is, so behavior matches the provider's SDK   |
+| **Cancellation support**     | Stop generation mid-stream with the stop button or `Escape`                                    |
+| **No added overhead**        | Sythoria's direct connection streams responses immediately — no buffering or middleman servers |
 
 ## Supported providers
 
@@ -52,10 +52,10 @@ Click the **Stop** button that appears during generation, or press `Escape`. The
 
 ## Technical details
 
-Sythoria's backend proxy forwards the SSE stream from the provider directly to your browser. There is no buffering or transformation — it's a pure passthrough:
+The Sythoria desktop application establishes direct connections to the provider to stream responses directly. There is no middleman server, buffering, or transformation — it's a direct API connection:
 
 - **No added latency** beyond the provider's first-token time
 - **Full compatibility** with provider-specific streaming features (e.g., Anthropic's content blocks, OpenAI's function calling)
-- **Automatic reconnection** is handled by the browser's native SSE implementation
+- **Automatic reconnection** is handled by the application's connection handler
 
-For developers: the streaming uses the standard OpenAI streaming format (`data: {...}` lines terminated by `data: [DONE]`). Anthropic's native format is translated to this standard format by Sythoria's proxy layer.
+For developers: the streaming uses the standard OpenAI streaming format (`data: {...}` lines terminated by `data: [DONE]`). Anthropic's native format is translated to this standard format by Sythoria's internal client layer.
