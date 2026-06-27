@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
+import Image from "next/image";
 
 export default function InteractiveGlowSphere() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -244,9 +245,11 @@ export default function InteractiveGlowSphere() {
 
       {/* Decorative center ring overlay */}
       <div className="absolute w-44 h-44 rounded-full border border-white/5 dark:border-white/5 bg-gradient-to-tr from-white/5 via-transparent to-white/5 backdrop-blur-[2px] pointer-events-none flex items-center justify-center shadow-inner">
-        <img
+        <Image
           src="/logonobg.png"
           alt="Sythoria Logo"
+          width={64}
+          height={64}
           className="w-16 h-16 opacity-85 hover:scale-110 transition-transform duration-500 ease-out"
         />
       </div>
