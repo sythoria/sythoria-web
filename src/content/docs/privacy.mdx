@@ -20,7 +20,7 @@ When you send a message, your API key is included in the request to the AI provi
 
 ## No server-side storage
 
-Sythoria's backend is a thin proxy that forwards requests to AI provider APIs. We do not:
+Sythoria is a desktop application that connects directly to the AI provider APIs from your machine. We do not run any middleman servers or proxies to handle your requests. We do not:
 
 - Store your conversations on any server
 - Log your prompts or responses
@@ -62,16 +62,6 @@ For absolute privacy, use Sythoria with **Ollama** or any local model server. Wi
 - No network connection required (after model download)
 
 See the [Ollama setup guide](/docs/providers/ollama) to get started with local models.
-
-## What about the proxy?
-
-Sythoria uses a backend proxy to forward API requests. This proxy:
-
-- **Does not store** requests or responses — they pass through in real-time
-- **Does not log** API keys, prompts, or model outputs
-- **Exists only** to handle CORS restrictions that web environments enforce on cross-origin API calls
-
-The proxy is stateless. Each request is independent, and no data persists after the response is sent.
 
 ## Desktop app security
 
