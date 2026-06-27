@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { Download } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { GITHUB_OWNER, GITHUB_REPO } from "@/lib/changelog";
 
 /* ────────────────────────────────────────── */
 /*  Kinetic line entrance                    */
@@ -27,45 +28,8 @@ function SplitLine({
   );
 }
 
-/* ────────────────────────────────────────── */
-/*  Terminal chat teaser                     */
-/* ────────────────────────────────────────── */
-function TerminalTeaser() {
-  return (
-    <div className="terminal-frame w-full max-w-md">
-      {/* Title bar */}
-      <div className="terminal-header">
-        <span className="terminal-dot terminal-dot-red" />
-        <span className="terminal-dot terminal-dot-yellow" />
-        <span className="terminal-dot terminal-dot-green" />
-        <span className="ml-auto text-[10px] font-mono text-text-muted tracking-wider">
-          sythoria
-        </span>
-      </div>
-
-      {/* Body */}
-      <div className="terminal-body !min-h-0 !p-5 space-y-2 text-[12px] leading-relaxed">
-        <p>
-          <span className="terminal-prompt">{"> "}</span>
-          <span className="text-accent">sythoria launch</span>
-        </p>
-        <p className="text-text-muted">Initializing Sythoria Desktop...</p>
-        <p className="text-[#22c55e]">✓ Local secure storage loaded</p>
-        <p className="text-[#22c55e]">✓ Connected to local model (Ollama)</p>
-        <p>
-          <span className="terminal-prompt">{"> "}</span>
-          <span className="terminal-response">
-            Ready. Ask anything...
-            <span className="terminal-cursor-block" />
-          </span>
-        </p>
-      </div>
-    </div>
-  );
-}
-
 /* ════════════════════════════════════════════
-   HERO — cinematic split layout
+   HERO — cinematic centered layout with teaser
    ════════════════════════════════════════════ */
 
 export default function Hero({
@@ -75,15 +39,24 @@ export default function Hero({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  /* ── Entrance animation variants ── */
   const ease = [0.16, 1, 0.3, 1] as const;
 
   return (
     <section
       ref={containerRef}
-      className="relative min-h-[90vh] flex items-center px-6 sm:px-10 lg:px-16 overflow-hidden pt-24 pb-16"
+      className="relative min-h-[92vh] flex flex-col justify-between items-center px-6 sm:px-10 lg:px-16 overflow-visible pt-32 pb-0"
     >
       {/* ───── Background decorations ───── */}
+
+      {/* Large centered glow */}
+      <div
+        className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] rounded-full opacity-35 blur-[120px]"
+        style={{
+          background:
+            "radial-gradient(circle, var(--color-glow-primary) 0%, transparent 70%)",
+        }}
+        aria-hidden
+      />
 
       {/* Large circle — top-right */}
       <motion.div
@@ -96,26 +69,25 @@ export default function Hero({
 
       {/* Horizontal accent lines */}
       <div
-        className="pointer-events-none absolute top-[30%] left-0 w-full h-px bg-gradient-to-r from-transparent via-border/40 to-transparent opacity-60"
+        className="pointer-events-none absolute top-[25%] left-0 w-full h-px bg-gradient-to-r from-transparent via-border/40 to-transparent opacity-60"
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute top-[65%] left-0 w-full h-px bg-gradient-to-r from-transparent via-border/20 to-transparent opacity-40"
+        className="pointer-events-none absolute top-[55%] left-0 w-full h-px bg-gradient-to-r from-transparent via-border/20 to-transparent opacity-40"
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute top-[85%] left-0 w-full h-px bg-gradient-to-r from-transparent via-border/10 to-transparent opacity-20"
+        className="pointer-events-none absolute top-[75%] left-0 w-full h-px bg-gradient-to-r from-transparent via-border/10 to-transparent opacity-20"
         aria-hidden
       />
 
-      {/* ───── Content wrapper — split layout ───── */}
-      <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center gap-12 lg:gap-8 z-10">
-        {/* ═══ LEFT — typography (60%) ═══ */}
+      {/* ───── Content wrapper — centered ───── */}
+      <div className="max-w-4xl mx-auto w-full flex flex-col items-center text-center justify-start z-10 flex-grow">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease }}
-          className="flex-[3] flex flex-col items-start text-left"
+          className="flex flex-col items-center"
         >
           {/* Version badge */}
           <motion.div
@@ -129,22 +101,22 @@ export default function Hero({
           </motion.div>
 
           {/* Kinetic headline */}
-          <h1 className="tracking-tighter leading-[1.15] sm:leading-[1.1] md:leading-[1.0] lg:leading-[0.95] mb-6">
+          <h1 className="tracking-tighter leading-[1.15] sm:leading-[1.1] md:leading-[1.0] lg:leading-[0.95] mb-6 flex flex-col items-center">
             <SplitLine
               delay={0.1}
-              className="text-5xl sm:text-7xl font-bold text-text-primary"
+              className="text-5xl sm:text-7xl font-bold text-text-primary block"
             >
               The private
             </SplitLine>
             <SplitLine
               delay={0.3}
-              className="text-6xl sm:text-8xl font-bold text-accent"
+              className="text-6xl sm:text-8xl font-bold text-accent block"
             >
               interface
             </SplitLine>
             <SplitLine
               delay={0.5}
-              className="text-5xl sm:text-7xl font-light text-text-muted"
+              className="text-5xl sm:text-7xl font-light text-text-muted block"
             >
               for every model.
             </SplitLine>
@@ -155,7 +127,7 @@ export default function Hero({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.65, duration: 0.9, ease }}
-            className="text-lg text-text-secondary font-light max-w-xl leading-relaxed mb-10"
+            className="text-lg sm:text-xl text-text-secondary font-light max-w-2xl leading-relaxed mb-8"
           >
             A deeply personal, high-precision instrument for AI interaction.
             Connects to OpenAI, Anthropic, Gemini, Ollama, and any compatible
@@ -167,10 +139,12 @@ export default function Hero({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.85, duration: 0.8, ease }}
-            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto mb-16"
           >
             <Link
-              href="https://github.com/sythoria/sythoria-desktop/releases/latest"
+              href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="magnetic-btn group relative flex items-center justify-center gap-2.5 px-8 py-4 bg-text-primary text-surface rounded-full font-medium transition-transform hover:scale-105"
             >
               <Download size={18} />
@@ -183,38 +157,43 @@ export default function Hero({
           </motion.div>
         </motion.div>
 
-        {/* ═══ RIGHT — terminal teaser (40%) ═══ */}
-        <motion.div
-          initial={{ opacity: 0, x: 40, rotateY: -8 }}
-          animate={{ opacity: 1, x: 0, rotateY: -5 }}
-          transition={{ delay: 0.5, duration: 1.2, ease }}
-          className="flex-[2] flex justify-center lg:justify-end w-full"
-        >
+        {/* ── macOS Demo Showcase ── */}
+        <div className="w-full max-w-7xl relative z-20 overflow-visible">
+          {/* Ambient glow behind showcase */}
           <div
-            className="relative"
+            className="absolute -inset-10 rounded-2xl opacity-40 blur-3xl pointer-events-none"
             style={{
-              perspective: "1000px",
+              background:
+                "radial-gradient(circle, var(--color-glow-primary), transparent 70%)",
             }}
-          >
-            {/* Glow behind terminal */}
-            <div
-              className="absolute -inset-12 rounded-3xl opacity-50 blur-3xl pointer-events-none"
-              style={{
-                background:
-                  "radial-gradient(circle, var(--color-glow-primary), transparent 70%)",
-              }}
-              aria-hidden
-            />
+            aria-hidden
+          />
 
-            <div
-              style={{
-                transform: "rotateY(-5deg) rotateX(3deg)",
-              }}
-            >
-              <TerminalTeaser />
+          {/* macOS window frame */}
+          <div className="terminal-frame overflow-hidden shadow-2xl">
+            {/* Header */}
+            <div className="terminal-header">
+              <span className="terminal-dot terminal-dot-red" />
+              <span className="terminal-dot terminal-dot-yellow" />
+              <span className="terminal-dot terminal-dot-green" />
+              <span className="ml-auto font-mono text-[11px] text-text-muted select-none">
+                sythoria
+              </span>
+            </div>
+
+            {/* Video body */}
+            <div className="terminal-body !p-0 overflow-hidden rounded-b-xl aspect-video bg-black flex items-center justify-center">
+              <video
+                src="/demo.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
