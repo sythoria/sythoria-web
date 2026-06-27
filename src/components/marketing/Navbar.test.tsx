@@ -59,4 +59,14 @@ describe("Navbar", () => {
       screen.getByRole("button", { name: /search docs/i })
     ).toBeInTheDocument();
   });
+
+  it("renders the Changelog link", () => {
+    render(<Navbar />);
+    const changelogLinks = screen.getAllByText("Changelog");
+    expect(changelogLinks.length).toBeGreaterThan(0);
+    expect(changelogLinks[0].closest("a")).toHaveAttribute(
+      "href",
+      "/changelog"
+    );
+  });
 });
