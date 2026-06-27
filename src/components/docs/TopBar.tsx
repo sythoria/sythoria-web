@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useSyncExternalStore, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui";
 import DocsSearch from "./Search";
+import { GITHUB_OWNER, GITHUB_REPO } from "@/lib/changelog";
 
 let themeListeners: Array<() => void> = [];
 function emitThemeChange() {
@@ -69,9 +71,11 @@ export default function DocsTopBar() {
             href="/docs"
             className="flex items-center gap-2 text-text-primary hover:text-accent transition-colors"
           >
-            <img
+            <Image
               src="/logonobg.png"
               alt="Sythoria - Privacy-focused desktop AI client logo"
+              width={32}
+              height={32}
               className="w-8 h-8"
             />
             <span className="text-lg font-medium tracking-tight hidden sm:block">
@@ -101,6 +105,13 @@ export default function DocsTopBar() {
             </button>
 
             <Link
+              href="/changelog"
+              className="hidden sm:block text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-hover"
+            >
+              Changelog
+            </Link>
+
+            <Link
               href="/"
               className="hidden sm:block text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-hover"
             >
@@ -110,7 +121,9 @@ export default function DocsTopBar() {
             <Button
               variant="primary"
               size="sm"
-              href="https://github.com/sythoria/sythoria-desktop/releases/latest"
+              href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="rounded-full"
             >
               Download
