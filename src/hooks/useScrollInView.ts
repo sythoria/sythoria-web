@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export function useScrollInView(threshold = 0.1) {
-  const ref = useRef<HTMLDivElement>(null);
+export function useScrollInView<T extends HTMLElement = HTMLDivElement>(
+  threshold = 0.1
+) {
+  const ref = useRef<T>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
