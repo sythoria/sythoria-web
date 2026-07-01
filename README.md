@@ -1,70 +1,89 @@
-# Sythoria
+# Sythoria Web & Docs
 
-A lightweight, privacy-first AI chat interface that connects to any OpenAI-compatible API. No accounts, no tracking — just pick a provider, add your key, and start chatting.
+Official landing page and documentation website for [Sythoria](https://github.com/sythoria/sythoria-desktop) — a lightweight, privacy-first AI desktop client.
 
-## Features
+Live website: [sythoria.app](https://sythoria.app)
 
-- **Multi-provider support** — OpenAI, Anthropic, Google Gemini, Ollama, OpenRouter, NVIDIA NIM, and any custom OpenAI-compatible endpoint
-- **Streaming responses** — Real-time, token-by-token output via Server-Sent Events
-- **Privacy-first** — API keys stored only in your browser; zero telemetry; no server-side data
-- **Web search integration** — Augment responses with live search (Google, SearXNG, Firecrawl, or custom)
-- **System prompts** — Built-in presets for Code Help, Code Review, Debug, and Refactor, plus custom prompts
-- **Dark/light theme** — Toggle appearance in settings
-- **Free and open source** — No subscriptions, no paywalls, no feature gates
+---
 
-## Quick Start
+## About Sythoria
 
-### Download the desktop app
+Sythoria is a privacy-first, lightweight AI desktop chat client that allows you to connect to any OpenAI-compatible API (such as OpenAI, Anthropic, Google Gemini, Ollama, OpenRouter, NVIDIA NIM, and custom endpoints) using your own API keys. 
 
-Download the latest release from [GitHub Releases](https://github.com/sythoria/sythoria-desktop/releases/latest).
+All API keys are stored securely in local storage and never leave your machine.
 
-### Run locally for development
+> [!NOTE]
+> This repository contains the source code for the **official landing page and documentation website**.
+> If you are looking for the desktop application itself, visit the [sythoria-desktop](https://github.com/sythoria/sythoria-desktop) repository.
 
-```bash
-npm install
-npm run dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+## Tech Stack
 
-## Supported Providers
+This website is built using:
+- **Framework**: Next.js 16 (App Router)
+- **Styling**: Tailwind CSS v4 + Vanilla CSS (`src/app/globals.css`)
+- **Icons**: Lucide React (`lucide-react`)
+- **Testing**: Vitest (`vitest`) + React Testing Library
+- **Documentation Engine**: Custom lightweight MDX frontmatter parser (`src/lib/docs.ts`) and `next-mdx-remote`
 
-| Provider | API Key Required | Type |
-|----------|-----------------|------|
-| OpenAI | Yes | Cloud |
-| Anthropic | Yes | Cloud |
-| Google Gemini | Yes | Cloud |
-| Ollama | No | Local |
-| OpenRouter | Yes | Cloud |
-| NVIDIA NIM | Yes | Cloud |
-| Custom | Optional | Any |
+---
 
-See the [full documentation](https://sythoria.app/docs/getting-started) for provider-specific setup guides.
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v18 or higher recommended)
+- npm
+
+### Run Locally for Development
+
+1. Clone the repository and install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+3. Open [http://localhost:3000](http://localhost:3000) in your browser to view the website.
+
+---
 
 ## Scripts
 
+The following commands are available:
+
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Lint, format check, and build for production |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint |
-| `npm run lint:fix` | Run ESLint with auto-fix |
-| `npm run format` | Format code with Prettier |
-| `npm run test` | Run tests with Vitest |
-| `npm run test:watch` | Run tests in watch mode |
-| `npm run check` | Full check: lint + format + test + build |
+| `npm run dev` | Starts the Next.js development server |
+| `npm run build` | Lints, format-checks, and builds the production bundle |
+| `npm run start` | Starts the production server |
+| `npm run lint` | Runs ESLint check |
+| `npm run lint:check` | Runs ESLint on the `src/` directory |
+| `npm run lint:fix` | Automatically fixes fixable ESLint errors in `src/` |
+| `npm run format` | Formats code with Prettier |
+| `npm run format:check` | Verifies code formatting with Prettier |
+| `npm run test` | Runs unit and component tests once with Vitest |
+| `npm run test:watch` | Runs Vitest in watch mode |
+| `npm run check` | Pre-commit check: runs linting, formatting, testing, and builds the production bundle |
 
-## Documentation
+---
 
-Full docs are available at [sythoria.app/docs](https://sythoria.app/docs):
+## Testing
 
-- [Quickstart](https://sythoria.app/docs/getting-started)
-- [Streaming Responses](https://sythoria.app/docs/features/streaming)
-- [Multi-Provider Chat](https://sythoria.app/docs/features/multi-provider)
-- [Configuration](https://sythoria.app/docs/configuration)
-- [Privacy & Security](https://sythoria.app/docs/privacy)
+All tests use Vitest and React Testing Library. To run tests, execute:
+
+```bash
+npm run test
+```
+
+Test files are placed alongside the components they cover, using the `.test.tsx` or `.test.ts` naming convention.
+
+---
 
 ## License
 
-Open source. See [LICENSE](LICENSE) for details.
+Open source under the MIT License.
