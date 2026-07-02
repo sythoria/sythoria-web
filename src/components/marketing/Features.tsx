@@ -96,7 +96,7 @@ const smallFeatures: SmallFeature[] = [
     title: "Lightweight",
     description:
       "Minimal footprint, instant load. No Electron, no heavy frameworks — just a lean desktop app.",
-    code: "bundle_size: '< 200kb'  // no electron",
+    code: "bundle_size: '< 10MB'  // no electron",
     accentColor: "#10b981",
   },
   {
