@@ -1,0 +1,68 @@
+---
+title: Adaptive Motion Design
+description: Explore Sythoria's spring-physics motion framework and its performance-adaptive animation scaling.
+---
+
+# Adaptive Motion Design
+
+Sythoria features a bespoke motion design system that replicates the feel of premium native desktop window managers. Built with custom spring-physics tokens and animations, the interface responds fluidly to clicks, hovers, panel collapses, and transitions.
+
+---
+
+## Spring-Physics Engine
+
+Rather than relying on linear or standard cubic-bezier timelines, Sythoria uses spring-physics equations to guide transitions. This mimics real-world momentum and friction:
+
+- **`springs.snappy`**: High responsiveness with minimal damping (Stiffness: 300, Damping: 30). Used for UI controls, sidebar toggle shifts, and notification popups.
+- **`springs.gentle`**: A softer, deceleration-focused spring (Stiffness: 120, Damping: 14). Used for cards, onboarding dashboards, and modals.
+- **`springs.bouncy`**: A lively spring with soft overshoot (Stiffness: 400, Damping: 10). Used to draw attention during entrance transitions (e.g. welcome screen).
+
+### Interactive Scaling Tokens
+
+Tactile micro-scaling provides immediate physical feedback to user clicks:
+
+- **Hover state (`pop`)**: Scales items slightly outward (to `1.04` scale).
+- **Active click (`press`)**: Compresses buttons (to `0.95` scale) to signify activation.
+- **Secondary click (`subtle`)**: Subtle press compression (to `0.98` scale).
+
+---
+
+## Adaptive Motion Architecture
+
+To ensure fluid performance across all setups and respect accessibility guidelines, Sythoria implements an adaptive animation engine:
+
+```mermaid
+graph TD
+    A[App Startup] --> B{Manual toggle "Animations Enabled"?}
+    B -- No --> C[Disable Animations]
+    B -- Yes --> D{Media: prefers-reduced-motion?}
+    D -- Yes --> C
+    D -- No --> E{Hardware: CPU Cores <= 4?}
+    E -- Yes --> F[Enable Essential Animations Only]
+    E -- No --> G[Full Physics-Based Springs Enabled]
+```
+
+### 1. Reduced Motion Compliance
+
+Sythoria automatically queries the operating system's accessibility state:
+
+- If the OS-level media query `prefers-reduced-motion: reduce` is active, the app disables all spatial offsets and transitions immediately.
+- A manual **Animations** toggle is also available under Settings, allowing users to override and turn off motion effects entirely.
+
+### 2. Low-End Hardware Detection
+
+To prevent frame drops on older hardware, the application checks the available hardware threads:
+
+- If `navigator.hardwareConcurrency` is **4 or fewer cores**, Sythoria marks the device as low-spec.
+- Non-essential aesthetics (such as floating icon loops, background gradients, or heavy panel scaling) are replaced with instant layout swaps to preserve CPU cycles and prolong battery life.
+
+---
+
+## Component Integrations
+
+The animation framework is natively woven into the application layout:
+
+- **`MotionButton`**: A safe wrapper over active button elements that filters interactive scaling through the safe-motion hooks.
+- **Start Screen Onboarding**: Sequence animations staggers headings, text, and buttons into view one-by-one using `springs.gentle` with offset delays.
+- **Collapsible Sidebar**: Animates width, opacity, and borders smoothly during expand/collapse triggers, instantly resizing the text area without visual stutter.
+- **Modals & Toasts**: Modal overlays fade in instantly, while modal bodies translate upward from a small distance using a gentle spring. Toasts slide into view from the screen edge with a snappy spring.
