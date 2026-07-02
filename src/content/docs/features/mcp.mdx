@@ -1,0 +1,58 @@
+---
+title: Model Context Protocol (MCP)
+description: Connect Sythoria to local and remote tools using the Model Context Protocol (MCP).
+---
+
+# Model Context Protocol (MCP)
+
+Sythoria fully supports the **Model Context Protocol (MCP)**, an open standard that enables secure integrations between AI models and local or remote data sources and tools.
+
+With MCP, you can plug in custom toolkits—such as database clients, filesystem managers, web searchers, or API clients—and make them instantly available to your models.
+
+## Supported Transports
+
+Sythoria supports three communication transports for connecting to MCP servers:
+
+### 1. Stdio (Standard Input/Output)
+
+Spawns a local subprocess on your machine and communicates with it via standard I/O streams.
+
+- **Usage**: Best for local scripts, CLI utilities, and packages (e.g. `npx`, `uvx`, `python`).
+- **Environment variables**: Per-server environment variables can be set in settings. These are stored securely in your OS keychain and loaded on startup.
+- **Security**: Only whitelisted system env variables (like `PATH`, `HOME`, `USER`) or keys matching specific patterns (e.g. `*_API_KEY`, `*_TOKEN`) are forwarded to the child process to prevent credential leaks.
+
+### 2. SSE (Server-Sent Events)
+
+Establishes a connection to an external or running server over HTTP, receiving messages via server-sent events.
+
+- **Usage**: Best for servers running in containers or external machines.
+
+### 3. Streamable HTTP
+
+A lightweight HTTP transport for remote client connections.
+
+---
+
+## Tool Namespacing & Prompt Injection
+
+When you connect to an MCP server, Sythoria fetches all of its exposed tools. To keep the model's tool schema clean and avoid naming conflicts across servers, Sythoria uses a namespacing convention:
+
+- **Namespaced tool names**: Exposed tools are prefixed with the server name: `serverName__toolName`.
+- **System Prompt Injection**: Sythoria automatically injects server statuses and namespaced tool schemas into the LLM system prompt prior to invocation, ensuring the model understands when and how to call each tool.
+
+---
+
+## Network Security & Private IP Blocking
+
+To prevent Server-Side Request Forgery (SSRF) and protect private local systems, Sythoria enforces strict network rules on SSE and HTTP MCP connections:
+
+- **Loopback & Private Blocklists**: The application blocks loopback hostnames (`localhost`, `127.0.0.1`, `::1`) and private IPv4/IPv6 CIDR ranges (RFC 1918 private subnets) by default.
+- **Opt-In Local Access**: If you need to connect to a local container or a developer server running on your network (e.g. `http://localhost:8000`), you must explicitly toggle **Allow Local Network** in that server's config settings.
+
+---
+
+## Rich Multimodal (Image) Tool Returns
+
+Sythoria support is not limited to text-based tool responses. MCP servers can return rich image content in their response blocks:
+
+- **Base64 Image Rendering**: If an MCP tool returns image content with a valid mime-type (such as `image/png` or `image/jpeg`) and base64-encoded payload, Sythoria's chat area automatically decodes and displays the image inline within the conversation flow. This allows the model to "see" screenshots, graphs, or visual assets produced by its tools.
