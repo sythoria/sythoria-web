@@ -115,7 +115,7 @@ export default function Navbar() {
                 Changelog
               </Link>
               <Link
-                href="https://github.com/sythoria/sythoria-web"
+                href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}`}
                 target="_blank"
                 className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-hover"
               >
@@ -187,7 +187,7 @@ export default function Navbar() {
             Changelog
           </Link>
           <a
-            href="https://github.com/sythoria/sythoria-web"
+            href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}`}
             target="_blank"
             rel="noopener noreferrer"
             onClick={closeMobile}
