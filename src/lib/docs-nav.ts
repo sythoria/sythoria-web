@@ -22,6 +22,13 @@ export const docsNav: DocNavGroup[] = [
     items: [
       { label: "Streaming Responses", slug: "features/streaming" },
       { label: "Multi-Provider Chat", slug: "features/multi-provider" },
+      { label: "Agentic Tool Loop", slug: "features/agentic-tool-loop" },
+      { label: "Model Context Protocol", slug: "features/mcp" },
+      { label: "Adaptive Motion Design", slug: "features/motion-design" },
+      {
+        label: "Troubleshooting & Logs",
+        slug: "features/logging-troubleshooting",
+      },
     ],
   },
   {
