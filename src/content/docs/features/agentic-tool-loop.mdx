@@ -1,0 +1,68 @@
+---
+title: Agentic Tool Loop
+description: How Sythoria performs multi-step executions, merges native search with project workspace controls, and manages user consent gates.
+---
+
+# Agentic Tool Loop
+
+Sythoria is equipped with an autonomous **Agentic Tool Loop** that allows supported models to perform multi-step tasks, search the web, read/write local files, and run commands.
+
+Instead of just responding with text, the model can execute actions, receive the output, and continue reasoning until the task is complete.
+
+## How the Tool Loop Works
+
+The tool execution loop runs sequentially up to a user-defined limit (default: 5 steps):
+
+1. **Prompt Compiling**: Sythoria builds the system prompt, appending repository-specific instructions from `AGENTS.md` and serializing the available tools.
+2. **LLM Invocation**: The application sends the history to the LLM. If the model determines it needs info or action, it returns one or more tool calls.
+3. **Execution & Sandboxing**: Native tools run directly in Tauri. For Git repositories, Sythoria creates an isolated temporary worktree to run edits safely.
+4. **HITL & Trust Gates**: Sensitive tools (e.g., shell executions, write tools) pause execution and await user confirmation.
+5. **Feedback Loop**: Results (including line diffs and base64-encoded images) are formatted and fed back to the LLM for the next reasoning step.
+
+## Merged Tool Directory
+
+Sythoria combines three categories of tools into a single schema list passed to the model:
+
+### 1. Native Web Search Tools
+
+Available if a search provider (Google, SearXNG, Firecrawl, etc.) is configured:
+
+- `search_query(query)`: Search the web for current or factual information.
+- `fetch_url(url)`: Extract readable markdown/text from a web page.
+
+### 2. Native Project Tools
+
+Available when working inside a project workspace, restricted by workspace permissions:
+
+- `project_glob(pattern)`: Discovers file paths matching glob patterns.
+- `project_grep(pattern)`: Performs high-speed codebase regex searches.
+- `project_list_dir(dir_path)`: Lists directory contents.
+- `project_read(file_path)`: Reads target file contents.
+- `project_git_status()` / `project_git_diff()`: Checks Git workspace status.
+- `project_write(file_path, content)`: Overwrites files (Requires Write/Full).
+- `project_edit(file_path, old_string, new_string)`: Performs precise target replacements (Requires Write/Full).
+- `project_git_commit(message)`: Stages and commits changes (Requires Write/Full).
+- `project_bash(command)`: Executes commands in a stateful shell (Requires Full).
+
+### 3. Model Context Protocol (MCP) Tools
+
+Custom tools exposed by active local or remote MCP servers. These are automatically namespaced (e.g., `server_name__tool_name`) to prevent naming conflicts.
+
+## Security & Human-In-The-Loop (HITL)
+
+To protect your system, Sythoria enforces security gates:
+
+| Tool Category / Name                      | Default Action | Security Behavior                                       |
+| :---------------------------------------- | :------------- | :------------------------------------------------------ |
+| **Read-only project tools**               | Auto-approve   | Executes instantly in workspace.                        |
+| **Trusted MCP servers**                   | Auto-approve   | Instantly runs tool calls.                              |
+| **Untrusted MCP servers**                 | Confirm Once   | Prompts for confirmation; can be approved permanently.  |
+| **`project_write` / `project_edit`**      | Await Consent  | Requires explicit user click to write or edit code.     |
+| **`project_bash` / `project_git_commit`** | Await Consent  | Blocked until user manually approves command execution. |
+
+## Loop Configuration
+
+You can customize loop limits under **Settings > Configuration**:
+
+- **Max Tool Steps**: Sets the maximum loop iterations (1 to 20). If the model exceeds this limit, it halts and synthesizes the best answer using gathered outputs.
+- **Trust Settings**: Toggle which MCP servers are marked as trusted.
