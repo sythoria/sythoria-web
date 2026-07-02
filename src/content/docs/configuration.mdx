@@ -7,13 +7,28 @@ description: Customize Sythoria with model selection, temperature, system prompt
 
 Sythoria works out of the box, but offers several customization options to tailor the experience to your workflow.
 
-## Model selection
+## Model selection & health checks
 
 Choose your active model from the **dropdown in the chat input bar**. Available models are the ones you've configured in Settings. To add or remove models:
 
 1. Open **Settings** from the sidebar
 2. Add models with the **Add Model** button, or delete existing ones with the trash icon
-3. Each model shows a live connection indicator — green means ready
+3. Each model shows a live connection indicator.
+
+### Connection indicators
+
+- **Green Dot**: Connected (the model endpoint is active and responsive).
+- **Pulsing Yellow Dot**: Connecting (a connection check is in progress).
+- **Red Dot**: Error (connection check failed or request was refused).
+- **Gray Dot**: Disconnected or disabled.
+
+### Health check mechanism
+
+Sythoria automatically performs connection health checks in the background to ensure your models are ready to respond:
+
+- **Interval**: Checks are run every **5 minutes**.
+- **Throttling**: Consecutively triggered manual or automatic checks are rate-limited to once every **30 seconds** to avoid provider API abuse.
+- **Background activity**: You can toggle background checks under Settings. If **Disable Background Activity** is enabled, all background health checks stop immediately, and indicators return to gray.
 
 See [Multi-Provider Chat](/docs/features/multi-provider) for details on managing multiple providers.
 
@@ -85,6 +100,6 @@ Each model in Settings has these fields:
 | **Provider Preset** | Auto-fills the API base URL and default model                            |
 | **API Base URL**    | The endpoint for API calls (auto-filled by presets)                      |
 | **Model ID**        | The model identifier to use (e.g., `gpt-4o`, `claude-sonnet-4-20250514`) |
-| **API Key**         | Your authentication key (stored locally only)                            |
+| **API Key**         | Your authentication key (stored securely in your OS keychain)            |
 
 See the [Providers](/docs/providers/openai) section for provider-specific setup guides.
