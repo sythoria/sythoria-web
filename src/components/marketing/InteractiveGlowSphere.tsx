@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useReducedMotion } from "framer-motion";
 import Image from "next/image";
 
@@ -8,8 +8,6 @@ export default function InteractiveGlowSphere() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
-  const [mouse, setMouse] = useState({ x: 0, y: 0, targetX: 0, targetY: 0 });
-  const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -67,6 +65,10 @@ export default function InteractiveGlowSphere() {
       });
     }
 
+    let hovered = false;
+    let targetX = 0;
+    let targetY = 0;
+
     let rotX = 0;
     let rotY = 0;
     let time = 0;
@@ -77,17 +79,17 @@ export default function InteractiveGlowSphere() {
       const rect = container.getBoundingClientRect();
       const x = e.clientX - rect.left - rect.width / 2;
       const y = e.clientY - rect.top - rect.height / 2;
-      setMouse((prev) => ({
-        ...prev,
-        targetX: x * 0.003,
-        targetY: y * 0.003,
-      }));
+      targetX = x * 0.003;
+      targetY = y * 0.003;
     };
 
-    const handleMouseEnter = () => setHovered(true);
+    const handleMouseEnter = () => {
+      hovered = true;
+    };
     const handleMouseLeave = () => {
-      setHovered(false);
-      setMouse((prev) => ({ ...prev, targetX: 0, targetY: 0 }));
+      hovered = false;
+      targetX = 0;
+      targetY = 0;
     };
 
     const handleClick = () => {
@@ -115,8 +117,8 @@ export default function InteractiveGlowSphere() {
 
       // Smooth mouse rotation
       if (!shouldReduceMotion) {
-        rotX += (mouse.targetY - rotX) * 0.08;
-        rotY += (mouse.targetX - rotY) * 0.08;
+        rotX += (targetY - rotX) * 0.08;
+        rotY += (targetX - rotY) * 0.08;
       }
 
       // Standard slow auto rotation
@@ -234,7 +236,7 @@ export default function InteractiveGlowSphere() {
       container.removeEventListener("click", handleClick);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [shouldReduceMotion, hovered, mouse.targetX, mouse.targetY]);
+  }, [shouldReduceMotion]);
 
   return (
     <div
