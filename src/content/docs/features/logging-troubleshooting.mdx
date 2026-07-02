@@ -1,0 +1,78 @@
+---
+title: Troubleshooting & Logs
+description: How to view application logs, diagnose connection issues, and troubleshoot API and MCP execution errors.
+---
+
+# Troubleshooting & Logs
+
+Sythoria is built with developer-friendly diagnostics, including structured logs, connection indicators, and specific troubleshooting hints when an API or local command fails to execute.
+
+---
+
+## Structured Logging System
+
+The desktop application maintains a structured log of its operations to help locate integration bugs without compromising your privacy (logs are strictly local and never phone home).
+
+### Log Sources
+
+Logs are categorized into seven operational namespaces:
+
+- `general`: Core startup, lifecycle events, and window management.
+- `chat`: Message history, exports, database operations, and user inputs.
+- `model`: Provider config loading, presets, and health-checks.
+- `search`: Web search queries, scrapers, and IP blocks.
+- `mcp`: MCP server starts, stops, tool calls, and namespaces.
+- `storage`: File reads, saves, and keychain credentials.
+- `stream`: SSE connection chunks and WebSocket events.
+
+### Buffer & Rendering Synchronization
+
+- **Logs Buffer**: The application stores a maximum of **500 logs** in a memory buffer. When the buffer is full, old logs are discarded.
+- **UI Syncing**: To keep the app highly responsive and avoid rendering lag during high-frequency tasks (like SSE streaming), logs are batched and synced to the UI store using `requestAnimationFrame`.
+- **Log Viewer**: You can view, filter (by source and severity), and clear logs under **Settings > Logs**.
+- **Native Logging**: Logs are also written to standard consoles and integrated with the native platform logger (`@tauri-apps/plugin-log`).
+
+---
+
+## Error Handling & Diagnosis
+
+Sythoria parses complex API and OS-level errors into human-readable notifications. Every parsed error contains:
+
+1.  **A clean error message** (e.g., stripping noisy stack traces or provider-specific wrapper JSONs).
+2.  **An actionable suggestion** (e.g., what buttons to click or configurations to verify).
+3.  **A severity category** (`network`, `auth`, `rate-limit`, `server`, `config`, `search`, `mcp`, or `unknown`).
+4.  **A retryability flag** (tells the chat loop whether it's safe to retry the request automatically).
+
+---
+
+## Troubleshooting Common Errors
+
+### 1. Model Connection Health Failures (Red Dots)
+
+If a model preset shows a **Red Connection Dot**:
+
+- Verify that your internet connection is active.
+- Double-check that the **API Key** is typed correctly (under Settings > Model Providers).
+- If using a local model (Ollama), make sure your local server is running (`ollama run <model>`) and that the API base URL matches `http://localhost:11434/v1/chat/completions`.
+
+### 2. MCP Server Launch Failures (Stdio)
+
+When a local stdio MCP server fails to start, Sythoria inspects the spawn error and suggests missing runtimes:
+
+| Spawn Failure                      | Detected Command      | Actionable Fix                                                                                    |
+| :--------------------------------- | :-------------------- | :------------------------------------------------------------------------------------------------ |
+| **`npx` not found**                | `npx`                 | Node.js is missing. Install Node.js from [nodejs.org](https://nodejs.org).                        |
+| **`uvx` / `uv` not found**         | `uvx` or `uv`         | Astral uv is missing. Install uv from [astral.sh](https://docs.astral.sh/uv/).                    |
+| **`python` / `python3` not found** | `python` or `python3` | Python is missing. Install Python from [python.org](https://www.python.org/downloads/).           |
+| **`pipx` not found**               | `pipx`                | pipx is missing. Run `python -m pip install --user pipx` to install.                              |
+| **`docker` not found**             | `docker`              | Docker is missing. Install Docker Desktop from [docker.com](https://docs.docker.com/get-docker/). |
+
+> [!TIP]
+> **Command Formatting**: For stdio transport, the **Command** field should contain the executable name _only_ (e.g. `npx`). All extra parameters (e.g. `-y`, `@modelcontextprotocol/server-postgres`) must be added separately in the **Arguments** input list. Alternatively, you can use the absolute path to the binary (e.g. `/usr/local/bin/npx`).
+
+### 3. MCP Connection Refused or Timeout (SSE)
+
+If connecting to an SSE or HTTP MCP server times out or returns connection refused:
+
+- Verify that the server process is running and bound to the correct port.
+- If the server is running on `localhost` or a local IP (e.g., `192.168.1.100`), ensure that **Allow Local Network** is explicitly enabled in that server's settings configuration.
