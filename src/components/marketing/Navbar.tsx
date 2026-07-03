@@ -4,6 +4,7 @@ import { useCallback, useEffect, useSyncExternalStore, useState } from "react";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import DocsSearch from "@/components/docs/Search";
 import { GITHUB_OWNER, GITHUB_REPO } from "@/lib/changelog";
 
@@ -29,6 +30,7 @@ function getServerSnapshot(): true {
 }
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [iconKey, setIconKey] = useState(0);
@@ -86,6 +88,12 @@ export default function Navbar() {
           <div className="flex items-center gap-6">
             <Link
               href="/"
+              onClick={(e) => {
+                if (pathname === "/") {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+              }}
               className="flex items-center gap-2 text-text-primary hover:text-accent transition-colors"
             >
               <Image
