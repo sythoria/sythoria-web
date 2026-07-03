@@ -1,6 +1,10 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import Navbar from "./Navbar";
+
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/",
+}));
 
 function mockMatchMedia(matches: boolean) {
   Object.defineProperty(window, "matchMedia", {
