@@ -5,7 +5,7 @@ description: Access hundreds of models through a single OpenRouter API key.
 
 # OpenRouter
 
-OpenRouter provides a unified API to hundreds of AI models from different providers — OpenAI, Anthropic, Google, Meta, Mistral, and more. Use it to access models you might not have direct API access to, all through a single key.
+OpenRouter provides a unified API to hundreds of AI models from different providers — including flagship models like OpenAI's GPT-5.6 Sol, Anthropic's Claude Fable 5, Meta's Llama 4 Maverick, Google's Gemini 3.1 Pro, and DeepSeek R1. Use it to access models you might not have direct API access to, all through a single key.
 
 ## Prerequisites
 
@@ -29,7 +29,7 @@ OpenRouter provides a unified API to hundreds of AI models from different provid
 | Setting           | Value                                           |
 | ----------------- | ----------------------------------------------- |
 | **API Base**      | `https://openrouter.ai/api/v1/chat/completions` |
-| **Default Model** | `anthropic/claude-3.5-sonnet`                   |
+| **Default Model** | `openai/gpt-5.6-sol`                            |
 | **API Format**    | OpenAI Chat Completions                         |
 | **Streaming**     | Supported                                       |
 
@@ -37,14 +37,13 @@ OpenRouter provides a unified API to hundreds of AI models from different provid
 
 OpenRouter supports models from dozens of providers. Model IDs use the `provider/model-name` format:
 
-| Model ID                            | Provider  | Notes                                |
-| ----------------------------------- | --------- | ------------------------------------ |
-| `anthropic/claude-3.5-sonnet`       | Anthropic | Balanced Claude model                |
-| `openai/gpt-4o`                     | OpenAI    | GPT-4o via OpenRouter                |
-| `meta-llama/llama-3.1-70b-instruct` | Meta      | Open-source, strong all-rounder      |
-| `mistralai/mistral-large`           | Mistral   | European provider, good multilingual |
-| `google/gemini-pro-1.5`             | Google    | Gemini via OpenRouter                |
-| `deepseek/deepseek-chat`            | DeepSeek  | Cost-effective, strong coding        |
+| Model ID                      | Best for                                                    | Context window / details                      |
+| :---------------------------- | :---------------------------------------------------------- | :-------------------------------------------- |
+| `openai/gpt-5.6-sol`          | Flagship reasoning, coding, and cybersecurity               | ~1.5M tokens, state-of-the-art capability     |
+| `anthropic/claude-fable-5`    | Complex reasoning and long-horizon agentic tasks            | 1M tokens, Anthropic's flagship model         |
+| `meta-llama/llama-4-maverick` | Natively multimodal tasks, cost-effective scaling           | 1M tokens, 17B active MoE parameters          |
+| `google/gemini-3.1-pro`       | Creative coding, multimodal input processing, and reasoning | 1M tokens, advanced Google model              |
+| `deepseek/deepseek-r1`        | Advanced reasoning, coding, and step-by-step logic          | 128K tokens, state-of-the-art reasoning model |
 
 Browse the full catalog at [openrouter.ai/models](https://openrouter.ai/models) with live pricing and availability.
 
@@ -52,9 +51,9 @@ Browse the full catalog at [openrouter.ai/models](https://openrouter.ai/models) 
 
 OpenRouter uses a `provider/model-name` naming scheme. When entering a model in Sythoria's **Model ID** field, use the exact ID from [openrouter.ai/models](https://openrouter.ai/models). Examples:
 
-- `anthropic/claude-3.5-sonnet`
-- `meta-llama/llama-3.1-70b-instruct`
-- `google/gemini-2.0-flash`
+- `openai/gpt-5.6-sol`
+- `anthropic/claude-fable-5`
+- `meta-llama/llama-4-maverick`
 
 ## Why use OpenRouter?
 
