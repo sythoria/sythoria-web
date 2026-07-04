@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { getDocBySlug } from "@/lib/docs";
 import { getDocMeta, getAdjacentDocs, getAllDocSlugs } from "@/lib/docs-nav";
+import InstallGuide from "@/components/docs/InstallGuide";
 
 export function generateStaticParams() {
   return getAllDocSlugs().map((slug) => ({
@@ -53,6 +54,7 @@ export default async function DocPage({
         <MDXRemote
           source={doc.content}
           options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+          components={{ InstallGuide }}
         />
       </div>
 
