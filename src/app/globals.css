@@ -1,5 +1,7 @@
 @import "tailwindcss" source("..");
 
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-sidebar: var(--theme-sidebar);
   --color-chat: var(--theme-chat);
