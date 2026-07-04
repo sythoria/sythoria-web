@@ -11,7 +11,7 @@ Instead of just responding with text, the model can execute actions, receive the
 
 ## How the Tool Loop Works
 
-The tool execution loop runs sequentially up to a user-defined limit (default: 5 steps):
+The tool execution loop runs sequentially up to a user-defined limit (default: 25 steps):
 
 1. **Prompt Compiling**: Sythoria builds the system prompt, appending repository-specific instructions from `AGENTS.md` and serializing the available tools.
 2. **LLM Invocation**: The application sends the history to the LLM. If the model determines it needs info or action, it returns one or more tool calls.
@@ -64,5 +64,5 @@ To protect your system, Sythoria enforces security gates:
 
 You can customize loop limits under **Settings > Configuration**:
 
-- **Max Tool Steps**: Sets the maximum loop iterations (1 to 20). If the model exceeds this limit, it halts and synthesizes the best answer using gathered outputs.
+- **Max Tool Steps**: Sets the maximum loop iterations (1 to 100). If the model exceeds this limit, it halts and synthesizes the best answer using gathered outputs.
 - **Trust Settings**: Toggle which MCP servers are marked as trusted.
