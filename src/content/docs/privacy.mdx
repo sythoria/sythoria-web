@@ -9,7 +9,7 @@ Privacy isn't a feature in Sythoria — it's the foundation. Here's exactly how 
 
 ## API keys stay local
 
-Your API keys, search keys, and Model Context Protocol (MCP) server environment variables are stored **exclusively in your operating system's secure credential store or keychain** (e.g., macOS Keychain, Windows Credential Manager, or Linux Secret Service) under the service name `com.sythoria.sythoria-desktop`. They are:
+Your API keys, search keys, Model Context Protocol (MCP) transport API keys, and server environment variables are stored **exclusively in your operating system's secure credential store or keychain** (e.g., macOS Keychain, Windows Credential Manager, or Linux Secret Service) under the service name `com.sythoria.sythoria-desktop`. They are:
 
 - Never sent to Sythoria's servers for storage
 - Never included in analytics, logs, or error reports
@@ -17,9 +17,6 @@ Your API keys, search keys, and Model Context Protocol (MCP) server environment 
 - Only used to authenticate directly with your chosen AI provider
 
 When you send a message, your API key is retrieved from your local keychain and included in the direct request to the AI provider's API — that's how authentication works. The key is never stored on any Sythoria infrastructure.
-
-> [!NOTE]
-> For HTTP/SSE-based MCP servers that require a custom endpoint key, the optional transport `apiKey` parameter is stored within the application configurations on disk. However, all standard stdio server environment variables and secrets are fully protected in the OS keychain.
 
 ## No server-side storage
 
@@ -70,7 +67,7 @@ See the [Ollama setup guide](/docs/providers/ollama) to get started with local m
 
 The desktop version of Sythoria is designed with maximum privacy guarantees:
 
-- API keys, search keys, and MCP secrets are stored securely in your OS-level credential vault (e.g., macOS Keychain, Windows Credential Manager, or Linux Secret Service)
+- API keys, search keys, MCP secrets, and transport credentials are stored securely in your OS-level credential vault (e.g., macOS Keychain, Windows Credential Manager, or Linux Secret Service)
 - No additional telemetry is added
 - No OS-level data collection beyond what the app needs to function
 
