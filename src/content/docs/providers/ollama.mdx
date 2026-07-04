@@ -5,7 +5,7 @@ description: Run AI models locally with Ollama — no API key, no cloud, no trac
 
 # Ollama (Local)
 
-Use Sythoria with models running locally through Ollama. No API key, no cloud dependency, no data leaving your machine — just fast, private AI on your own hardware.
+Use Sythoria with models running locally through Ollama. Run state-of-the-art open-weights models including Llama 4 (Scout and Maverick), DeepSeek R1, and Gemma 4. No API key, no cloud dependency, no data leaving your machine — just fast, private AI on your own hardware.
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ Use Sythoria with models running locally through Ollama. No API key, no cloud de
 2. Pull a model:
 
    ```bash
-   ollama pull llama3.1
+   ollama pull llama4:maverick
    ```
 
 3. Start the Ollama server:
@@ -39,28 +39,25 @@ Use Sythoria with models running locally through Ollama. No API key, no cloud de
 | Setting           | Value                                        |
 | ----------------- | -------------------------------------------- |
 | **API Base**      | `http://localhost:11434/v1/chat/completions` |
-| **Default Model** | `llama3.1`                                   |
+| **Default Model** | `llama4-maverick`                            |
 | **API Format**    | OpenAI-compatible                            |
 | **Streaming**     | Supported                                    |
 | **API Key**       | None required                                |
 
 ## Popular models
 
-| Model       | Size                 | Pull command              | Best for                                   |
-| ----------- | -------------------- | ------------------------- | ------------------------------------------ |
-| Llama 3.1   | 8B / 70B             | `ollama pull llama3.1`    | General-purpose, strong all-rounder        |
-| Mistral     | 7B                   | `ollama pull mistral`     | Fast, efficient reasoning                  |
-| Code Llama  | 7B / 13B / 34B       | `ollama pull codellama`   | Code generation and analysis               |
-| Phi-3       | 3.8B                 | `ollama pull phi3`        | Lightweight, runs on minimal hardware      |
-| Gemma 2     | 2B / 9B / 27B        | `ollama pull gemma2`      | Google's open model, good for conversation |
-| Qwen 2.5    | 7B / 14B / 32B / 72B | `ollama pull qwen2.5`     | Strong multilingual and coding performance |
-| DeepSeek R1 | 8B / 14B / 32B / 70B | `ollama pull deepseek-r1` | Reasoning and math                         |
+| Model            | Size                    | Pull command                  | Best for                                                    |
+| ---------------- | ----------------------- | ----------------------------- | ----------------------------------------------------------- |
+| Llama 4 Scout    | 17B active (109B total) | `ollama pull llama4:scout`    | Efficient, high-speed Mixture-of-Experts (MoE) reasoning    |
+| Llama 4 Maverick | 17B active (400B total) | `ollama pull llama4:maverick` | Complex reasoning, advanced coding, and multi-GPU setups    |
+| DeepSeek R1      | 8B / 14B / 32B / 70B    | `ollama pull deepseek-r1`     | Advanced reasoning, step-by-step logic, and math            |
+| Gemma 4          | 12B / 26B / 31B         | `ollama pull gemma4`          | Google's open multimodal model (text, image, audio support) |
 
 Browse all available models at [ollama.com/library](https://ollama.com/library).
 
 ## Model selection
 
-Ollama models are entered manually in Settings under **Model ID** (e.g., `llama3.1`, `mistral`, or `deepseek-r1`). Ensure you have downloaded the model locally via the Ollama command line before attempting to use it in Sythoria.
+Ollama models are entered manually in Settings under **Model ID** (e.g., `llama4-maverick`, `llama4:scout`, `deepseek-r1`, or `gemma4`). Ensure you have downloaded the model locally via the Ollama command line before attempting to use it in Sythoria.
 
 ## Hardware recommendations
 
