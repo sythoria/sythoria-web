@@ -24,6 +24,8 @@ export const docsNav: DocNavGroup[] = [
       { label: "Multi-Provider Chat", slug: "features/multi-provider" },
       { label: "Agentic Tool Loop", slug: "features/agentic-tool-loop" },
       { label: "Model Context Protocol", slug: "features/mcp" },
+      { label: "Vision & Screenshots", slug: "features/appshots" },
+      { label: "Local Voice Input", slug: "features/voice" },
       { label: "Adaptive Motion Design", slug: "features/motion-design" },
       {
         label: "Troubleshooting & Logs",
