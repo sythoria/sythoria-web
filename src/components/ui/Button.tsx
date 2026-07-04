@@ -29,15 +29,15 @@ type ButtonProps = ButtonAsButton | ButtonAsAnchor;
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "btn-primary bg-accent hover:bg-accent-hover text-white shadow-sm shadow-accent/20 hover:shadow-lg hover:shadow-accent/25 active:scale-[0.97] hover:-translate-y-0.5",
+    "btn-primary bg-accent hover:bg-accent-hover !text-white shadow-sm shadow-accent/20 hover:shadow-lg hover:shadow-accent/25 active:scale-[0.97] hover:-translate-y-0.5",
   secondary:
-    "btn-secondary bg-surface border border-border text-text-primary hover:border-accent/40 hover:bg-hover hover:shadow-md hover:shadow-accent/5 hover:-translate-y-0.5",
+    "btn-secondary bg-surface border border-border !text-text-primary hover:!text-text-primary hover:border-accent/40 hover:bg-hover hover:shadow-md hover:shadow-accent/5 hover:-translate-y-0.5",
   tertiary:
-    "bg-accent-soft text-accent hover:bg-accent/15 border border-accent/10 hover:border-accent/25 hover:shadow-sm hover:shadow-accent/10 active:scale-[0.97] hover:-translate-y-0.5",
+    "bg-accent-soft !text-accent hover:bg-accent/15 border border-accent/10 hover:border-accent/25 hover:shadow-sm hover:shadow-accent/10 active:scale-[0.97] hover:-translate-y-0.5",
   outline:
-    "bg-transparent border border-border text-text-secondary hover:text-text-primary hover:border-accent/30 hover:bg-hover hover:shadow-sm hover:shadow-accent/5 hover:-translate-y-0.5",
+    "bg-transparent border border-border !text-text-secondary hover:!text-text-primary hover:border-accent/30 hover:bg-hover hover:shadow-sm hover:shadow-accent/5 hover:-translate-y-0.5",
   ghost:
-    "bg-transparent text-text-secondary hover:text-text-primary hover:bg-hover active:scale-[0.97]",
+    "bg-transparent !text-text-secondary hover:!text-text-primary hover:bg-hover active:scale-[0.97]",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -62,7 +62,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
     ref
   ) => {
     const classes = [
-      "inline-flex items-center justify-center font-medium transition-[color,background-color,border-color,box-shadow,transform] duration-300 ease-out select-none whitespace-nowrap relative overflow-hidden",
+      "inline-flex items-center justify-center font-medium transition-[color,background-color,border-color,box-shadow,transform] duration-300 ease-out select-none whitespace-nowrap relative overflow-hidden !no-underline",
       variantClasses[variant],
       sizeClasses[size],
       fullWidth ? "w-full" : "",
