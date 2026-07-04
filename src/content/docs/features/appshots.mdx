@@ -1,0 +1,54 @@
+---
+title: Vision & Screenshots (Appshots)
+description: Capture your screen and attach it to your AI conversations instantly.
+---
+
+# Vision & Screenshots (Appshots)
+
+Sythoria features a native screen capture utility called **Appshots**. It allows you to take screenshots of your displays or windows and attach them directly to your chat draft for visual analysis.
+
+## Quickstart
+
+1. Press `Alt+Shift+S` (on Windows, macOS, or Linux)
+2. Sythoria will hide its window, capture your primary display, and append the screenshot directly to your active chat input
+3. Type a prompt (e.g., _"analyze this layout error"_) and press `Enter` to send it to a vision-enabled model (like `gpt-4o` or `gemini-2.5-pro`)
+
+> [!NOTE]
+> All screenshots are saved locally in the app's secure cache directory on your machine. They are never sent to third-party servers except when included in requests to your configured AI provider.
+
+## Screen Recording Permissions (macOS)
+
+Because Appshots captures native screen coordinates, macOS requires explicit security approval:
+
+1. The first time you trigger a capture, macOS will prompt you for permissions
+2. Open **System Settings > Privacy & Security > Screen & System Audio Recording**
+3. Ensure the toggle next to **Sythoria** is enabled
+4. Restart Sythoria for the permission change to take effect
+
+If your screenshots return blank or grey images, verify that this permission toggle is active.
+
+## Configuration Options
+
+You can customize capture behavior under **Settings** under the **Vision / Appshots** section:
+
+| Option                     | Default           | Description                                                                                              |
+| :------------------------- | :---------------- | :------------------------------------------------------------------------------------------------------- |
+| **Capture Target**         | `Primary Display` | Capture all connected displays, the primary display, or just the active Sythoria window.                 |
+| **Capture Delay**          | `0 seconds`       | Add a delay before the screen is captured (useful if you need to position other windows first).          |
+| **Image Format**           | `PNG`             | Choose between lossless `PNG` or compressed `JPEG`.                                                      |
+| **Image Quality**          | `85`              | Compression quality for JPEG captures (higher means better quality, larger files).                       |
+| **Hide Window on Capture** | `Enabled`         | Automatically minimizes or hides the Sythoria window during the capture so it doesn't block your screen. |
+| **Include Cursor**         | `Disabled`        | Choose whether to draw your mouse cursor in the captured screenshot.                                     |
+
+## Automated Caching & Cleanup
+
+By default, screenshots are saved in your application data directory. To prevent these files from filling up your local disk, enable **Auto-Cleanup** in Settings:
+
+- **Clean by Count**: Keep only a set number of recent screenshots (e.g., the last 50 captures) and automatically delete older ones.
+- **Clean by Age**: Delete screenshots older than a specific number of days.
+
+## Attachment Limits
+
+- **Maximum Attachments**: You can attach up to **6 files** (images, code files, or text documents) to a single message draft.
+- **File Size**: Individual attachments must be under **10 MB** in size.
+- **Supported Formats**: Standard images (`PNG`, `JPEG`, `GIF`, `WebP`) and text/code files (see the full list under [Configuration](/docs/configuration)).
