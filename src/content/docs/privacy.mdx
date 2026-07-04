@@ -9,7 +9,7 @@ Privacy isn't a feature in Sythoria — it's the foundation. Here's exactly how 
 
 ## API keys stay local
 
-Your API keys are stored **exclusively in your operating system's secure credential store or keychain** (e.g., macOS Keychain, Windows Credential Manager, or Linux Secret Service). They are:
+Your API keys, search keys, and Model Context Protocol (MCP) server environment variables are stored **exclusively in your operating system's secure credential store or keychain** (e.g., macOS Keychain, Windows Credential Manager, or Linux Secret Service) under the service name `com.sythoria.sythoria-desktop`. They are:
 
 - Never sent to Sythoria's servers for storage
 - Never included in analytics, logs, or error reports
@@ -17,6 +17,9 @@ Your API keys are stored **exclusively in your operating system's secure credent
 - Only used to authenticate directly with your chosen AI provider
 
 When you send a message, your API key is retrieved from your local keychain and included in the direct request to the AI provider's API — that's how authentication works. The key is never stored on any Sythoria infrastructure.
+
+> [!NOTE]
+> For HTTP/SSE-based MCP servers that require a custom endpoint key, the optional transport `apiKey` parameter is stored within the application configurations on disk. However, all standard stdio server environment variables and secrets are fully protected in the OS keychain.
 
 ## No server-side storage
 
@@ -70,3 +73,19 @@ The desktop version of Sythoria is designed with maximum privacy guarantees:
 - API keys, search keys, and MCP secrets are stored securely in your OS-level credential vault (e.g., macOS Keychain, Windows Credential Manager, or Linux Secret Service)
 - No additional telemetry is added
 - No OS-level data collection beyond what the app needs to function
+
+## File Storage Locations
+
+All settings, chats, and workspace layouts are stored in plaintext JSON files within your local user data directory:
+
+- **macOS**: `~/Library/Application Support/com.sythoria.sythoria-desktop/`
+- **Windows**: `%APPDATA%\com.sythoria.sythoria-desktop\`
+- **Linux**: `~/.local/share/com.sythoria.sythoria-desktop/`
+
+The directory contains the following configuration files:
+
+- `sythoria-store.json`: Stores local chat history (conversations), UI theme settings, keybinds, and search/MCP server parameters.
+- `config.json`: Stores model endpoints and parameters (with model API keys stripped before saving).
+- `projects.json`: Stores local developer workspace folders and permissions.
+
+To completely reset all application data, configurations, and stored secrets, you can clear application data in Settings or delete these files manually.
