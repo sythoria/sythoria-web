@@ -5,7 +5,7 @@ description: Connect Sythoria to Anthropic's Claude models for nuanced, thoughtf
 
 # Anthropic
 
-Connect Sythoria to Anthropic's API to chat with the Claude family of models. Claude excels at nuanced reasoning, long-context understanding, and careful instruction following.
+Connect Sythoria to Anthropic's API to chat with the Claude family of models, including the latest Claude 5-series (Claude Fable 5 and Claude Sonnet 5). Claude excels at nuanced reasoning, long-context understanding, and careful instruction following.
 
 ## Prerequisites
 
@@ -28,17 +28,16 @@ Connect Sythoria to Anthropic's API to chat with the Claude family of models. Cl
 | Setting           | Value                                                               |
 | ----------------- | ------------------------------------------------------------------- |
 | **API Base**      | `https://api.anthropic.com/v1/messages`                             |
-| **Default Model** | `claude-3-5-sonnet-latest`                                          |
+| **Default Model** | `claude-5-sonnet-latest`                                            |
 | **API Format**    | Anthropic Messages API (Sythoria handles translation automatically) |
 | **Streaming**     | Supported                                                           |
 
 ## Available models
 
-| Model ID                    | Best for                                                   | Context window |
-| --------------------------- | ---------------------------------------------------------- | -------------- |
-| `claude-3-5-sonnet-latest`  | Balanced performance — everyday tasks, coding, analysis    | 200K           |
-| `claude-3-5-haiku-20241022` | Fast, lightweight responses — quick Q&A, simple tasks      | 200K           |
-| `claude-3-opus-latest`      | Most capable — complex reasoning, research, long documents | 200K           |
+| Model ID                 | Best for                                                                   | Context window |
+| ------------------------ | -------------------------------------------------------------------------- | -------------- |
+| `claude-fable-5`         | Highest capability — complex, long-horizon agentic tasks and deep research | 1M             |
+| `claude-5-sonnet-latest` | Balanced performance — everyday tasks, coding, analysis                    | 1M             |
 
 ## Important: API format differences
 
@@ -50,7 +49,7 @@ Anthropic charges per token based on input and output size. Check [anthropic.com
 
 ## Switching models mid-conversation
 
-Use the model dropdown in the chat input bar to switch between Claude Sonnet, Haiku, and Opus without losing your conversation. Each new message uses the currently selected model.
+Use the model dropdown in the chat input bar to switch between Claude Fable and Sonnet without losing your conversation. Each new message uses the currently selected model.
 
 ## Troubleshooting
 
