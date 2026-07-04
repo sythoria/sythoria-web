@@ -15,7 +15,7 @@ The desktop application maintains a structured log of its operations to help loc
 
 ### Log Sources
 
-Logs are categorized into seven operational namespaces:
+Logs are categorized into nine operational namespaces:
 
 - `general`: Core startup, lifecycle events, and window management.
 - `chat`: Message history, exports, database operations, and user inputs.
@@ -24,13 +24,20 @@ Logs are categorized into seven operational namespaces:
 - `mcp`: MCP server starts, stops, tool calls, and namespaces.
 - `storage`: File reads, saves, and keychain credentials.
 - `stream`: SSE connection chunks and WebSocket events.
+- `git`: Local Git integration (worktrees, commits, repository status).
+- `appshots`: Screen capture utility processes, auto-cleanups, and cache directories.
 
 ### Buffer & Rendering Synchronization
 
-- **Logs Buffer**: The application stores a maximum of **500 logs** in a memory buffer. When the buffer is full, old logs are discarded.
+- **Logs Buffer**: The application stores a maximum of **500 logs** in an in-memory buffer. When the buffer is full, older logs are discarded.
 - **UI Syncing**: To keep the app highly responsive and avoid rendering lag during high-frequency tasks (like SSE streaming), logs are batched and synced to the UI store using `requestAnimationFrame`.
 - **Log Viewer**: You can view, filter (by source and severity), and clear logs under **Settings > Logs**.
-- **Native Logging**: Logs are also written to standard consoles and integrated with the native platform logger (`@tauri-apps/plugin-log`).
+- **Native Logging & File Paths**: Logs are also integrated with the native platform logger (`@tauri-apps/plugin-log`).
+  - **Level Filtering**: To save disk space, the native file logger only writes `Warning` and `Error` logs to your disk. Standard `Info` logs are kept only in the app's in-memory viewer and the developer console.
+  - **File Paths on Disk**: Logs are saved inside the following system directories (under the app bundle `com.sythoria.sythoria-desktop`):
+    - **macOS**: `~/Library/Logs/com.sythoria.sythoria-desktop/webapp.log`
+    - **Windows**: `%APPDATA%\com.sythoria.sythoria-desktop\logs\webapp.log`
+    - **Linux**: `~/.config/com.sythoria.sythoria-desktop/logs/webapp.log` (or `~/.local/state/com.sythoria.sythoria-desktop/logs/webapp.log`)
 
 ---
 
