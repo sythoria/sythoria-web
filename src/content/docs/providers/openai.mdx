@@ -1,11 +1,11 @@
 ---
 title: OpenAI
-description: Connect Sythoria to OpenAI's GPT and o-series models.
+description: Connect Sythoria to OpenAI's GPT-5 and GPT-5.6 models.
 ---
 
 # OpenAI
 
-Connect Sythoria to OpenAI's API to chat with GPT-4o, GPT-4o Mini, o1, and more. OpenAI offers the most widely-used commercial language models with strong general-purpose performance.
+Connect Sythoria to OpenAI's API to chat with GPT-5.6 (Sol, Terra, Luna) and GPT-5. OpenAI offers the most widely-used commercial language models with strong general-purpose performance.
 
 ## Prerequisites
 
@@ -28,7 +28,7 @@ Connect Sythoria to OpenAI's API to chat with GPT-4o, GPT-4o Mini, o1, and more.
 | Setting           | Value                                        |
 | ----------------- | -------------------------------------------- |
 | **API Base**      | `https://api.openai.com/v1/chat/completions` |
-| **Default Model** | `gpt-4o`                                     |
+| **Default Model** | `gpt-5.6-terra`                              |
 | **API Format**    | OpenAI Chat Completions                      |
 | **Streaming**     | Supported                                    |
 
@@ -36,14 +36,12 @@ Connect Sythoria to OpenAI's API to chat with GPT-4o, GPT-4o Mini, o1, and more.
 
 The model dropdown auto-populates with models available to your API key. Common options:
 
-| Model ID      | Best for                                    | Context window |
-| ------------- | ------------------------------------------- | -------------- |
-| `gpt-4o`      | General-purpose tasks, multi-step reasoning | 128K           |
-| `gpt-4o-mini` | Fast, cost-effective everyday use           | 128K           |
-| `o1`          | Complex reasoning, math, coding             | 200K           |
-| `o1-mini`     | Lightweight reasoning tasks                 | 128K           |
-| `gpt-4-turbo` | High-performance instruction following      | 128K           |
-| `o3-mini`     | High-speed reasoning and coding             | 200K           |
+| Model ID        | Best for                                                     | Context window |
+| --------------- | ------------------------------------------------------------ | -------------- |
+| `gpt-5.6-sol`   | Flagship capability, complex coding, and deep reasoning      | 1M             |
+| `gpt-5.6-terra` | Balanced, cost-effective everyday professional tasks         | 1M             |
+| `gpt-5.6-luna`  | Ultra-fast, highly efficient high-volume operations          | 1M             |
+| `gpt-5`         | Advanced general-purpose reasoning and instruction following | 400K           |
 
 Check [platform.openai.com/models](https://platform.openai.com/models) for the full list and current availability.
 
@@ -53,7 +51,7 @@ OpenAI charges per token. Rates vary by model. Check [openai.com/pricing](https:
 
 ## Switching models mid-conversation
 
-You can switch to a different OpenAI model at any time using the model dropdown in the chat input bar. Each new message uses the currently selected model, so you can start with GPT-4o and switch to o1 for a harder question — all within the same conversation.
+You can switch to a different OpenAI model at any time using the model dropdown in the chat input bar. Each new message uses the currently selected model, so you can start with GPT-5.6-terra and switch to GPT-5.6-sol for a harder question — all within the same conversation.
 
 ## Troubleshooting
 
