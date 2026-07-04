@@ -5,7 +5,7 @@ description: Connect Sythoria to NVIDIA's NIM inference endpoints for GPU-optimi
 
 # NVIDIA NIM
 
-NVIDIA NIM provides optimized inference endpoints for open-source models running on NVIDIA GPUs. Get production-quality performance from models like Llama, Mixtral, and Gemma without managing your own GPU infrastructure.
+NVIDIA NIM provides optimized inference endpoints for open-source models running on NVIDIA GPUs. Get production-quality performance from models like Llama 4, Nemotron-3, and Gemma 4 without managing your own GPU infrastructure.
 
 ## Prerequisites
 
@@ -29,7 +29,7 @@ NVIDIA NIM provides optimized inference endpoints for open-source models running
 | Setting           | Value                                                  |
 | ----------------- | ------------------------------------------------------ |
 | **API Base**      | `https://integrate.api.nvidia.com/v1/chat/completions` |
-| **Default Model** | `meta/llama-3.3-70b-instruct`                          |
+| **Default Model** | `meta/llama-4-maverick`                                |
 | **API Format**    | OpenAI Chat Completions                                |
 | **Streaming**     | Supported                                              |
 
@@ -37,12 +37,12 @@ NVIDIA NIM provides optimized inference endpoints for open-source models running
 
 NVIDIA NIM hosts optimized versions of popular open-source models. Model IDs use the `provider/model-name` format:
 
-| Model ID                                 | Base model    | Best for                                      |
-| ---------------------------------------- | ------------- | --------------------------------------------- |
-| `meta/llama-3.3-70b-instruct`            | Llama 3.3 70B | General-purpose, strong reasoning             |
-| `mistralai/mixtral-8x22b-instruct-v0.1`  | Mixtral 8x22B | Efficient mixture-of-experts, good throughput |
-| `google/gemma-2-27b-it`                  | Gemma 2 27B   | Conversation and instruction following        |
-| `nvidia/llama-3.1-nemotron-70b-instruct` | Nemotron 70B  | NVIDIA-tuned Llama, high accuracy             |
+| Model ID                       | Base model            | Best for                                                 | Context / Details            |
+| ------------------------------ | --------------------- | -------------------------------------------------------- | ---------------------------- |
+| `meta/llama-4-maverick`        | Llama 4 Maverick      | Complex vision-language tasks and reasoning              | 1M token context window      |
+| `meta/llama-4-scout`           | Llama 4 Scout         | Lightweight multimodal tasks and long-context processing | 10M token context window     |
+| `nvidia/nemotron-3-ultra-550b` | Nemotron-3 Ultra 550B | Frontier-scale reasoning and agentic orchestration       | 550B hybrid LatentMoE model  |
+| `google/gemma-4-12b`           | Gemma 4 12B           | Unified multimodal tasks (text, image, audio)            | Efficient encoder-free model |
 
 Browse all available models at [build.nvidia.com/explore/discover](https://build.nvidia.com/explore/discover).
 
@@ -50,9 +50,10 @@ Browse all available models at [build.nvidia.com/explore/discover](https://build
 
 NVIDIA NIM uses the `provider/model-name` naming scheme. When entering a model in Sythoria's **Model ID** field, use the exact ID from [build.nvidia.com/explore/discover](https://build.nvidia.com/explore/discover). Examples:
 
-- `meta/llama-3.3-70b-instruct`
-- `mistralai/mixtral-8x22b-instruct-v0.1`
-- `google/gemma-2-27b-it`
+- `meta/llama-4-maverick`
+- `meta/llama-4-scout`
+- `nvidia/nemotron-3-ultra-550b`
+- `google/gemma-4-12b`
 
 ## Pricing
 
