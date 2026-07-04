@@ -58,9 +58,9 @@ Use Sythoria with models running locally through Ollama. No API key, no cloud de
 
 Browse all available models at [ollama.com/library](https://ollama.com/library).
 
-## Model auto-detection
+## Model selection
 
-Sythoria queries Ollama's local API (`/api/tags`) to discover available models. Any model you've pulled appears in the dropdown automatically — no manual configuration needed.
+Ollama models are entered manually in Settings under **Model ID** (e.g., `llama3.1`, `mistral`, or `deepseek-r1`). Ensure you have downloaded the model locally via the Ollama command line before attempting to use it in Sythoria.
 
 ## Hardware recommendations
 
@@ -85,10 +85,11 @@ http://localhost:<your-port>/v1/chat/completions
 
 ## Troubleshooting
 
-| Error                        | Cause                                   | Fix                                                             |
-| ---------------------------- | --------------------------------------- | --------------------------------------------------------------- |
-| **Connection refused**       | Ollama isn't running                    | Run `ollama serve` in a terminal, or start the Ollama app       |
-| **Model not found**          | Model hasn't been pulled yet            | Run `ollama pull <model-name>` to download it                   |
-| **Slow responses**           | Hardware too limited for the model size | Try a smaller model or a quantized variant                      |
-| **Out of memory**            | Model exceeds available RAM/VRAM        | Switch to a smaller model (e.g., 7B instead of 70B)             |
-| **Connection indicator red** | Can't reach `localhost:11434`           | Ensure Ollama is running and no firewall is blocking port 11434 |
+| Error                           | Cause                                   | Fix                                                                                                 |
+| ------------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| **Connection refused**          | Ollama isn't running                    | Run `ollama serve` in a terminal, or start the Ollama app                                           |
+| **Model not found**             | Model hasn't been pulled yet            | Run `ollama pull <model-name>` to download it                                                       |
+| **Slow responses**              | Hardware too limited for the model size | Try a smaller model or a quantized variant                                                          |
+| **Out of memory**               | Model exceeds available RAM/VRAM        | Switch to a smaller model (e.g., 7B instead of 70B)                                                 |
+| **Connection indicator red**    | Can't reach `localhost:11434`           | Ensure Ollama is running and no firewall is blocking port 11434                                     |
+| **Access Denied / Local Block** | Backend security blocks local networks  | Open `config.json` in your App Data folder, and add `"allowLocalNetwork": true` to the model block. |
