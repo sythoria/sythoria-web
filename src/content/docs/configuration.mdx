@@ -67,12 +67,41 @@ Sythoria can augment chat responses with live web search results. When enabled, 
 
 ## Keyboard shortcuts
 
-| Shortcut        | Action           |
-| --------------- | ---------------- |
-| `Enter`         | Send message     |
-| `Shift+Enter`   | Insert new line  |
-| `Escape`        | Stop streaming   |
-| `⌘K` / `Ctrl+K` | Search (in docs) |
+The desktop application includes extensive configurable keyboard shortcuts (which can be customized under **Settings > Keyboard Shortcuts**). The defaults are:
+
+| Shortcut (Mac / Windows/Linux) | Action                                                             | Category     |
+| :----------------------------- | :----------------------------------------------------------------- | :----------- |
+| `Enter` / `Enter`              | Send message (Can be toggled to `⌘Enter`/`Ctrl+Enter` in Settings) | Recommended  |
+| `Shift+Enter` / `Shift+Enter`  | Insert new line (When `Enter` sends message)                       | Recommended  |
+| `⌘K` / `Ctrl+K`                | Open Conversation Picker (quick-search list of active threads)     | Recommended  |
+| `Ctrl+L` / `Ctrl+L`            | Focus message compose box / chat input                             | Recommended  |
+| `Ctrl+N` / `Ctrl+N`            | Start a new conversation thread                                    | Recommended  |
+| `⌥⇧S` / `Alt+Shift+S`          | Capture screen screenshot (Appshot) and attach to chat             | Recommended  |
+| `⌘[` / `Ctrl+[`                | Go Back (navigate backward in conversation history)                | Navigation   |
+| `⌘]` / `Ctrl+]`                | Go Forward (navigate forward in conversation history)              | Navigation   |
+| `⌘P` / `Ctrl+P`                | Open local file attachment upload picker                           | Navigation   |
+| `⌥↑` / `Alt+ArrowUp`           | Select the conversation directly above in the sidebar list         | Navigation   |
+| `⌥↓` / `Alt+ArrowDown`         | Select the conversation directly below in the sidebar list         | Navigation   |
+| `⌘,` / `Ctrl+,`                | Open the Settings dashboard                                        | Navigation   |
+| `⌘/` / `Ctrl+/`                | Toggle active Model Selector dropdown                              | Conversation |
+| `⌘B` / `Ctrl+B`                | Expand or collapse history sidebar panel                           | Layout       |
+| `⌘=` / `Ctrl+=`                | Increase user interface zoom level / font scaling                  | Layout       |
+| `⌘-` / `Ctrl+-`                | Decrease user interface zoom level / font scaling                  | Layout       |
+| `⌘0` / `Ctrl+0`                | Reset interface scaling back to 100%                               | Layout       |
+| `←` / `ArrowLeft`              | Select previous image in the image preview viewer                  | Navigation   |
+| `→` / `ArrowRight`             | Select next image in the image preview viewer                      | Navigation   |
+| `Escape`                       | Stop model response streaming                                      | General      |
+
+## Application Limits & Inputs
+
+To ensure stability and performance, the application enforces the following hard constraints on inputs and file uploads:
+
+| Limit / Metric            | Max Value           | Details                                                                                               |
+| :------------------------ | :------------------ | :---------------------------------------------------------------------------------------------------- |
+| **Max Message Length**    | `10,000` characters | Input blocks are restricted to 10,000 characters per message.                                         |
+| **Max File Upload Size**  | `10 MB`             | Individual image or text file attachments cannot exceed 10 MB.                                        |
+| **Max Draft Attachments** | `6` files           | You can attach a maximum of 6 images or documents to a single prompt.                                 |
+| **Supported File Types**  | Varies              | Text (`.txt`, `.md`, `.json`, `.yaml`, `.csv`, `.log`) and images (`.png`, `.jpeg`, `.gif`, `.webp`). |
 
 ## Data management
 
