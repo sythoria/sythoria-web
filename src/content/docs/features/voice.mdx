@@ -1,0 +1,56 @@
+---
+title: Local Voice Input (Whisper)
+description: Record voice notes and transcribe them locally using OpenAI Whisper models.
+---
+
+# Local Voice Input (Whisper)
+
+Sythoria integrates an offline speech-to-text transcription engine powered by `whisper.cpp`. This allows you to dictate messages through your microphone, which are then transcribed locally on your CPU/GPU without sending any audio data to external cloud servers.
+
+## How It Works
+
+Voice transcription in Sythoria runs completely locally:
+
+1. When you trigger voice input, the application records audio from your default system microphone.
+2. The recorded audio is processed by a local Whisper model file (`.bin` GGML format).
+3. The transcribed text is automatically typed directly into your chat input bar.
+
+## Setup & Model Download
+
+Before using voice input, you must configure a Whisper model:
+
+1. Open **Settings** and scroll to the **Voice / Whisper** section.
+2. Toggle **Enable Voice Input** to on.
+3. Select a model preset from the dropdown.
+4. Click **Download Model** — the app will fetch the model from Hugging Face and show progress in the UI.
+5. Once the download finishes, the voice recorder is active and ready to use.
+
+## Model Presets
+
+Sythoria provides several pre-configured models depending on your machine's hardware capabilities and language requirements:
+
+| Model ID         | Model Name           | Download Size | Best For                                                     |
+| :--------------- | :------------------- | :------------ | :----------------------------------------------------------- |
+| `tiny.en`        | Tiny (English only)  | 75 MB         | Fastest option, optimized for English speech.                |
+| `tiny`           | Tiny (Multilingual)  | 75 MB         | Ultra-lightweight, supports multiple languages.              |
+| `base.en`        | Base (English only)  | 142 MB        | Balanced speed and spelling accuracy for English.            |
+| `base`           | Base (Multilingual)  | 142 MB        | Balanced speed and multi-language support.                   |
+| `small.en`       | Small (English only) | 466 MB        | High quality English model. Recommended for clear dictation. |
+| `small`          | Small (Multilingual) | 466 MB        | High quality multi-language transcription.                   |
+| `large-v3-turbo` | Large v3 Turbo       | 1.5 GB        | State-of-the-art accuracy with fast execution times.         |
+
+> [!TIP]
+> If you only speak English, always choose an `.en` variant (like `base.en` or `small.en`). They are significantly more accurate and run faster than their multilingual counterparts of the same size.
+
+## Custom Models
+
+If you have a custom GGML-compatible Whisper model file (`.bin` extension) already saved on your computer:
+
+1. Open settings and choose **Custom Model** from the preset dropdown.
+2. Click **Browse** and select your model file.
+3. Sythoria will load this file directly for transcription.
+
+## Troubleshooting
+
+- **Microphone Permissions**: If the app fails to record audio, ensure Sythoria has microphone access permissions in your operating system settings.
+- **Slow Transcription**: If transcription takes longer than a few seconds, try downloading a smaller model preset (e.g., `tiny.en` or `base.en`) which requires less CPU and memory.
