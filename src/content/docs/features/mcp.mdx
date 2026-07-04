@@ -42,6 +42,16 @@ When you connect to an MCP server, Sythoria fetches all of its exposed tools. To
 
 ---
 
+## Tool Execution & Trust Levels
+
+To protect your system from unauthorized tool runs, Sythoria enforces security checks on all MCP tool calls:
+
+- **Trusted Servers**: If you set an MCP server's trust level to **Trusted** in Settings, the model can execute its tools automatically without interrupting your chat flow.
+- **Untrusted Servers**: By default, new servers are set to **Untrusted**. When the model attempts to call a tool from an untrusted server, Sythoria will pause execution and display a **confirmation dialog** showing the tool's name and arguments. Execution will only proceed once you explicitly approve the call.
+- **Session-level Approval**: Once you approve a specific tool during a chat session, Sythoria remembers your approval and won't prompt you again for that tool during the same conversation thread.
+
+---
+
 ## Network Security & Private IP Blocking
 
 To prevent Server-Side Request Forgery (SSRF) and protect private local systems, Sythoria enforces strict network rules on SSE and HTTP MCP connections:
