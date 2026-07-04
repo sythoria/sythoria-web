@@ -19,7 +19,8 @@ const comparisons: ComparisonRow[] = [
   {
     feature: "API Keys Storage",
     sythoriaVal: true,
-    sythoriaText: "Stored locally on your device within secure OS Keychain",
+    sythoriaText:
+      "Stored locally in secure OS Keychain (configs & chats saved offline on disk)",
     othersVal: false,
     othersText:
       "Uploaded to platform databases & decrypted on cloud proxy servers",
