@@ -5,7 +5,7 @@ description: Connect Sythoria to Google's Gemini models for long-context reasoni
 
 # Google Gemini
 
-Connect Sythoria to Google's Gemini API to chat with Google's most capable models. Gemini offers large context windows and strong performance on reasoning, code, and multilingual tasks.
+Connect Sythoria to Google's Gemini API to chat with Google's most capable models, including the latest Gemini 3-series (Gemini 3.1 Pro, Gemini 3.5 Flash, Gemini 3.1 Flash-Lite, Gemini 3 Deep Think, and Gemini 3 Flash). Gemini offers large context windows and strong performance on reasoning, code, and multilingual tasks.
 
 ## Prerequisites
 
@@ -28,18 +28,19 @@ Connect Sythoria to Google's Gemini API to chat with Google's most capable model
 | Setting           | Value                                                                      |
 | ----------------- | -------------------------------------------------------------------------- |
 | **API Base**      | `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions` |
-| **Default Model** | `gemini-2.5-pro`                                                           |
+| **Default Model** | `gemini-3.5-flash`                                                         |
 | **API Format**    | OpenAI-compatible (Google's compatibility layer)                           |
 | **Streaming**     | Supported                                                                  |
 
 ## Available models
 
-| Model ID           | Best for                                                        | Context window |
-| ------------------ | --------------------------------------------------------------- | -------------- |
-| `gemini-2.5-pro`   | Standard baseline default — extremely capable reasoning, coding | 2M             |
-| `gemini-2.5-flash` | Next-generation speed — highly optimized everyday agent tasks   | 1M             |
-| `gemini-1.5-pro`   | Complex reasoning, massive long-context documents               | 1M             |
-| `gemini-2.0-flash` | Fast reasoning — general conversation, quick Q&A                | 1M             |
+| Model ID                | Best for                                                                        | Context window |
+| ----------------------- | ------------------------------------------------------------------------------- | -------------- |
+| `gemini-3.5-flash`      | High-efficiency everyday tasks — optimized for coding and agentic loops         | 1M             |
+| `gemini-3.1-pro`        | Flagship reasoning — complex workflows, software engineering, and data analysis | 1M             |
+| `gemini-3.1-flash-lite` | Most cost-efficient — optimized for high-volume, low-latency tasks              | 1M             |
+| `gemini-3-deep-think`   | Advanced reasoning — specialized mode for math, science, and complex coding     | 1M             |
+| `gemini-3-flash`        | Balanced performance — preview tier for speed and general capabilities          | 1M             |
 
 ## How it works: OpenAI-compatible endpoint
 
