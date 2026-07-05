@@ -5,7 +5,7 @@ description: Run AI models locally with Ollama — no API key, no cloud, no trac
 
 # Ollama (Local)
 
-Use Sythoria with models running locally through Ollama. Run state-of-the-art open-weights models including Llama 4 (Scout and Maverick), DeepSeek R1, and Gemma 4. No API key, no cloud dependency, no data leaving your machine — just fast, private AI on your own hardware.
+Use Sythoria with models running locally through Ollama. Run state-of-the-art open-weights models including Llama 4 (Scout and Maverick), DeepSeek-R1, and Gemma 4. No API key, no cloud dependency, no data leaving your machine — just fast, private AI on your own hardware.
 
 ## Prerequisites
 
@@ -14,25 +14,36 @@ Use Sythoria with models running locally through Ollama. Run state-of-the-art op
 
 ## Setup
 
-1. Install Ollama from [ollama.com](https://ollama.com) (or via Homebrew: `brew install ollama`)
-2. Pull a model:
+1. **Install Ollama**: Download for your operating system:
+   - **macOS / Linux**: Install via Homebrew using `brew install ollama` or download the installer from [ollama.com](https://ollama.com).
+   - **Windows**: Install via Winget using `winget install Ollama.Ollama` or download the installer from the website.
+   - **Linux CLI**: Install via the official shell script:
+     ```bash
+     curl -fsSL https://ollama.com/install.sh | sh
+     ```
+
+2. **Pull a Model**: Download your preferred model from the Ollama library. For example:
 
    ```bash
    ollama pull llama4:maverick
    ```
 
-3. Start the Ollama server:
+3. **Start the Ollama Server**:
 
    ```bash
    ollama serve
    ```
 
-4. In Sythoria, open **Settings** from the sidebar
-5. Select **Ollama (Local)** from the **Provider Preset** dropdown — the API base URL and default model fill in automatically
-6. Leave the **API Key** field empty (Ollama doesn't require one)
-7. The connection indicator should turn **green** once Ollama is detected
+   _(Note: The desktop installers for macOS and Windows usually start the Ollama background service automatically on login.)_
 
-> Ollama must be running while you chat. If you close the Ollama server, Sythoria will show a red connection indicator.
+4. **Configure Sythoria**:
+   - Open **Settings** from the sidebar.
+   - Select **Ollama (Local)** from the **Provider Preset** dropdown. The API base URL and default model will fill in automatically.
+   - Leave the **API Key** field empty (Ollama does not require authentication by default).
+   - The connection indicator should turn **green** once Ollama is detected.
+
+> [!NOTE]
+> Ollama must be running while you chat. If the Ollama server is stopped, Sythoria's connection indicator will turn red and requests will fail.
 
 ## Default configuration
 
@@ -46,47 +57,91 @@ Use Sythoria with models running locally through Ollama. Run state-of-the-art op
 
 ## Popular models
 
-| Model            | Size                    | Pull command                  | Best for                                                    |
-| ---------------- | ----------------------- | ----------------------------- | ----------------------------------------------------------- |
-| Llama 4 Scout    | 17B active (109B total) | `ollama pull llama4:scout`    | Efficient, high-speed Mixture-of-Experts (MoE) reasoning    |
-| Llama 4 Maverick | 17B active (400B total) | `ollama pull llama4:maverick` | Complex reasoning, advanced coding, and multi-GPU setups    |
-| DeepSeek R1      | 8B / 14B / 32B / 70B    | `ollama pull deepseek-r1`     | Advanced reasoning, step-by-step logic, and math            |
-| Gemma 4          | 12B / 26B / 31B         | `ollama pull gemma4`          | Google's open multimodal model (text, image, audio support) |
+Ollama supports a vast library of open-weights models. The table below highlights the most highly usable and recommended models in 2026, including the latest flagship series and top reasoning/coding agents:
+
+| Model                | Size                                    | Pull command                  | Context window | Best for                                                                 |
+| :------------------- | :-------------------------------------- | :---------------------------- | :------------- | :----------------------------------------------------------------------- |
+| **Llama 4 Scout**    | 17B active (109B total)                 | `ollama pull llama4:scout`    | 128K           | Efficient, high-speed Mixture-of-Experts (MoE) reasoning                 |
+| **Llama 4 Maverick** | 17B active (400B total)                 | `ollama pull llama4:maverick` | 128K           | Complex reasoning, advanced coding, and multi-GPU setups                 |
+| **Gemma 4**          | 12B (Unified) / 26B (MoE) / 31B (Dense) | `ollama pull gemma4`          | 128K           | Google's open multimodal model (text, image, audio support)              |
+| **DeepSeek-R1**      | 1.5B / 8B / 14B / 32B / 70B / 671B      | `ollama pull deepseek-r1`     | 128K           | State-of-the-art chain-of-thought reasoning, math, and code              |
+| **Llama 3.3**        | 70B                                     | `ollama pull llama3.3`        | 128K           | High-quality general reasoning, multilingual tasks, and tool use         |
+| **Llama 3.2**        | 1B / 3B                                 | `ollama pull llama3.2`        | 128K           | Ultra-lightweight local deployment, fast summaries, and low-end hardware |
+| **Llama 3.1**        | 8B / 70B / 405B                         | `ollama pull llama3.1`        | 128K           | Robust general-purpose tasks, synthetic data generation, and fine-tuning |
+| **Qwen 2.5 Coder**   | 1.5B / 7B / 14B / 32B                   | `ollama pull qwen2.5-coder`   | 128K           | Advanced coding assistant, multi-language code generation, and debugging |
+| **Phi-4**            | 14B                                     | `ollama pull phi4`            | 16K / 32K      | Microsoft's highly optimized scientific reasoning and math model         |
+| **Phi-3 / 3.5**      | 3.8B (Mini) / 14B (Medium)              | `ollama pull phi3`            | 128K           | Efficient instruction-following for constrained environments             |
+| **Gemma 2**          | 2B / 9B / 27B                           | `ollama pull gemma2`          | 8K             | High-efficiency general reasoning, text generation, and fast responses   |
 
 Browse all available models at [ollama.com/library](https://ollama.com/library).
 
 ## Model selection
 
-Ollama models are entered manually in Settings under **Model ID** (e.g., `llama4-maverick`, `llama4:scout`, `deepseek-r1`, or `gemma4`). Ensure you have downloaded the model locally via the Ollama command line before attempting to use it in Sythoria.
+Ollama models are entered manually in Settings under **Model ID** (e.g., `llama4-maverick`, `llama4:scout`, `deepseek-r1`, or `gemma4`). You can also specify exact tags (e.g., `llama3.1:8b-instruct-q8_0` or `qwen2.5-coder:14b`) if you pulled a specific quantization or variant.
+
+Ensure you have downloaded the model locally via the Ollama CLI before attempting to use it in Sythoria.
 
 ## Hardware recommendations
 
-Local model performance depends entirely on your hardware. As a rough guide:
+Local model performance depends entirely on your system's hardware (VRAM, RAM, and GPU/CPU speed). Use this general reference guide to choose a model size:
 
-| Model size | Minimum RAM | Recommended RAM | GPU                           |
-| ---------- | ----------- | --------------- | ----------------------------- |
-| 3B–7B      | 8 GB        | 16 GB           | Optional (CPU works)          |
-| 13B–14B    | 16 GB       | 32 GB           | Recommended                   |
-| 32B–34B    | 32 GB       | 64 GB           | Strongly recommended          |
-| 70B+       | 64 GB       | 128 GB          | Required for acceptable speed |
+| Model size  | Minimum RAM | Recommended RAM | GPU Recommendations                                              |
+| :---------- | :---------- | :-------------- | :--------------------------------------------------------------- |
+| **1B–3B**   | 8 GB        | 16 GB           | Optional (CPU works well, fast on Apple Silicon/integrated GPUs) |
+| **7B–9B**   | 8 GB        | 16 GB           | Recommended (Discrete GPU with at least 6 GB VRAM)               |
+| **12B–15B** | 16 GB       | 32 GB           | Recommended (Discrete GPU with at least 12 GB VRAM)              |
+| **26B–34B** | 32 GB       | 64 GB           | Strongly recommended (Discrete GPU with at least 24 GB VRAM)     |
+| **70B+**    | 64 GB       | 128 GB          | Required for acceptable speed (Dual GPU or high-end workstation) |
 
-> **Tip:** Use quantized models (Q4_K_M) for better performance on consumer hardware. Ollama downloads quantized versions by default.
+> [!NOTE]
+> **Mixture-of-Experts (MoE) Memory Requirements:** Models like Llama 4 Scout (109B total parameters, 17B active) and Gemma 4 MoE (26B total) execute with the speed of their _active_ parameters but require memory (RAM/VRAM) to fit their _total_ parameter size. Make sure you have enough system RAM or VRAM to hold the complete model weight footprint, even though execution will be highly efficient.
 
-## Running Ollama on a different port
+> [!TIP]
+> **Quantized Models:** Use quantized models (like `Q4_K_M`, which Ollama downloads by default) for significantly better performance and lower RAM usage on consumer hardware.
 
-If you've configured Ollama to listen on a non-default port, update the **API Base URL** in Sythoria's settings:
+## Network and CORS configuration
 
-```
-http://localhost:<your-port>/v1/chat/completions
-```
+By default, Ollama only listens to requests coming from `localhost`. If you need to access Ollama from another machine on your local network, or if you run into Origin/CORS issues, you must configure Ollama's environment variables:
+
+### Setting OLLAMA_ORIGINS
+
+To allow Sythoria to connect seamlessly under all security contexts, set the `OLLAMA_ORIGINS` environment variable to `*`:
+
+- **macOS**:
+  Run this in your terminal and restart the Ollama app:
+  ```bash
+  launchctl setenv OLLAMA_ORIGINS "*"
+  ```
+- **Linux**:
+  Create a systemd override for the service:
+  ```bash
+  sudo systemctl edit ollama
+  ```
+  Add the following lines under the `[Service]` block:
+  ```ini
+  [Service]
+  Environment="OLLAMA_ORIGINS=*"
+  ```
+  Then reload systemd and restart the service:
+  ```bash
+  sudo systemctl daemon-reload
+  sudo systemctl restart ollama
+  ```
+- **Windows**:
+  1. Open the Start Menu and search for **Environment Variables**.
+  2. Under System Variables, click **New** and add `OLLAMA_ORIGINS` with a value of `*`.
+  3. Exit Ollama from the system tray and restart it.
+
+---
 
 ## Troubleshooting
 
-| Error                           | Cause                                   | Fix                                                                                                 |
-| ------------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| **Connection refused**          | Ollama isn't running                    | Run `ollama serve` in a terminal, or start the Ollama app                                           |
-| **Model not found**             | Model hasn't been pulled yet            | Run `ollama pull <model-name>` to download it                                                       |
-| **Slow responses**              | Hardware too limited for the model size | Try a smaller model or a quantized variant                                                          |
-| **Out of memory**               | Model exceeds available RAM/VRAM        | Switch to a smaller model (e.g., 7B instead of 70B)                                                 |
-| **Connection indicator red**    | Can't reach `localhost:11434`           | Ensure Ollama is running and no firewall is blocking port 11434                                     |
-| **Access Denied / Local Block** | Backend security blocks local networks  | Open `config.json` in your App Data folder, and add `"allowLocalNetwork": true` to the model block. |
+| Error                           | Cause                                                   | Fix                                                                                                         |
+| :------------------------------ | :------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------- |
+| **Connection refused**          | Ollama isn't running or is on a different port          | Ensure Ollama is running (`ollama serve` or open the desktop app). Verify the port matches.                 |
+| **Model not found**             | Model hasn't been pulled locally yet                    | Run `ollama pull <model-name>` in your terminal to download it.                                             |
+| **Slow responses**              | Model is too large for your hardware, or running on CPU | Choose a smaller model size (e.g., 3B or 8B) or check if Ollama is utilizing your GPU (`ollama ps`).        |
+| **Out of memory**               | Model exceeds available system RAM/VRAM                 | Switch to a smaller model size or close other heavy background applications.                                |
+| **Connection indicator red**    | Network mismatch or service offline                     | Verify that the API Base URL is exactly `http://localhost:11434/v1/chat/completions` and click **Refresh**. |
+| **Access Denied / Local Block** | Backend security blocks local networks                  | Open `config.json` in your App Data folder, and add `"allowLocalNetwork": true` to the model block.         |
+| **CORS Origin Blocked**         | Ollama security blocks the app origin                   | Set the `OLLAMA_ORIGINS="*"` environment variable and restart the Ollama service.                           |
