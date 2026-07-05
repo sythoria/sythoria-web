@@ -11,9 +11,9 @@ Sythoria is built with developer-friendly diagnostics, including structured logs
 
 ## Structured Logging System
 
-The desktop application maintains a structured log of its operations to help locate integration bugs without compromising your privacy (logs are strictly local and never phone home).
+The desktop application maintains a structured log of its operations to help locate integration bugs without compromising your privacy. **All logs are strictly local and never phone home.**
 
-### Log Sources
+### Log Sources & Namespaces
 
 Logs are categorized into nine operational namespaces:
 
@@ -27,28 +27,85 @@ Logs are categorized into nine operational namespaces:
 - `git`: Local Git integration (worktrees, commits, repository status).
 - `appshots`: Screen capture utility processes, auto-cleanups, and cache directories.
 
-### Buffer & Rendering Synchronization
+---
+
+## Log Privacy & Sanitization
+
+To ensure that your sensitive data remains completely confidential, the logging pipeline applies real-time sanitization rules before writing any log entry to memory or disk:
+
+1. **Credential Masking**: Any log containing strings matching common API key formats (such as `sk-proj-...`, `sk-ant-...`, etc.) or bearer token patterns is automatically redacted.
+2. **HTTP Header Stripping**: Connection logs filter out HTTP authorization and cookie headers (e.g., `Authorization: Bearer [REDACTED]`).
+3. **Payload Exclusion**: Raw prompt strings, system instructions, and model responses are never captured in the logs. Only metadata (e.g., token counts, request duration, status codes) is tracked.
+
+---
+
+## Log Buffer & Rendering Sync
 
 - **Logs Buffer**: The application stores a maximum of **500 logs** in an in-memory buffer. When the buffer is full, older logs are discarded.
 - **UI Syncing**: To keep the app highly responsive and avoid rendering lag during high-frequency tasks (like SSE streaming), logs are batched and synced to the UI store using `requestAnimationFrame`.
 - **Log Viewer**: You can view, filter (by source and severity), and clear logs under **Settings > Logs**.
-- **Native Logging & File Paths**: Logs are also integrated with the native platform logger (`@tauri-apps/plugin-log`).
-  - **Level Filtering**: To save disk space, the native file logger only writes `Warning` and `Error` logs to your disk. Standard `Info` logs are kept only in the app's in-memory viewer and the developer console.
-  - **File Paths on Disk**: Logs are saved inside the following system directories (under the app bundle `com.sythoria.sythoria-desktop`):
-    - **macOS**: `~/Library/Logs/com.sythoria.sythoria-desktop/webapp.log`
-    - **Windows**: `%APPDATA%\com.sythoria.sythoria-desktop\logs\webapp.log`
-    - **Linux**: `~/.config/com.sythoria.sythoria-desktop/logs/webapp.log` (or `~/.local/state/com.sythoria.sythoria-desktop/logs/webapp.log`)
+- **Native Logging & Level Filtering**: Native logging is managed by the platform runtime logger (e.g., `@tauri-apps/plugin-log` or `electron-log`).
+  - To save disk space and prevent storage wear, only `Warning` and `Error` logs are written to disk.
+  - Standard `Info` and `Debug` logs are kept strictly in the in-memory viewer and the developer console.
 
 ---
 
-## Error Handling & Diagnosis
+## Platform-Specific Log Locations
 
-Sythoria parses complex API and OS-level errors into human-readable notifications. Every parsed error contains:
+If you need to extract logs for troubleshooting or debugging, you can access them directly from the following directories on your system:
 
-1.  **A clean error message** (e.g., stripping noisy stack traces or provider-specific wrapper JSONs).
-2.  **An actionable suggestion** (e.g., what buttons to click or configurations to verify).
-3.  **A severity category** (`network`, `auth`, `rate-limit`, `server`, `config`, `search`, `mcp`, or `unknown`).
-4.  **A retryability flag** (tells the chat loop whether it's safe to retry the request automatically).
+### macOS
+
+- **Tauri / Native Build**: `~/Library/Logs/com.sythoria.sythoria-desktop/webapp.log`
+- **Electron / Next.js Build**: `~/Library/Logs/com.sythoria.sythoria-desktop/main.log`
+
+### Windows
+
+- **Tauri / Native Build**: `%APPDATA%\com.sythoria.sythoria-desktop\logs\webapp.log`
+- **Electron / Next.js Build**: `%USERPROFILE%\AppData\Roaming\com.sythoria.sythoria-desktop\logs\main.log`
+  _(Note: `%APPDATA%` typically resolves to `C:\Users\<Username>\AppData\Roaming\`)_
+
+### Linux
+
+- **Tauri / Native Build**: `~/.config/com.sythoria.sythoria-desktop/logs/webapp.log` (or `~/.local/state/com.sythoria.sythoria-desktop/logs/webapp.log` depending on distribution defaults)
+- **Electron / Next.js Build**: `~/.config/com.sythoria.sythoria-desktop/logs/main.log`
+  _(Note: These directories respect the `$XDG_CONFIG_HOME` and `$XDG_STATE_HOME` environment variables)_
+
+---
+
+## Troubleshooting Secure Keychains
+
+Because Sythoria stores credentials in the operating system's native keychain, configuration issues can occasionally prevent the application from saving or retrieving API keys.
+
+### 1. Linux Secret Service & D-Bus Failures
+
+On Linux, Sythoria requires a running Secret Service daemon (GNOME Keyring, KWallet, or KeePassXC) communicating over D-Bus.
+
+- **Symptom**: The application fails to save API keys, throws `keyring not found` or `D-Bus timeout` errors, or prompts for credentials repeatedly.
+- **Headless or Minimal Window Managers**: If you use a minimal setup (like i3, sway, or Hyprland), the D-Bus secret agent might not launch automatically.
+  - _Fix_: Install `libsecret-tools` or `gnome-keyring` and ensure the daemon is initialized in your startup script:
+    ```bash
+    dbus-update-activation-environment --all
+    eval $(gnome-keyring-daemon --start)
+    export SSH_AUTH_SOCK
+    ```
+- **Sandboxed Environment Confines (Snap / Flatpak)**:
+  - If running a **Snap** package, verify that the `password-manager-service` plug is connected:
+    ```bash
+    snap connect sythoria-desktop:password-manager-service
+    ```
+  - If running a **Flatpak**, ensure the application has permission to access the `org.freedesktop.secrets` D-Bus interface or uses the Desktop Portal (`secret-portal`).
+
+### 2. macOS Keychain Permissions
+
+- **Symptom**: A prompt appears asking for permission to access `com.sythoria.sythoria-desktop` in the Keychain, or Keychain operations throw access control errors.
+- **Fix**: This usually occurs if the application's digital signature changes (e.g., after updating a local dev build). Open the **Keychain Access** app on macOS, search for `com.sythoria.sythoria-desktop`, inspect its properties, and verify that the application has permissions under the "Access Control" tab.
+
+### 3. Windows DPAPI Decryption Issues
+
+- **Symptom**: Decryption fails with `DPAPI Decryption Error` or `Key not valid for use in specified state`.
+- **Cause**: DPAPI encrypts data using keys bound to the current Windows user account. If your Windows user password was reset externally (without logging in and updating the credential vault), DPAPI may fail to decrypt existing secrets.
+- **Fix**: You must reset the application configuration database. Deleting the `config.json` and `sythoria-store.json` files in `%APPDATA%\com.sythoria.sythoria-desktop\` will regenerate the encryption environment.
 
 ---
 
