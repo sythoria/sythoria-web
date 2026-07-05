@@ -5,84 +5,126 @@ description: How Sythoria keeps your data and API keys safe — by design, not b
 
 # Privacy & Security
 
-Privacy isn't a feature in Sythoria — it's the foundation. Here's exactly how your data is handled, where it goes, and where it doesn't.
+Privacy isn't a feature in Sythoria — it's the foundation. As a local-first, desktop-only interface, Sythoria is architected so that you have absolute control over your keys, configurations, and conversations.
 
-## API keys stay local
+Here is a technical deep-dive into how your data is handled, stored, and protected.
 
-Your API keys, search keys, Model Context Protocol (MCP) transport API keys, and server environment variables are stored **exclusively in your operating system's secure credential store or keychain** (e.g., macOS Keychain, Windows Credential Manager, or Linux Secret Service) under the service name `com.sythoria.sythoria-desktop`. They are:
+---
 
-- Never sent to Sythoria's servers for storage
-- Never included in analytics, logs, or error reports
-- Never shared with third parties
-- Only used to authenticate directly with your chosen AI provider
+## Local Stateless Operation
 
-When you send a message, your API key is retrieved from your local keychain and included in the direct request to the AI provider's API — that's how authentication works. The key is never stored on any Sythoria infrastructure.
+Sythoria operates as a local-first application. Unlike conventional AI chat platforms that route your traffic through proprietary middleware servers, Sythoria establishes **direct peer-to-endpoint connections** from your device to the designated AI providers.
 
-## No server-side storage
+```mermaid
+graph TD
+    UserDevice["User's Machine (Sythoria App)"]
+    Keychain["OS Credential Store / Keychain"]
+    Provider["AI Provider (e.g., Anthropic, OpenAI, local Ollama)"]
 
-Sythoria is a desktop application that connects directly to the AI provider APIs from your machine. We do not run any middleman servers or proxies to handle your requests. We do not:
+    UserDevice -- "1. Requests API Key" --> Keychain
+    Keychain -- "2. Returns Plaintext Key (In-Memory)" --> UserDevice
+    UserDevice -- "3. Direct HTTPS Request (with Key)" --> Provider
+    Provider -- "4. Direct Streaming Response" --> UserDevice
 
-- Store your conversations on any server
-- Log your prompts or responses
-- Retain any personal data or usage history
+    style UserDevice fill:#2a2b36,stroke:#4f46e5,stroke-width:2px,color:#fff
+    style Keychain fill:#1e293b,stroke:#0ea5e9,stroke-width:2px,color:#fff
+    style Provider fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#fff
+```
 
-Conversations exist only in the desktop application's local state. Closing the application, clearing the application's storage, or using "Clear All Chats" removes them entirely.
+- **No Proxy Middlemen**: Your prompts, responses, files, and workspace context never pass through Sythoria-owned servers or database layers.
+- **Stateless Request Flow**: Once a request is assembled and dispatched, the associated credentials exist in-memory only for the duration of the HTTP connection and are never logged or stored.
+- **Direct API Streams**: Server-Sent Events (SSE) and WebSockets connect directly to provider endpoints, avoiding transport interception.
 
-## Zero telemetry
+---
 
-Sythoria does not collect any usage data, analytics, or tracking information. There are no:
+## Secure API Key & Credential Storage
 
-- Analytics scripts (no Google Analytics, no Plausible, nothing)
-- Tracking cookies
-- Error reporting services that phone home
-- Session recordings or fingerprinting
+Sensitive credentials—including provider API keys, search engine credentials, Model Context Protocol (MCP) authentication headers, and custom server environment variables—are never stored in plaintext configuration files.
 
-## Comparison with other tools
+Sythoria utilizes platform-native secure credential vaults to encrypt and isolate your keys.
 
-| Feature             | Sythoria | Typical chat UI                 |
-| ------------------- | -------- | ------------------------------- |
-| API keys stay local | Yes      | Often stored server-side        |
-| No account required | Yes      | Usually requires signup         |
-| Zero telemetry      | Yes      | Analytics by default            |
-| No server-side data | Yes      | Conversations stored on servers |
-| Open source         | Yes      | Usually proprietary             |
+### Platform-Native Integration
 
-## Open source verification
+Under the hood, Sythoria's secure storage layer interfaces with the following native OS vaults:
 
-Sythoria is fully open source. You don't have to take our word for any of this — audit every line of code yourself:
+- **macOS**: Apple Keychain Services (via the Security framework).
+- **Windows**: Windows Credential Manager (using the Data Protection API / DPAPI).
+- **Linux**: freedesktop.org Secret Service API over D-Bus (automatically interfacing with GNOME Keyring or KWallet).
 
-- [GitHub Repository](https://github.com/sythoria/sythoria-desktop)
+### Secure Storage Implementations
 
-## Local models for maximum privacy
+Depending on your desktop platform runtime configuration, Sythoria implements the following cryptographic best practices:
 
-For absolute privacy, use Sythoria with **Ollama** or any local model server. With local models:
+#### 1. Electron `safeStorage` Architecture
 
-- No data leaves your machine
-- No API key is needed
-- No network connection required (after model download)
+For Electron-based deployments, the application integrates the built-in `safeStorage` API rather than deprecated third-party libraries (like `keytar` or `node-keytar`).
 
-See the [Ollama setup guide](/docs/providers/ollama) to get started with local models.
+- **Cryptographic Encryption**: `safeStorage` uses Chromium's `OSCrypt` engine, utilizing **AES-128-CBC** encryption.
+- **OS-Bound Key Derivation**: The decryption key is derived directly from the OS-level credential store. This protects against **at-rest data extraction**: if an adversary copies your configuration files from disk, they cannot decrypt the secrets without the platform's hardware/OS-bound key.
+- **Linux Backend Validation**: On Linux systems, the app verifies the active backend (`safeStorage.getSelectedStorageBackend()`) to prevent falling back to insecure `basic_text` storage, warning the user if a valid D-Bus keyring is not detected.
 
-## Desktop app security
+#### 2. Tauri Keyring & Rust Security
 
-The desktop version of Sythoria is designed with maximum privacy guarantees:
+For Tauri-based deployments, Sythoria interfaces with the OS keychain using the Rust `keyring` crate with `sync-secret-service` features.
 
-- API keys, search keys, MCP secrets, and transport credentials are stored securely in your OS-level credential vault (e.g., macOS Keychain, Windows Credential Manager, or Linux Secret Service)
-- No additional telemetry is added
-- No OS-level data collection beyond what the app needs to function
+- **Cryptographic Enclaves**: Utilizes secure hardware or cryptographic plugins like `tauri-plugin-stronghold` to build encrypted key-value databases on top of local storage.
+- **Memory Zeroization**: The application implements the Rust `zeroize` crate to systematically wipe decrypted API keys from system RAM immediately after the request payload is dispatched, mitigating potential memory-scraping attacks.
+
+---
+
+## Runtime Sandboxing & Execution Isolation
+
+Sythoria enforces strict process isolation to ensure that compromised frontend components or external dependencies cannot access your host OS or filesystem.
+
+### Frontend-to-Backend Isolation
+
+- **Context Isolation & Preload Scripts**: In Electron environments, the application runs with `contextIsolation: true` and `sandbox: true`. The renderer process (the frontend) has absolutely no direct access to Node.js APIs or system resources.
+- **Tauri IPC Command Validation**: In Tauri, the WebView is completely isolated. It communicates with the Rust Core solely through a strongly-typed Inter-Process Communication (IPC) bridge. Every IPC command is bound to strict parameter validation schemas.
+- **Content Security Policy (CSP)**: The app applies a strict CSP that blocks the execution of inline scripts and limits network requests exclusively to configured AI provider domains and local loopbacks.
+
+### Tool & Subprocess Isolation
+
+When utilizing developer integrations (such as local Git operations or MCP servers):
+
+- **Directory Scoping**: Filesystem operations are strictly bound to folders you explicitly register as workspaces. The backend rejects attempts to read or write files outside these directories.
+- **Isolated Subprocesses**: Local Model Context Protocol (MCP) servers run as isolated child processes. They are spawned with a minimized environment variable footprint, preventing secrets from leaking into the child process space.
+
+---
+
+## Zero Telemetry & Privacy Warranties
+
+We believe that privacy policies are only as good as the code enforcing them. Sythoria implements **Zero Telemetry** by default:
+
+- **No Remote Tracking**: There are no Google Analytics, Plausible, or tracking cookies embedded in the app.
+- **No Crash Report Harvesting**: Unlike tools that use Sentry or LogRocket to upload full stack traces (which frequently contain sensitive prompts or API keys), Sythoria stores crash logs strictly on your local disk.
+- **No AI Training**: Because your data never hits our servers, we can never use your conversations or code to train AI models. Your interactions remain entirely your own.
+
+---
 
 ## File Storage Locations
 
-All settings, chats, and workspace layouts are stored in plaintext JSON files within your local user data directory:
+All user-configured layouts, chat histories, and non-sensitive options are stored in plain JSON files. You can inspect, back up, or delete these files at any time.
+
+### Storage Paths
 
 - **macOS**: `~/Library/Application Support/com.sythoria.sythoria-desktop/`
-- **Windows**: `%APPDATA%\com.sythoria.sythoria-desktop\`
-- **Linux**: `~/.local/share/com.sythoria.sythoria-desktop/`
+- **Windows**: `%APPDATA%\com.sythoria.sythoria-desktop\` (resolving to `C:\Users\<Username>\AppData\Roaming\com.sythoria.sythoria-desktop\`)
+- **Linux**: `~/.local/share/com.sythoria.sythoria-desktop/` (adhering to the `$XDG_DATA_HOME` specification)
 
-The directory contains the following configuration files:
+### Database and Configuration Files
 
-- `sythoria-store.json`: Stores local chat history (conversations), UI theme settings, keybinds, and search/MCP server parameters.
-- `config.json`: Stores model endpoints and parameters (with model API keys stripped before saving).
-- `projects.json`: Stores local developer workspace folders and permissions.
+- `sythoria-store.json`: Contains local chat history, themes, and search/MCP configurations. **API keys and secrets are systematically stripped before writing to this file.**
+- `config.json`: Stores configured model parameters and provider endpoints.
+- `projects.json`: Registers local folder directories mapped to workspaces, along with their access permissions.
 
-To completely reset all application data, configurations, and stored secrets, you can clear application data in Settings or delete these files manually.
+---
+
+## Absolute Offline Privacy: Local Models
+
+For users with strict air-gapped security requirements, Sythoria offers first-class compatibility with local model servers:
+
+- **Ollama**: Connect to locally hosted models (e.g., Llama 3, Mistral) via `http://localhost:11434`.
+- **Custom Local Endpoints**: Integrate LM Studio, Llama.cpp, or vLLM instances.
+- **Air-Gapped Operation**: Once models are downloaded, you can disable all network connections. Sythoria will continue to function fully locally, ensuring zero bytes ever leave your machine.
+
+For setup details, see the [Ollama Configuration Guide](/docs/providers/ollama).
