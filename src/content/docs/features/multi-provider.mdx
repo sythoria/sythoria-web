@@ -5,66 +5,120 @@ description: Switch between AI providers seamlessly within a single conversation
 
 # Multi-Provider Chat
 
-Sythoria unifies multiple AI providers under a single interface. Switch between OpenAI, Anthropic, Gemini, Ollama, and more — without switching tabs, apps, or accounts.
+Sythoria is engineered to unify different AI providers—both cloud-based frontier APIs and locally-hosted engines—under a single, cohesive user interface. Instead of switching tabs, applications, or accounts, Sythoria allows you to interact with multiple models, compare their reasoning outputs, and transition between them fluidly within the same conversation thread.
 
-## Switching providers
+---
 
-Use the **model dropdown** in the chat input bar to switch models at any time — even mid-conversation. Each new message uses the currently selected model, so you can:
+## The Power of Mid-Conversation Model Switching
 
-- Start a conversation with GPT-4o, then switch to Claude for a second opinion
-- Use Ollama for offline work, then jump to Gemini for a complex query
-- Compare outputs from different models by asking the same question with different providers
+Use the **model dropdown** in the chat input bar to change models at any point, even between subsequent messages in a single chat. This enables powerful hybrid workflows:
 
-> Switching is instant. There's no loading, no reconnection — just select and send.
+- **Iterative Debugging**: Start an architectural discussion with a highly capable reasoning model like `claude-fable-5`, then switch to a local `llama4:maverick` via Ollama for standard boilerplate generation.
+- **Multimodal Visual Inspection**: Attach layout screenshots using the [Appshots tool](/docs/features/appshots) to a vision-enabled model like `gpt-5.6-sol`, then pivot to `gemini-3.5-flash` for high-context data parsing.
+- **Verification & Comparison**: Query a frontier reasoning model, then switch to a local offline model to verify structural execution without uploading proprietary results.
 
-## Supported providers
+> [!TIP]
+> Switching models is immediate. The Sythoria interface manages provider handshakes behind the scenes, so there is no lag or connection delay when changing models.
 
-| Provider      | API format        | Local/Cloud | API key required |
-| ------------- | ----------------- | ----------- | ---------------- |
-| OpenAI        | OpenAI API        | Cloud       | Yes              |
-| Anthropic     | Anthropic API     | Cloud       | Yes              |
-| Google Gemini | OpenAI-compatible | Cloud       | Yes              |
-| Ollama        | OpenAI-compatible | Local       | No               |
-| OpenRouter    | OpenAI API        | Cloud       | Yes              |
-| NVIDIA NIM    | OpenAI API        | Cloud       | Yes              |
-| Custom        | OpenAI-compatible | Any         | Optional         |
+---
 
-## Adding multiple models
+## Supported Providers & Presets
 
-You can add as many model configurations as you want in **Settings**:
+| Provider Preset   | API Format              | Host  | Key Required       | Streaming Support |
+| :---------------- | :---------------------- | :---- | :----------------- | :---------------- |
+| **OpenAI**        | OpenAI Chat Completions | Cloud | Yes (`sk-...`)     | Yes               |
+| **Anthropic**     | Anthropic Messages API  | Cloud | Yes (`sk-ant-...`) | Yes (translated)  |
+| **Google Gemini** | OpenAI-Compatible       | Cloud | Yes                | Yes               |
+| **Ollama**        | OpenAI-Compatible       | Local | No                 | Yes               |
+| **OpenRouter**    | OpenAI Chat Completions | Cloud | Yes                | Yes               |
+| **NVIDIA NIM**    | OpenAI Chat Completions | Cloud | Yes                | Yes               |
+| **Custom**        | OpenAI-Compatible       | Any   | Optional           | Yes               |
 
-1. Open **Settings** from the sidebar
-2. Click **Add Model**
-3. Choose a **Provider Preset** or set up a custom endpoint
-4. Enter the model details and API key
-5. Repeat for each model you want to use
+---
 
-Each model gets its own connection indicator (green = connected, red = error, yellow = connecting).
+## Context Translation Engine
 
-## Custom providers
+Because different AI providers utilize distinct input formats and payload structures (such as Anthropic’s Messages API structure versus OpenAI’s Chat Completions JSON schema), Sythoria features a built-in **Context Translation Engine**.
 
-Sythoria supports any OpenAI-compatible API. Select **Custom** from the provider dropdown and enter:
+When switching models, Sythoria dynamically parses the active chat thread and compiles it into the schema required by the destination provider:
 
-| Field            | What to enter          | Example                                          |
-| ---------------- | ---------------------- | ------------------------------------------------ |
-| **API Base URL** | The endpoint URL       | `https://my-llm.example.com/v1/chat/completions` |
-| **API Key**      | Your key (if required) | `sk-...`                                         |
-| **Model ID**     | The model identifier   | `my-model-v2`                                    |
+- **System Prompts**: Automatically injected at the top-level parameter for Anthropic or converted into a `system` role message for OpenAI-compatible endpoints.
+- **Multi-Modal Data**: Screenshots and text attachments are serialized into base64 image block structures or text arrays depending on provider vision capabilities.
+- **Unsupported Roles**: System, User, and Assistant message alternates are consolidated to prevent structure errors (e.g., merging consecutive messages of the same role).
 
-This works with services like:
+---
 
-- **Together AI** — `https://api.together.xyz/v1/chat/completions`
-- **Groq** — `https://api.groq.com/openai/v1/chat/completions`
-- **Fireworks AI** — `https://api.fireworks.ai/inference/v1/chat/completions`
-- **vLLM** — your own server endpoint
-- **LM Studio** — `http://localhost:1234/v1/chat/completions`
-- Any other OpenAI-compatible server
+## State-of-the-Art Model Catalog (2026)
 
-## Provider-specific setup guides
+Sythoria comes pre-configured with presets for the current leading models:
 
-- [OpenAI setup](/docs/providers/openai)
-- [Anthropic setup](/docs/providers/anthropic)
-- [Google Gemini setup](/docs/providers/gemini)
-- [Ollama setup](/docs/providers/ollama)
-- [OpenRouter setup](/docs/providers/openrouter)
-- [NVIDIA NIM setup](/docs/providers/nvidia-nim)
+| Provider           | Model ID                 | Context Window | Best For                                                            |
+| :----------------- | :----------------------- | :------------- | :------------------------------------------------------------------ |
+| **OpenAI**         | `gpt-5.6-sol`            | 1,000,000      | Advanced code synthesis, math, and deep reasoning workflows.        |
+| **OpenAI**         | `gpt-5.6-terra`          | 1,000,000      | Balanced, cost-effective everyday analysis.                         |
+| **Anthropic**      | `claude-fable-5`         | 1,000,000      | Long-context comprehension, complex agentic planning, and research. |
+| **Anthropic**      | `claude-5-sonnet-latest` | 1,000,000      | High-velocity programming assistance and document analysis.         |
+| **Google Gemini**  | `gemini-3.5-flash`       | 1,000,000      | Low-latency response loops, long-context parsing, and tools.        |
+| **Google Gemini**  | `gemini-3.1-pro`         | 1,000,000      | Comprehensive multi-lingual tasks and deep logic reasoning.         |
+| **Ollama (Local)** | `llama4-maverick`        | 128,000        | Large-scale offline development and local context synthesis.        |
+| **Ollama (Local)** | `deepseek-r1`            | 128,000        | Advanced step-by-step logic, science, and math reasoning.           |
+
+---
+
+## Local-First Security Design
+
+Your API keys are highly sensitive. Unlike SaaS interfaces that route your keys through their own proxy servers, Sythoria is a desktop client that communicates **directly** with the provider endpoints:
+
+1. **Secure Storage**: Credentials are saved using your operating system's native secure storage layer (macOS Keychain, Windows Credential Manager, or Linux Secret Service via DBus/libsecret).
+2. **Direct HTTPS Traffic**: Requests are sent over TLS directly from your machine to the provider’s URL.
+3. **No Intermediate Logging**: Sythoria does not log prompts, tokens, or API keys to any telemetry server. Your conversation history is stored locally in an encrypted SQLite database on your device.
+
+---
+
+## Connection Lifecycle Indicators
+
+Each model configuration displays a color-coded status indicator next to the model selector, showing the status of the connection in real-time:
+
+- 🟢 **Green (Connected)**: A background heartbeat request succeeded. The endpoint is active and authenticated.
+- 🟡 **Yellow (Validating)**: Handshaking or testing credentials.
+- 🔴 **Red (Offline / Error)**: Connection failed. Click the indicator to view the error log (e.g., `401 Unauthorized` or `ERR_CONNECTION_REFUSED`).
+
+---
+
+## Configuring Custom Providers
+
+For custom endpoints (Together AI, Groq, Fireworks AI, vLLM, or LM Studio), choose **Custom** from the provider dropdown and configure the following parameters:
+
+- **API Base URL**: The endpoint URL (e.g., `https://api.groq.com/openai/v1` or `http://localhost:1234/v1`).
+- **API Key**: The credentials required by the server (leave blank if running locally without authentication).
+- **Model ID**: The string identifier matching the model hosted by your custom endpoint.
+
+### Custom Headers and Payload Injection
+
+For advanced setups (such as private enterprise proxies), you can inject custom HTTP headers and custom body parameters in **Settings > Model Settings > Advanced JSON configuration**:
+
+```json
+{
+  "headers": {
+    "X-Organization-ID": "corp-dev-division",
+    "X-Routing-Key": "priority-gpu-cluster"
+  },
+  "custom_body_params": {
+    "frequency_penalty": 0.2,
+    "repetition_penalty": 1.1
+  }
+}
+```
+
+---
+
+## Provider Setup Guides
+
+For detailed, step-by-step connection guides for specific platforms, refer to:
+
+- [OpenAI Setup Guide](/docs/providers/openai)
+- [Anthropic Setup Guide](/docs/providers/anthropic)
+- [Google Gemini Setup Guide](/docs/providers/gemini)
+- [Ollama (Local) Setup Guide](/docs/providers/ollama)
+- [OpenRouter Setup Guide](/docs/providers/openrouter)
+- [NVIDIA NIM Setup Guide](/docs/providers/nvidia-nim)
