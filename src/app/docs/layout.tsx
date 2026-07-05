@@ -15,7 +15,7 @@ export default function DocsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-transparent relative overflow-x-hidden">
+    <div className="min-h-screen bg-transparent relative">
       <RefractiveBackground />
       <DocsTopBar />
       <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 pt-28 pb-16 flex gap-6 lg:gap-8">
