@@ -5,28 +5,29 @@ description: Connect Sythoria to Google's Gemini models for long-context reasoni
 
 # Google Gemini
 
-Connect Sythoria to Google's Gemini API to chat with Google's most capable models, including the latest Gemini 3-series (Gemini 3.1 Pro, Gemini 3.5 Flash, Gemini 3.1 Flash-Lite, Gemini 3 Deep Think, and Gemini 3 Flash). Gemini offers large context windows and strong performance on reasoning, code, and multilingual tasks.
+Connect Sythoria to Google's Gemini API to chat with Google's most capable models, including the latest Gemini 3.5 series, Gemini 3.1 series, Gemini 2.5 series, Gemini 2.0 series, and Gemini 1.5 series. Gemini models offer industry-leading context windows (up to 2 million tokens) and strong performance on reasoning, coding, and multimodal tasks.
 
 ## Prerequisites
 
 - A Google account
-- An API key from Google AI Studio
+- An API key generated from Google AI Studio
 
 ## Setup
 
-1. Go to [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
-2. Click **Create API Key** and copy it
-3. In Sythoria, open **Settings** from the sidebar
-4. Select **Google Gemini** from the **Provider Preset** dropdown — the API base URL and default model fill in automatically
-5. Paste your API key into the **API Key** field
-6. The connection indicator should turn **green** within a few seconds
+1. Go to [aistudio.google.com/apikey](https://aistudio.google.com/apikey).
+2. Click **Create API Key**, select your project, and copy the key.
+3. In Sythoria, open **Settings** from the sidebar.
+4. Select **Google Gemini** from the **Provider Preset** dropdown — the API base URL and default model will fill in automatically.
+5. Paste your API key into the **API Key** field.
+6. The connection indicator should turn **green** within a few seconds, indicating successful authentication.
 
+> [!NOTE]
 > Your API key is stored securely in your OS keychain. It is never sent to Sythoria's servers. See [Privacy & Security](/docs/privacy).
 
 ## Default configuration
 
 | Setting           | Value                                                                      |
-| ----------------- | -------------------------------------------------------------------------- |
+| :---------------- | :------------------------------------------------------------------------- |
 | **API Base**      | `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions` |
 | **Default Model** | `gemini-3.5-flash`                                                         |
 | **API Format**    | OpenAI-compatible (Google's compatibility layer)                           |
@@ -34,28 +35,66 @@ Connect Sythoria to Google's Gemini API to chat with Google's most capable model
 
 ## Available models
 
-| Model ID                | Best for                                                                        | Context window |
-| ----------------------- | ------------------------------------------------------------------------------- | -------------- |
-| `gemini-3.5-flash`      | High-efficiency everyday tasks — optimized for coding and agentic loops         | 1M             |
-| `gemini-3.1-pro`        | Flagship reasoning — complex workflows, software engineering, and data analysis | 1M             |
-| `gemini-3.1-flash-lite` | Most cost-efficient — optimized for high-volume, low-latency tasks              | 1M             |
-| `gemini-3-deep-think`   | Advanced reasoning — specialized mode for math, science, and complex coding     | 1M             |
-| `gemini-3-flash`        | Balanced performance — preview tier for speed and general capabilities          | 1M             |
+Sythoria connects directly to Google AI Studio's models. You can enter any of the following model IDs in your configuration:
 
-## How it works: OpenAI-compatible endpoint
+| Model ID                        | Best for                                                                                                                                  | Context window   | Status / Tier                                   |
+| :------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------- | :--------------- | :---------------------------------------------- |
+| **Gemini 3/3.5 Series**         |                                                                                                                                           |                  |                                                 |
+| `gemini-3.5-pro`                | **Flagship Reasoning & Deep Think**: State-of-the-art coding, complex math, and deep logical analysis with a "Deep Think" reasoning mode. | 2,000,000 tokens | Upcoming / Coming Soon                          |
+| `gemini-3.5-flash`              | **Default Flagship**: High-efficiency everyday tasks, fast coding, and advanced agentic workflows.                                        | 1,000,000 tokens | Active (GA)                                     |
+| `gemini-3.1-pro`                | **Advanced Coding & Science**: Strong complex multi-step reasoning, legacy development workflows.                                         | 1,000,000 tokens | Active                                          |
+| `gemini-3.1-flash-lite`         | **Ultra-Low Latency**: Highly cost-efficient, optimized for high-volume, low-latency, simple tasks.                                       | 1,000,000 tokens | Active                                          |
+| `gemini-3-deep-think`           | **Advanced Reasoning Mode**: Specialized reasoning-focused preview mode targeting math, science, and multi-file code.                     | 1,000,000 tokens | Active                                          |
+| `gemini-3-flash`                | **Balanced Performance**: Preview tier for speed, general capabilities, and quick prototyping.                                            | 1,000,000 tokens | Active                                          |
+| **Gemini 2.5 Series**           |                                                                                                                                           |                  |                                                 |
+| `gemini-2.5-pro`                | **High-Reasoning & Complex Tasks**: High performance on coding and multimodal reasoning challenges.                                       | 1,000,000 tokens | Active                                          |
+| `gemini-2.5-flash`              | **Speed & Multimodal Efficiency**: Optimized for quick reasoning, vision analysis, and text processing.                                   | 1,000,000 tokens | Active                                          |
+| **Gemini 2.0 Series**           |                                                                                                                                           |                  |                                                 |
+| `gemini-2.0-pro-exp`            | **Experimental Reasoning**: Early-access Pro tier model optimized for experimental coding.                                                | 1,000,000 tokens | Active (Experimental)                           |
+| `gemini-2.0-flash-thinking-exp` | **Thinking Traces**: Experimental model producing visible logical thinking traces prior to the final response.                            | 1,000,000 tokens | Active (Experimental)                           |
+| `gemini-2.0-flash`              | **General Multimodal Tasks**: Fast and lightweight.                                                                                       | 1,000,000 tokens | Deprecated (Migrate to `gemini-3.5-flash`)      |
+| `gemini-2.0-flash-lite`         | **Cost-Effective Tasks**: Extremely fast, simple workloads.                                                                               | 1,000,000 tokens | Deprecated (Migrate to `gemini-3.1-flash-lite`) |
+| **Gemini 1.5 Series**           |                                                                                                                                           |                  |                                                 |
+| `gemini-1.5-pro`                | **Legacy Long Context**: Pioneered the 2M context window. Best for parsing massive codebases or long documents.                           | 2,000,000 tokens | Legacy                                          |
+| `gemini-1.5-flash`              | **Legacy Efficiency**: High-speed, low-cost processing for older application builds.                                                      | 1,000,000 tokens | Legacy                                          |
 
-Sythoria uses Google's **OpenAI-compatible endpoint** (`/v1beta/openai/chat/completions`). This means the experience is identical to using OpenAI's API — same request format, same streaming protocol, same response structure. No special configuration needed.
+## Model Capabilities & Features
+
+### OpenAI-Compatible Endpoint
+
+Sythoria utilizes Google's official **OpenAI compatibility layer** (`/v1beta/openai/chat/completions`). This maps standard OpenAI API requests onto the Gemini backend.
+
+- **Parameters**: Standard parameters like `temperature`, `max_tokens`, `stop`, and `stream` are fully supported.
+- **System Instructions**: System messages (developer roles) are correctly translated to direct instructions for the Gemini models.
+
+### Deep Think & Reasoning Modes
+
+The latest frontier models, such as the upcoming `gemini-3.5-pro` and `gemini-3-deep-think` (as well as `gemini-2.0-flash-thinking-exp`), incorporate an internal reasoning step.
+
+- **Thinking Traces**: During a chat, the model produces a hidden or visible thought process before generating the final response.
+- **Use Cases**: Best suited for competitive programming, advanced mathematical proofs, and complex debugging scenarios.
+
+### Multimodal Inputs
+
+All Gemini models are natively multimodal. You can attach images, diagrams, or screenshots to your messages. Sythoria encodes these assets and transmits them directly through the OpenAI compatibility layer, allowing you to ask questions about visual data.
+
+### Switching Models Mid-Conversation
+
+Sythoria allows you to switch between different Gemini models dynamically. For instance, you can use the fast `gemini-3.5-flash` for initial discussion and switch to `gemini-3.1-pro` (or the upcoming `gemini-3.5-pro` once available) when requesting a complex code implementation or deep analytical review.
 
 ## Pricing
 
-Google offers a **free tier** with rate limits for development and light use. For production workloads, see [ai.google.dev/pricing](https://ai.google.dev/pricing) for pay-per-token pricing.
+Google AI Studio provides a highly generous **Free Tier** for developers, allowing you to build and test applications with rate limits (typically 15 RPM for Flash models).
+For production workloads, you can enable billing in your Google Cloud Project to pay per token. See [ai.google.dev/pricing](https://ai.google.dev/pricing) for the latest pricing schedules.
 
 ## Troubleshooting
 
-| Error                        | Cause                                       | Fix                                                                                    |
-| ---------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------- |
-| **403 Forbidden**            | API key lacks access to the requested model | Check your Google Cloud project settings and enable the Generative Language API        |
-| **400 Invalid API key**      | Key is malformed or revoked                 | Generate a new key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
-| **429 Rate Limit**           | Exceeded free tier quota                    | Wait and retry, or upgrade to a paid plan                                              |
-| **Model not found**          | Model ID is incorrect                       | Use the exact model IDs from the table above                                           |
-| **Connection indicator red** | Network issue or invalid API base           | Verify the API base URL is the OpenAI-compatible endpoint and click **Refresh**        |
+| Error                                   | Cause                                                                                            | Fix                                                                                                                                            |
+| :-------------------------------------- | :----------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| **400 Invalid Argument**                | Request contains unsupported parameters or syntax errors.                                        | Verify the request format and check if your settings have any non-standard parameters enabled.                                                 |
+| **400 Failed Precondition**             | Free tier is unavailable in your current geographic region.                                      | Go to Google AI Studio, link a Google Cloud Project, and enable billing to access models from restricted locations.                            |
+| **401 Unauthorized**                    | Your API key is incorrect, revoked, or expired.                                                  | Generate a new API key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey) and paste it into Settings.                         |
+| **403 Forbidden**                       | The Generative Language API is not enabled in your Google Cloud project, or your key is blocked. | Verify that the Generative Language API is enabled in your Google Cloud Console. Check for IP/referrer restrictions.                           |
+| **404 Model Not Found**                 | The specified model ID is incorrect, or the model has been retired.                              | Double-check that your model ID matches the table above exactly. Do not use shut-down model versions (e.g. Gemini 2.0 Flash).                  |
+| **429 Rate Limit / Resource Exhausted** | You have exceeded the free tier quota limits or billing limits.                                  | Wait a few minutes before retrying. To increase quotas, upgrade your Google AI Studio account to a paid plan.                                  |
+| **Connection indicator red**            | Network offline, firewall blocking Google domain, or incorrect API Base URL.                     | Verify your internet connection. Ensure the API Base URL is set to `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`. |
