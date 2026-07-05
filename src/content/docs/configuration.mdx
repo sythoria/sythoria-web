@@ -5,130 +5,187 @@ description: Customize Sythoria with model selection, temperature, system prompt
 
 # Configuration
 
-Sythoria works out of the box, but offers several customization options to tailor the experience to your workflow.
+Sythoria is designed to work out of the box with reasonable defaults, but it offers deep customization options to tailor its behavior to your specific development and privacy workflows. All settings are stored locally on your machine.
 
-## Model selection & health checks
+---
 
-Choose your active model from the **dropdown in the chat input bar**. Available models are the ones you've configured in Settings. To add or remove models:
+## Model Selection & Health Checks
 
-1. Open **Settings** from the sidebar
-2. Add models with the **Add Model** button, or delete existing ones with the trash icon
-3. Each model shows a live connection indicator.
+You can switch your active LLM at any time using the **model dropdown** located directly in the chat input bar. The models shown in this dropdown are managed under **Settings > Model Providers**.
 
-### Connection indicators
+### Customizing Model Configurations
 
-- **Green Dot**: Connected (the model endpoint is active and responsive).
-- **Pulsing Yellow Dot**: Connecting (a connection check is in progress).
-- **Red Dot**: Error (connection check failed or request was refused).
-- **Gray Dot**: Disconnected or disabled.
+1. Open **Settings** and scroll to **Model Providers**.
+2. Click **Add Model** to define a new endpoint.
+3. Select a **Provider Preset** (OpenAI, Anthropic, Gemini, Ollama, etc.) to auto-populate the endpoint URL and model name, or choose **Custom** to enter your own OpenAI-compatible endpoint (e.g., LM Studio, Groq, Together AI, or a private vLLM server).
+4. Fill in the **Model ID** matching the exact identifier expected by the provider (e.g., `gpt-4o` or `claude-3-5-sonnet-latest`).
 
-### Health check mechanism
+### Connection Health Indicators
 
-Sythoria automatically performs connection health checks in the background to ensure your models are ready to respond:
+Each configured model displays a real-time health indicator dot:
 
-- **Interval**: Checks are run every **5 minutes**.
-- **Throttling**: Consecutively triggered manual or automatic checks are rate-limited to once every **30 seconds** to avoid provider API abuse.
-- **Background activity**: You can toggle background checks under Settings. If **Disable Background Activity** is enabled, all background health checks stop immediately, and indicators return to gray.
+- 🟢 **Green (Connected)**: The endpoint is active, reachable, and has successfully authenticated your API key.
+- 🟡 **Pulsing Yellow (Connecting)**: A health check ping is currently executing.
+- 🔴 **Red (Error)**: The health check failed. Hovering over the indicator will display the precise error code or message returned by the server.
+- ⚪ **Gray (Inactive/Disabled)**: The model is disabled, or background connectivity checks are turned off.
 
-See [Multi-Provider Chat](/docs/features/multi-provider) for details on managing multiple providers.
+### Background Health Check Logic
 
-## Temperature
+To ensure that models are ready when you need them, Sythoria performs automatic background health checks:
 
-Control the randomness of responses via the **Temperature** slider in Settings:
+- **Interval**: Automatic checks are run every **5 minutes**.
+- **Rate-Limiting (Throttling)**: Manual or automated check triggers are throttled to a minimum of **30 seconds** apart to prevent accidental API rate-limiting or provider abuse.
+- **Power & Resource Savings**: If you want to prevent background network activity, toggle **Disable Background Activity** in Settings. This will halt all periodic health checks and force all indicators to gray until a model is manually selected or pinged.
 
-| Value   | Behavior                       | Best for                                 |
-| ------- | ------------------------------ | ---------------------------------------- |
-| **0.0** | Deterministic, focused outputs | Factual tasks, data extraction, coding   |
-| **0.7** | Balanced creativity (default)  | General conversation, writing, analysis  |
-| **2.0** | Maximum randomness             | Brainstorming, creative writing, variety |
+---
 
-Lower temperatures produce more consistent, predictable responses. Higher temperatures introduce more variation and creativity.
+## LLM Hyperparameters
 
-## Web search
+You can fine-tune response characteristics globally or per model preset under the settings panel:
 
-Sythoria can augment chat responses with live web search results. When enabled, the AI can search the web and read web pages to provide up-to-date information.
+| Hyperparameter        | Range          | Default | Details                                                                                                                                                                              |
+| :-------------------- | :------------- | :------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Temperature**       | `0.0` - `2.0`  | `0.7`   | Controls randomness. Lower values (`0.0` - `0.3`) make output deterministic, ideal for coding and facts. Higher values (`1.0` - `2.0`) encourage creative writing and brainstorming. |
+| **Max Tokens**        | `1` - `4096+`  | Varies  | Restricts the maximum length of the model's generated response.                                                                                                                      |
+| **Top P**             | `0.0` - `1.0`  | `1.0`   | Nucleus sampling. Filters candidate tokens based on cumulative probability mass. Setting to `0.9` means only tokens in the top 90% probability are considered.                       |
+| **Frequency Penalty** | `-2.0` - `2.0` | `0.0`   | Discourages the model from repeating the same exact words or phrases.                                                                                                                |
+| **Presence Penalty**  | `-2.0` - `2.0` | `0.0`   | Encourages the model to introduce and discuss new topics.                                                                                                                            |
 
-### Supported search providers
+---
 
-| Provider                 | Requires        | Best for                               |
-| ------------------------ | --------------- | -------------------------------------- |
-| **Google Custom Search** | API key + CX ID | High-quality results, widely available |
-| **SearXNG**              | Base URL only   | Self-hosted, privacy-preserving        |
-| **Firecrawl**            | API key         | Web scraping and search combined       |
-| **Custom**               | Varies          | Any OpenAI-compatible search API       |
+## System Prompts & Repository Instructions (`AGENTS.md`)
 
-### Setting up web search
+System prompts dictate the personality, constraints, and operational guidelines of the AI model. Sythoria implements a layered system prompt compiler:
 
-1. Open **Settings** and scroll to **Web Search APIs**
-2. Click **Add Search API**
-3. Choose a provider and enter your credentials
-4. Enable the search API with the toggle switch
-5. Use the search toggle in the chat interface to enable/disable search per conversation
+### 1. Global Default System Prompt
 
-## Keyboard shortcuts
+Configured under **Settings > General**, this prompt is applied to all new chats. You can use it to set general preferences, such as: _"Respond in concise markdown, avoid preambles, and use TypeScript for coding tasks."_
 
-The desktop application includes extensive configurable keyboard shortcuts (which can be customized under **Settings > Keyboard Shortcuts**). The defaults are:
+### 2. Workspace Context Injection (`AGENTS.md`)
 
-| Shortcut (Mac / Windows/Linux) | Action                                                             | Category     |
-| :----------------------------- | :----------------------------------------------------------------- | :----------- |
-| `Enter` / `Enter`              | Send message (Can be toggled to `⌘Enter`/`Ctrl+Enter` in Settings) | Recommended  |
-| `Shift+Enter` / `Shift+Enter`  | Insert new line (When `Enter` sends message)                       | Recommended  |
-| `⌘K` / `Ctrl+K`                | Open Conversation Picker (quick-search list of active threads)     | Recommended  |
-| `Ctrl+L` / `Ctrl+L`            | Focus message compose box / chat input                             | Recommended  |
-| `Ctrl+N` / `Ctrl+N`            | Start a new conversation thread                                    | Recommended  |
-| `⌥⇧S` / `Alt+Shift+S`          | Capture screen screenshot (Appshot) and attach to chat             | Recommended  |
-| `⌘[` / `Ctrl+[`                | Go Back (navigate backward in conversation history)                | Navigation   |
-| `⌘]` / `Ctrl+]`                | Go Forward (navigate forward in conversation history)              | Navigation   |
-| `⌘P` / `Ctrl+P`                | Open local file attachment upload picker                           | Navigation   |
-| `⌥↑` / `Alt+ArrowUp`           | Select the conversation directly above in the sidebar list         | Navigation   |
-| `⌥↓` / `Alt+ArrowDown`         | Select the conversation directly below in the sidebar list         | Navigation   |
-| `⌘,` / `Ctrl+,`                | Open the Settings dashboard                                        | Navigation   |
-| `⌘/` / `Ctrl+/`                | Toggle active Model Selector dropdown                              | Conversation |
-| `⌘B` / `Ctrl+B`                | Expand or collapse history sidebar panel                           | Layout       |
-| `⌘=` / `Ctrl+=`                | Increase user interface zoom level / font scaling                  | Layout       |
-| `⌘-` / `Ctrl+-`                | Decrease user interface zoom level / font scaling                  | Layout       |
-| `⌘0` / `Ctrl+0`                | Reset interface scaling back to 100%                               | Layout       |
-| `←` / `ArrowLeft`              | Select previous image in the image preview viewer                  | Navigation   |
-| `→` / `ArrowRight`             | Select next image in the image preview viewer                      | Navigation   |
-| `Escape`                       | Stop model response streaming                                      | General      |
+If you mount a local folder as a developer workspace, Sythoria inspects the root of that folder for a file named `AGENTS.md`. If detected:
 
-## Application Limits & Inputs
+- The contents of `AGENTS.md` are **automatically read** and appended directly to the model's system prompt prior to every message sent in that workspace.
+- This allows you to define project-specific conventions, code styling rules, or API schemas that the AI will follow seamlessly without manual copying.
 
-To ensure stability and performance, the application enforces the following hard constraints on inputs and file uploads:
+---
 
-| Limit / Metric            | Max Value           | Details                                                                                               |
-| :------------------------ | :------------------ | :---------------------------------------------------------------------------------------------------- |
-| **Max Message Length**    | `10,000` characters | Input blocks are restricted to 10,000 characters per message.                                         |
-| **Max File Upload Size**  | `10 MB`             | Individual image or text file attachments cannot exceed 10 MB.                                        |
-| **Max Draft Attachments** | `6` files           | You can attach a maximum of 6 images or documents to a single prompt.                                 |
-| **Supported File Types**  | Varies              | Text (`.txt`, `.md`, `.json`, `.yaml`, `.csv`, `.log`) and images (`.png`, `.jpeg`, `.gif`, `.webp`). |
+## Developer Workspace Mounts (Project Tools)
 
-## Data management
+Sythoria allows you to turn your chat interface into a local coding agent by mounting project folders. When a workspace is open, the model is granted access to a set of project tool primitives (e.g., directory listing, file searching, file reading, and editing).
 
-All data is stored locally within the desktop application. You can:
+### Workspace Permission Levels
 
-| Action                           | How                                                                          |
-| -------------------------------- | ---------------------------------------------------------------------------- |
-| **Export a conversation**        | Click the export button in the sidebar conversation menu — saves as Markdown |
-| **Clear all conversations**      | Use **Clear All Chats** in the sidebar, or clear application data            |
-| **Delete a single conversation** | Click the trash icon on the conversation in the sidebar                      |
+To protect your file system, you must configure a security permission level when mounting a folder:
 
-> Resetting the application data resets everything — conversations, API keys, and settings.
+| Permission Level | Permitted Tools                                                                          | Security / HITL Behavior                                                                                                                                            |
+| :--------------- | :--------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Read-Only**    | `project_glob`, `project_grep`, `project_list_dir`, `project_read`, `project_git_status` | **Auto-approve**: The model can navigate and inspect your workspace code instantly.                                                                                 |
+| **Write/Commit** | _All Read-Only tools_ + `project_write`, `project_edit`, `project_git_commit`            | **Human-In-The-Loop**: The app pauses and shows a diff viewer when the model attempts to write or replace text. Files are only modified when you click **Approve**. |
+| **Full (Bash)**  | _All Write tools_ + `project_bash`                                                       | **Strict Await Consent**: The app displays the command line string that the model wants to run in your terminal. You must review and click **Execute** to run it.   |
 
-## Appearance
+---
 
-Toggle between light and dark mode in **Settings** under **Appearance**. Your preference is saved automatically and persists across sessions.
+## Model Context Protocol (MCP) Configuration
 
-## Provider configuration
+Sythoria includes complete client support for the Model Context Protocol (MCP), enabling integration with local and remote developer toolkits.
 
-Each model in Settings has these fields:
+### MCP Transport Protocols
 
-| Field               | Description                                                              |
-| ------------------- | ------------------------------------------------------------------------ |
-| **Name**            | A display name for your reference (e.g., "Work GPT-4o")                  |
-| **Provider Preset** | Auto-fills the API base URL and default model                            |
-| **API Base URL**    | The endpoint for API calls (auto-filled by presets)                      |
-| **Model ID**        | The model identifier to use (e.g., `gpt-4o`, `claude-sonnet-4-20250514`) |
-| **API Key**         | Your authentication key (stored securely in your OS keychain)            |
+Configure servers in **Settings > MCP Settings**:
 
-See the [Providers](/docs/providers/openai) section for provider-specific setup guides.
+- **Stdio**: Spawns local binaries or runtimes (e.g., `npx`, `uvx`, `python`, `docker`) using standard input/output streams.
+  - _Parameters_: You must define the **Command** (e.g., `npx`) and **Arguments** (e.g., `-y`, `@modelcontextprotocol/server-postgres`) separately.
+- **SSE (Server-Sent Events)**: Connects to an external running server over HTTP.
+- **Streamable HTTP**: Lightweight HTTP-based remote server connections.
+
+### MCP Security & Network Configurations
+
+- **Opt-In Local Network Access**: By default, Sythoria blocks connections to private networks and loopback interfaces (e.g., `localhost`, `127.0.0.1`, RFC 1918 subnets) to prevent Server-Side Request Forgery (SSRF) attacks. If your MCP server runs locally, you must explicitly enable the **Allow Local Network** toggle in its configuration.
+- **Trust Settings**:
+  - **Untrusted (Default)**: Sythoria prompts you with a confirmation dialog showing arguments before running any tool from this server.
+  - **Trusted**: The model is allowed to run tool calls from this server automatically, streamlining agent loops.
+- **Environment Variables**: Custom environment variables needed by stdio servers are stored securely in your OS keychain alongside your LLM API keys.
+
+---
+
+## Web Search APIs
+
+Sythoria can search the web and fetch page content to answer questions with real-time data. You can configure and toggle search engines under **Settings > Web Search**:
+
+- **Google Custom Search**: Requires a Google API key and a Custom Search Engine ID (CX ID).
+- **SearXNG**: Requires only the base URL of your self-hosted or public SearXNG instance.
+- **Firecrawl**: Requires a Firecrawl API key, which enables optimized markdown extraction from search and scrape operations.
+- **Custom Search APIs**: Custom endpoints utilizing OpenAI-compatible search schemas.
+
+> [!TIP]
+> You can toggle web search on or off dynamically during a conversation using the search icon directly next to the chat compose box.
+
+---
+
+## Keyboard Shortcuts
+
+All keyboard shortcuts can be configured under **Settings > Keyboard Shortcuts**. The default configuration is:
+
+| Shortcut (Mac) | Shortcut (Win/Linux) | Action                                                      | Category     |
+| :------------- | :------------------- | :---------------------------------------------------------- | :----------- |
+| `Enter`        | `Enter`              | Send message (toggles to `⌘Enter`/`Ctrl+Enter` in settings) | General      |
+| `Shift+Enter`  | `Shift+Enter`        | Insert new line                                             | General      |
+| `Escape`       | `Escape`             | Stop model response generation/streaming                    | General      |
+| `⌘K`           | `Ctrl+K`             | Open Conversation Picker (quick-search thread history)      | General      |
+| `⌘,`           | `Ctrl+,`             | Open the Settings dashboard                                 | Navigation   |
+| `Ctrl+L`       | `Ctrl+L`             | Focus the chat input box                                    | Navigation   |
+| `Ctrl+N`       | `Ctrl+N`             | Start a new conversation thread                             | Navigation   |
+| `⌥⇧S`          | `Alt+Shift+S`        | Trigger **Appshot** (Screen capture attached to chat draft) | General      |
+| `⌘[`           | `Ctrl+[`             | Go Back (navigate backward in thread history)               | Navigation   |
+| `⌘]`           | `Ctrl+]`             | Go Forward (navigate forward in thread history)             | Navigation   |
+| `⌘P`           | `Ctrl+P`             | Open local file attachment upload picker                    | Navigation   |
+| `⌥↑`           | `Alt+ArrowUp`        | Select the conversation directly above in the sidebar list  | Navigation   |
+| `⌥↓`           | `Alt+ArrowDown`      | Select the conversation directly below in the sidebar list  | Navigation   |
+| `⌘/`           | `Ctrl+/`             | Toggle active Model Selector dropdown                       | Conversation |
+| `⌘B`           | `Ctrl+B`             | Expand or collapse history sidebar panel                    | Layout       |
+| `⌘=`           | `Ctrl+=`             | Increase user interface zoom level / font scaling           | Layout       |
+| `⌘-`           | `Ctrl+-`             | Decrease user interface zoom level / font scaling           | Layout       |
+| `⌘0`           | `Ctrl+0`             | Reset interface scaling back to 100%                        | Layout       |
+| `←`            | `ArrowLeft`          | Select previous image in the image preview viewer           | Navigation   |
+| `→`            | `ArrowRight`         | Select next image in the image preview viewer               | Navigation   |
+
+---
+
+## Application Constraints & Input Limits
+
+To prevent application rendering lag and ensure memory stability, the following limits are enforced inside the desktop wrapper:
+
+- **Max Message Length**: `10,000` characters per single chat submission.
+- **Max File Upload Size**: `10 MB` per file.
+- **Max Draft Attachments**: A maximum of `6` files (images, documents, code files) can be attached to one prompt.
+- **Supported Text File Formats**: `.txt`, `.md`, `.json`, `.yaml`, `.yml`, `.csv`, `.log`, `.ini`, `.conf`.
+- **Supported Image Formats**: `.png`, `.jpeg`, `.jpg`, `.gif`, `.webp`.
+
+---
+
+## Data Management & Storage Locations
+
+Sythoria is completely stateless on the server side. All data is saved on your local hard drive.
+
+### Filesystem Storage Locations
+
+Settings, chat history databases, and cache folders are located in the user application support directory:
+
+- **macOS**: `~/Library/Application Support/com.sythoria.sythoria-desktop/`
+- **Windows**: `%APPDATA%\com.sythoria.sythoria-desktop\`
+- **Linux**: `~/.local/share/com.sythoria.sythoria-desktop/`
+
+### Configuration Files Structure
+
+Within the storage directory, the following JSON files contain your data:
+
+- `sythoria-store.json`: Contains your chat threads, conversation histories, UI preferences, keybinds, and MCP/search server connection endpoints.
+- `config.json`: Contains model provider configurations (excluding credentials). Sensitive API keys are stripped out before saving to this file, as they are delegated directly to the OS keychain.
+- `projects.json`: Stores details of your local project workspaces and their permission boundaries.
+
+### Exporting and Resetting Data
+
+- **Export Chat**: You can export individual conversations to markdown using the export icon in the active chat header.
+- **Clear All Chats**: Located in the sidebar menu. Removes your database of chat histories, but keeps your configurations and API keys.
+- **Factory Reset**: Located at the bottom of the Settings panel. This deletes all conversation histories, deletes configurations, and purges all credentials saved in the OS-level credential vault.
