@@ -5,50 +5,109 @@ description: Capture your screen and attach it to your AI conversations instantl
 
 # Vision & Screenshots (Appshots)
 
-Sythoria features a native screen capture utility called **Appshots**. It allows you to take screenshots of your displays or windows and attach them directly to your chat draft for visual analysis.
+Sythoria features a native, low-latency screen capture utility called **Appshots**. Engineered to streamline visual AI workflows, Appshots allows you to capture selected portions of your screen, active windows, or entire displays and attach them directly to your chat draft for visual analysis.
+
+By bypassing manual snipping tools and clipboard pastes, Appshots facilitates instant interactions with vision-capable models (such as `gpt-5.6-sol`, `claude-fable-5`, and `gemini-3.5-flash`).
+
+---
 
 ## Quickstart
 
-1. Press `Alt+Shift+S` (on Windows, macOS, or Linux)
-2. Sythoria will hide its window, capture your primary display, and append the screenshot directly to your active chat input
-3. Type a prompt (e.g., _"analyze this layout error"_) and press `Enter` to send it to a vision-enabled model (like `gpt-4o` or `gemini-2.5-pro`)
+1. Press **`Alt + Shift + S`** (on Windows, macOS, or Linux).
+2. Sythoria will temporarily hide its user interface, capture your designated target (display or window), and immediately render a thumbnail of the screenshot inside the active chat input area.
+3. Type your analysis query (e.g., _"How can I fix the alignment of this navigation menu?"_ or _"Analyze this database schema chart"_).
+4. Press **`Enter`** to submit the image alongside your prompt to the active vision model.
 
-> [!NOTE]
-> All screenshots are saved locally in the app's secure cache directory on your machine. They are never sent to third-party servers except when included in requests to your configured AI provider.
+> [!IMPORTANT]
+> Because Sythoria is a privacy-first, local-first client, all screenshots are written directly to your local application data directory. They are never sent to external servers or cloud intermediaries, except when transmitted securely via HTTPS directly to your chosen AI provider using your configured API key.
 
-## Screen Recording Permissions (macOS)
+---
 
-Because Appshots captures native screen coordinates, macOS requires explicit security approval:
+## Technical Architecture & OS Integration
 
-1. The first time you trigger a capture, macOS will prompt you for permissions
-2. Open **System Settings > Privacy & Security > Screen & System Audio Recording**
-3. Ensure the toggle next to **Sythoria** is enabled
-4. Restart Sythoria for the permission change to take effect
+Appshots avoids generic, high-overhead screen recorders in favor of platform-native capture mechanisms:
 
-If your screenshots return blank or grey images, verify that this permission toggle is active.
+- **macOS**: Utilizes the Apple-native `screencapture` CLI and Quartz Window Services API to capture raw pixel buffers.
+- **Windows**: Invokes Win32 Graphics Device Interface (GDI) and Desktop Duplication APIs for low-overhead multi-monitor grabs.
+- **Linux**: Automatically detects the display server:
+  - **Wayland**: Integrates with `grim` and `slurp` (commonly found on sway and wlroots-based compositors) or falls back to standard XDG Desktop Portals.
+  - **X11**: Integrates with `maim` or `scrot` CLI utilities.
+
+---
+
+## Operating System Setup & Permissions
+
+To capture coordinates outside of Sythoria's own application window, the operating system requires explicit permission.
+
+### macOS (Screen Recording Permissions)
+
+1. Trigger a screen capture via `Alt + Shift + S` or click the camera icon in the message input.
+2. A macOS system dialog will prompt you to authorize **Sythoria**.
+3. Open **System Settings > Privacy & Security > Screen & System Audio Recording**.
+4. Locate **Sythoria** in the list and toggle the permission switch to **Enabled**.
+5. Restart the Sythoria application to apply the changes.
+
+### Linux (Wayland & X11 Dependencies)
+
+Depending on your desktop environment (GNOME, KDE, or window managers like i3/Sway), ensure the necessary capture dependencies are installed:
+
+- **Arch Linux**: `sudo pacman -S grim slurp` (Wayland) or `sudo pacman -S maim` (X11)
+- **Ubuntu/Debian**: `sudo apt install grim slurp` (Wayland) or `sudo apt install maim` (X11)
+- **Fedora**: `sudo dnf install grim slurp` (Wayland) or `sudo dnf install maim` (X11)
+
+> [!TIP]
+> If your screenshots appear entirely blank, grey, or display only the desktop wallpaper, double-check that your desktop environment's portal permissions (`xdg-desktop-portal`) are configured correctly.
+
+---
 
 ## Configuration Options
 
-You can customize capture behavior under **Settings** under the **Vision / Appshots** section:
+Customize screen capture mechanics in **Settings > Vision / Appshots**:
 
-| Option                     | Default           | Description                                                                                              |
-| :------------------------- | :---------------- | :------------------------------------------------------------------------------------------------------- |
-| **Capture Target**         | `Primary Display` | Capture all connected displays, the primary display, or just the active Sythoria window.                 |
-| **Capture Delay**          | `0 seconds`       | Add a delay before the screen is captured (useful if you need to position other windows first).          |
-| **Image Format**           | `PNG`             | Choose between lossless `PNG` or compressed `JPEG`.                                                      |
-| **Image Quality**          | `85`              | Compression quality for JPEG captures (higher means better quality, larger files).                       |
-| **Hide Window on Capture** | `Enabled`         | Automatically minimizes or hides the Sythoria window during the capture so it doesn't block your screen. |
-| **Include Cursor**         | `Disabled`        | Choose whether to draw your mouse cursor in the captured screenshot.                                     |
+| Option                     | Default           | Available Choices                                  | Functional Description                                                                                                               |
+| :------------------------- | :---------------- | :------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
+| **Capture Target**         | `Primary Display` | `Primary Display`, `All Displays`, `Active Window` | Determines whether the capture includes your main screen, a stitched view of all displays, or only the frontmost application window. |
+| **Capture Delay**          | `0 seconds`       | `0s`, `1s`, `3s`, `5s`                             | Adds a countdown delay before firing the shutter, allowing you to position popovers or hover states.                                 |
+| **Image Format**           | `PNG`             | `PNG` (Lossless), `JPEG` (Compressed)              | `PNG` preserves crisp text and code lines; `JPEG` reduces payload size for faster network transfers.                                 |
+| **Image Quality**          | `85`              | `10` to `100`                                      | Only applicable to `JPEG` formatting. Lower values reduce payload size; higher values preserve fine visual elements.                 |
+| **Hide Window on Capture** | `Enabled`         | `Enabled`, `Disabled`                              | Automatically minimizes or hides the Sythoria window during capture to prevent the client from blocking your workspace.              |
+| **Include Cursor**         | `Disabled`        | `Enabled`, `Disabled`                              | Draws the OS mouse cursor into the captured frame, useful for pointing out specific bugs or UI states.                               |
 
-## Automated Caching & Cleanup
+---
 
-By default, screenshots are saved in your application data directory. To prevent these files from filling up your local disk, enable **Auto-Cleanup** in Settings:
+## Storage Lifecycle & Automated Caching
 
-- **Clean by Count**: Keep only a set number of recent screenshots (e.g., the last 50 captures) and automatically delete older ones.
-- **Clean by Age**: Delete screenshots older than a specific number of days.
+To keep disk usage in check, Sythoria implements a local retention manager. Images are written to:
 
-## Attachment Limits
+- **macOS**: `~/Library/Application Support/Sythoria/appshots/`
+- **Windows**: `%APPDATA%\Sythoria\appshots\`
+- **Linux**: `~/.config/sythoria/appshots/`
 
-- **Maximum Attachments**: You can attach up to **6 files** (images, code files, or text documents) to a single message draft.
-- **File Size**: Individual attachments must be under **10 MB** in size.
-- **Supported Formats**: Standard images (`PNG`, `JPEG`, `GIF`, `WebP`) and text/code files (see the full list under [Configuration](/docs/configuration)).
+### Automated Retention Policies
+
+Configure cleanup options in Settings under **Storage Management**:
+
+- **Rolling Buffer (Count-Based)**: Define a maximum number of historical screenshots (e.g., keep the last 50 captures). Older images are permanently purged on a First-In, First-Out (FIFO) basis.
+- **Duration Buffer (Age-Based)**: Automatically delete screenshots older than a set interval (e.g., 7 days).
+- **Manual Purge**: Clear the entire screenshot cache instantly with a single button click.
+
+---
+
+## Attachment & Payload Limits
+
+Before transmitting visual context to your AI model, Sythoria verifies constraints to prevent request failures:
+
+- **Simultaneous Attachments**: You can queue up to **6 files** (including multiple screenshots, external images, or text/code fragments) within a single prompt message.
+- **File Size Restrictions**: Individual attachments are capped at **10 MB**.
+- **Supported Formats**: Lossy and lossless image codecs (`PNG`, `JPEG`, `GIF`, `WebP`) and cleartext data formats (CSV, JSON, source code files).
+- **Payload Optimization**: Large images are dynamically scaled down or re-compressed if they exceed safety thresholds, saving valuable model token usage.
+
+---
+
+## Best Practices for Vision Prompting
+
+To get the most accurate analysis from models like GPT-5.6 or Claude Fable, use these visual context strategies:
+
+- **Specify Regions**: Mention landmarks in your prompts (e.g., _"Look at the top-right button"_ or _"Under the search bar, explain the formatting error"_).
+- **Maximize Contrast**: If using dark theme variants, ensure text is readable.
+- **Combine with Code**: Select relevant code blocks and attach them alongside the screenshot so the model can map visual rendering defects directly to your source files.
