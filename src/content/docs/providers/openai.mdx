@@ -1,26 +1,27 @@
 ---
 title: OpenAI
-description: Connect Sythoria to OpenAI's GPT-5 and GPT-5.6 models.
+description: Connect Sythoria to OpenAI's GPT-5, GPT-5.6, reasoning (o1/o3-mini), and GPT-4o models.
 ---
 
 # OpenAI
 
-Connect Sythoria to OpenAI's API to chat with GPT-5.6 (Sol, Terra, Luna) and GPT-5. OpenAI offers the most widely-used commercial language models with strong general-purpose performance.
+Connect Sythoria to OpenAI's API to access their complete suite of frontier models, including the flagship GPT-5.6 series (Sol, Terra, Luna), the general-purpose GPT-5, the advanced reasoning-driven `o` series (o1, o1-mini, o3-mini), and the highly efficient GPT-4o models. OpenAI offers the industry-standard developer platform with strong general-purpose reasoning, state-of-the-art coding capabilities, and vision processing.
 
 ## Prerequisites
 
-- An OpenAI account with billing enabled
-- An API key from the OpenAI dashboard
+- An OpenAI developer account with billing enabled
+- An API key generated from the OpenAI developer platform
 
 ## Setup
 
-1. Go to [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
-2. Click **Create new secret key** and copy it
-3. In Sythoria, open **Settings** from the sidebar
-4. Select **OpenAI** from the **Provider Preset** dropdown — the API base URL and default model fill in automatically
-5. Paste your API key into the **API Key** field
-6. The connection indicator should turn **green** within a few seconds
+1. Log in to your OpenAI developer account and navigate to [platform.openai.com/api-keys](https://platform.openai.com/api-keys).
+2. Click **Create new secret key**, give it an optional name (e.g., "Sythoria Desktop"), and copy it.
+3. In Sythoria, open **Settings** from the sidebar.
+4. Select **OpenAI** from the **Provider Preset** dropdown — the API base URL and default model will fill in automatically.
+5. Paste your API key into the **API Key** field.
+6. The connection indicator should turn **green** within a few seconds, showing that Sythoria has successfully authenticated.
 
+> [!NOTE]
 > Your API key is stored securely in your OS keychain. It is never sent to Sythoria's servers. See [Privacy & Security](/docs/privacy).
 
 ## Default configuration
@@ -34,31 +35,48 @@ Connect Sythoria to OpenAI's API to chat with GPT-5.6 (Sol, Terra, Luna) and GPT
 
 ## Available models
 
-The model dropdown auto-populates with models available to your API key. Common options:
+The model dropdown in Sythoria auto-populates with the models available to your OpenAI API key. Common options include:
 
-| Model ID        | Best for                                                     | Context window |
-| --------------- | ------------------------------------------------------------ | -------------- |
-| `gpt-5.6-sol`   | Flagship capability, complex coding, and deep reasoning      | 1M             |
-| `gpt-5.6-terra` | Balanced, cost-effective everyday professional tasks         | 1M             |
-| `gpt-5.6-luna`  | Ultra-fast, highly efficient high-volume operations          | 1M             |
-| `gpt-5`         | Advanced general-purpose reasoning and instruction following | 400K           |
+| Model ID        | Best for                                                                                       | Context window |
+| :-------------- | :--------------------------------------------------------------------------------------------- | :------------- |
+| `gpt-5.6-sol`   | **Flagship Capability**: State-of-the-art reasoning, complex coding, and deep research         | 1M tokens      |
+| `gpt-5.6-terra` | **Balanced & Versatile**: Cost-effective everyday tasks, analysis, and standard coding         | 1M tokens      |
+| `gpt-5.6-luna`  | **Ultra-Fast & Efficient**: Low-latency, high-volume tasks and fast streaming                  | 1M tokens      |
+| `gpt-5`         | **Frontier General Purpose**: Advanced instruction following, agents, and complex reasoning    | 400K tokens    |
+| `gpt-5-preview` | **Early Access**: Preview features and early testing of next-generation capabilities           | 400K tokens    |
+| `o1`            | **Deep Reasoning**: High-level reasoning for complex math, science, and multi-step programming | 200K tokens    |
+| `o3-mini`       | **Fast Reasoning**: High-speed reasoning optimized for coding, mathematics, and science        | 200K tokens    |
+| `o1-mini`       | **Cost-Effective Reasoning**: Lightweight reasoning optimized for coding and STEM              | 128K tokens    |
+| `gpt-4o`        | **Multimodal Flagship**: Fast, highly capable text and vision processing                       | 128K tokens    |
+| `gpt-4o-mini`   | **Lightweight & Affordable**: High-speed everyday tasks with basic vision support              | 128K tokens    |
 
-Check [platform.openai.com/models](https://platform.openai.com/models) for the full list and current availability.
+Check [platform.openai.com/models](https://platform.openai.com/models) for the full list and current availability for your account tier.
+
+### Reasoning Models (o1, o1-mini, o3-mini)
+
+OpenAI's reasoning models are designed to think step-by-step before returning a response, making them exceptional at complex logic, math, and software engineering.
+
+- **Reasoning Tokens**: These models generate internal "reasoning tokens" that represent their thought process. These tokens count toward your output limits and billing but are hidden from the final chat display.
+- **Auto-adjusted Parameters**: Certain parameters (like custom temperature and frequency penalties) are not supported by the OpenAI API for reasoning models. Sythoria automatically adjusts or strips these parameters dynamically when a reasoning model is selected to prevent API errors.
+
+### Multimodal Capabilities
+
+Models like `gpt-4o`, `gpt-4o-mini`, `gpt-5`, and the `gpt-5.6` series support image inputs. You can drag and drop images directly into Sythoria's chat input or take screenshots to analyze visual data, UI designs, or charts.
 
 ## Pricing
 
-OpenAI charges per token. Rates vary by model. Check [openai.com/pricing](https://openai.com/pricing) for current rates.
+OpenAI charges per token. Rates vary by model, with lighter models like `gpt-4o-mini` costing significantly less than flagship models like `gpt-5.6-sol`. Check [openai.com/pricing](https://openai.com/pricing) for the latest rates.
 
 ## Switching models mid-conversation
 
-You can switch to a different OpenAI model at any time using the model dropdown in the chat input bar. Each new message uses the currently selected model, so you can start with GPT-5.6-terra and switch to GPT-5.6-sol for a harder question — all within the same conversation.
+You can switch to a different OpenAI model at any time using the model dropdown in the chat input bar. Each new message uses the currently selected model, allowing you to start a session with a fast model like `gpt-5.6-luna` or `gpt-4o-mini`, and switch to a more capable reasoning model like `gpt-5.6-sol` or `o3-mini` when facing a challenging question — all within the same chat history.
 
 ## Troubleshooting
 
-| Error                        | Cause                                                  | Fix                                                                                                                              |
-| ---------------------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| **401 Unauthorized**         | API key is invalid or expired                          | Generate a new key at [platform.openai.com/api-keys](https://platform.openai.com/api-keys)                                       |
-| **429 Rate Limit**           | Exceeded your usage tier's rate limit                  | Wait a moment, or upgrade your OpenAI plan at [platform.openai.com/account/billing](https://platform.openai.com/account/billing) |
-| **Model not found**          | Model name is incorrect or unavailable to your account | Verify the model ID at [platform.openai.com/models](https://platform.openai.com/models)                                          |
-| **402 Payment required**     | No billing method on file                              | Add a payment method at [platform.openai.com/account/billing](https://platform.openai.com/account/billing)                       |
-| **Connection indicator red** | Network issue or invalid API base                      | Check that the API base URL is `https://api.openai.com/v1/chat/completions` and try clicking **Refresh**                         |
+| Error                               | Cause                                                                   | Fix                                                                                                                                                                  |
+| :---------------------------------- | :---------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **401 Unauthorized**                | API key is invalid, revoked, or expired                                 | Generate a new API key at [platform.openai.com/api-keys](https://platform.openai.com/api-keys) and verify it was pasted correctly.                                   |
+| **429 Rate Limit / Quota Exceeded** | You have reached your usage tier limit or ran out of account credits    | Check your account limits and credit balance at [platform.openai.com/settings/organization/billing](https://platform.openai.com/settings/organization/billing).      |
+| **Model not found / 404**           | The selected model is not available to your API key or usage tier       | Verify the model ID at [platform.openai.com/models](https://platform.openai.com/models). Note that newer models may require a higher API usage tier (e.g., Tier 1+). |
+| **402 Payment Required**            | No billing method is on file or the account has zero pre-funded credits | Add funds or update your payment method at [platform.openai.com/settings/organization/billing](https://platform.openai.com/settings/organization/billing).           |
+| **Connection indicator red**        | Network issue, local firewall block, or invalid API Base URL            | Verify that your network is connected and that the API Base URL is set to `https://api.openai.com/v1/chat/completions`. Click **Refresh** to re-test the connection. |
