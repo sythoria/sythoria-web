@@ -5,47 +5,137 @@ description: Get Sythoria up and running in under a minute as a desktop app.
 
 # Quickstart
 
-Sythoria is a lightweight, privacy-first AI chat interface that connects to any OpenAI-compatible API. No accounts, no tracking — just pick a provider, add your key, and start chatting.
+Sythoria is a lightweight, privacy-first, desktop-only AI chat interface that connects to any OpenAI-compatible API. With no external accounts, telemetry, or server-side databases, Sythoria stores your API keys and conversation histories securely on your own device. Just download, pick a provider, set up your key, and start chatting.
 
 ## Installation
 
+Select your operating system below to download and install the latest version of Sythoria:
+
 <InstallGuide />
 
-### Initial Setup
+---
+
+## System Requirements
+
+Sythoria is optimized for speed and low resource usage. Ensure your machine meets these basic requirements:
+
+| Platform    | Recommended Version                           | Supported Architectures                | Key Dependencies / Notes                   |
+| :---------- | :-------------------------------------------- | :------------------------------------- | :----------------------------------------- |
+| **Windows** | Windows 10 or 11                              | `x64` (64-bit), `ARM64`                | Windows Credential Manager                 |
+| **macOS**   | macOS 11 (Big Sur) or later                   | Apple Silicon (`ARM64`), Intel (`x64`) | Screen Recording permission (for Appshots) |
+| **Linux**   | GLIBC 2.31+ (Ubuntu 20.04+, Fedora 32+, etc.) | `x64`, `ARM64`                         | `libfuse2` required for AppImage execution |
+
+---
+
+## Operating System Setup & Security Gates
+
+Because Sythoria is distributed directly as a standalone desktop binary via GitHub Releases, your operating system may trigger safety alerts during the first installation. Follow the guides below to safely bypass them:
+
+### Windows SmartScreen Bypass
+
+When running the `.exe` installer for the first time, Windows Defender SmartScreen may display a warning stating that the application is from an unrecognized publisher:
+
+1. Click **More info** on the warning window.
+2. Click **Run anyway** to launch the installer.
+3. Follow the installation wizard prompts to complete the setup.
+
+### macOS Gatekeeper & Translocation Bypass
+
+On macOS, Gatekeeper may prevent the application from opening because it was downloaded from the internet rather than the Mac App Store:
+
+1. Drag **Sythoria** from the `.dmg` window into your `/Applications` folder.
+2. In your Applications folder, **right-click (or Control-click)** the Sythoria application and select **Open** from the context menu.
+3. A confirmation dialog will appear. Click **Open** to run it.
+4. Alternatively, if Gatekeeper refuses to run the app, you can clear the quarantine attribute by opening your Terminal and running:
+   ```bash
+   xattr -d com.apple.quarantine /Applications/Sythoria.app
+   ```
+
+### Linux Execution & FUSE Configuration
+
+The Linux release is packaged as a portable `.AppImage`. To run it:
+
+1. Open a terminal and navigate to your download directory (usually `~/Downloads`).
+2. Make the file executable:
+   ```bash
+   chmod +x Sythoria-*.AppImage
+   ```
+3. Run the AppImage from the terminal or double-click it in your file manager:
+   ```bash
+   ./Sythoria-*.AppImage
+   ```
+4. **Troubleshooting FUSE**: Modern Linux distributions (such as Ubuntu 22.04+ or Debian 12+) do not include the legacy `libfuse2` package by default. If the AppImage fails to start, install FUSE:
+   - **Ubuntu/Debian**: `sudo apt update && sudo apt install libfuse2`
+   - **Fedora/RHEL**: `sudo dnf install fuse-libs`
+   - **Arch Linux**: `sudo pacman -S fuse2`
+
+---
+
+## Secure API Key Storage (OS Keychain Integration)
+
+Sythoria does not use raw, unencrypted files or custom databases to save your API keys. Instead, it delegates credential storage to your operating system's native secure keychain system via Tauri’s backend layer:
+
+- **macOS**: Apple Keychain Access
+- **Windows**: Windows Credential Manager
+- **Linux**: Secret Service API via D-Bus (`gnome-keyring` or `kwallet`)
+
+All keys (OpenAI, Anthropic, Gemini, OpenRouter, NVIDIA, and custom MCP variables) are stored under the service identifier `com.sythoria.sythoria-desktop`.
+
+> [!IMPORTANT]
+> **Linux Users**: Ensure you have a keyring manager (such as `gnome-keyring`) active and unlocked. If you run a minimal desktop environment (like a standalone window manager without a display manager), you must ensure D-Bus is running properly and that the keyring daemon is initialized on login, otherwise Sythoria will not be able to save your credentials.
+
+---
+
+## Step-by-Step Initial Onboarding
 
 Once you launch the app, follow these steps to configure your first model:
 
-1. Click **Start** on the welcome screen
-2. Open **Settings** (gear icon in the sidebar)
-3. Configure your first provider preset and add your API key
-4. You're ready to chat!
+### Step 1: Initialize Settings
 
-## Add your first model
+Click **Start** on the onboarding screen. If you are already in the app, click the **Settings** gear icon at the bottom of the left sidebar, or use the keyboard shortcut `Ctrl+,` (Windows/Linux) or `⌘,` (macOS).
 
-When you open Settings for the first time, a default OpenAI model is pre-filled. You can keep it, switch providers, or add more. For each model you need a provider preset and an API key — the rest fills in automatically.
+### Step 2: Configure a Model Provider
 
-| Provider      | Setup guide                                              | Where to get your key                                                | Key? |
-| ------------- | -------------------------------------------------------- | -------------------------------------------------------------------- | ---- |
-| OpenAI        | [/docs/providers/openai](/docs/providers/openai)         | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) | Yes  |
-| Anthropic     | [/docs/providers/anthropic](/docs/providers/anthropic)   | [console.anthropic.com](https://console.anthropic.com/)              | Yes  |
-| Google Gemini | [/docs/providers/gemini](/docs/providers/gemini)         | [aistudio.google.com/apikey](https://aistudio.google.com/apikey)     | Yes  |
-| Ollama        | [/docs/providers/ollama](/docs/providers/ollama)         | None — just run `ollama server`                                      | No   |
-| OpenRouter    | [/docs/providers/openrouter](/docs/providers/openrouter) | [openrouter.ai/keys](https://openrouter.ai/keys)                     | Yes  |
-| NVIDIA NIM    | [/docs/providers/nvidia-nim](/docs/providers/nvidia-nim) | [build.nvidia.com](https://build.nvidia.com/)                        | Yes  |
+Under the **Model Providers** section, choose a pre-filled provider or add a new one:
 
-Your API key is stored **only in the app's local storage** — it never touches Sythoria's servers. See [Privacy & Security](/docs/privacy) for the full breakdown.
+1. Click **Add Model** to create a blank configuration.
+2. Select a **Provider Preset** from the dropdown (e.g., OpenAI, Anthropic, Gemini). This will automatically populate the appropriate **API Base URL** and recommend a default **Model ID**.
+3. Retrieve your API key from the provider's dashboard (see links in the table below) and paste it into the **API Key** input.
+4. Click **Save**.
 
-## Start chatting
+### Step 3: Verify the Connection (Health Checks)
 
-1. Pick a model from the **dropdown in the chat input bar**
-2. Type a message and press `Enter`
-3. Responses stream in real-time, token by token
+Each configured model card features a live connection indicator at the top right:
 
-That's it. You're running Sythoria.
+- 🟢 **Green (Connected)**: The API base URL is reachable, and the API key is verified.
+- 🟡 **Pulsing Yellow (Connecting)**: A connection ping is currently in progress.
+- 🔴 **Red (Error)**: The health check failed. Hover over the dot to see the returned error message (e.g., unauthorized key or network timeout).
 
-## What's next?
+### Step 4: Pick and Chat
 
-- [Streaming Responses](/docs/features/streaming) — how real-time streaming works under the hood
-- [Multi-Provider Chat](/docs/features/multi-provider) — switch between providers mid-conversation
-- [Configuration](/docs/configuration) — temperature, system prompts, keyboard shortcuts, and more
-- [Privacy & Security](/docs/privacy) — how your data stays safe
+Close Settings, select your newly verified model from the dropdown in the chat input bar, and write your first prompt.
+
+---
+
+## Model Providers Quick Reference
+
+| Provider          | Setup Guide                                              | API Dashboard                                               | Authentication Key |
+| :---------------- | :------------------------------------------------------- | :---------------------------------------------------------- | :----------------- |
+| **OpenAI**        | [/docs/providers/openai](/docs/providers/openai)         | [platform.openai.com](https://platform.openai.com/api-keys) | Yes (`sk-...`)     |
+| **Anthropic**     | [/docs/providers/anthropic](/docs/providers/anthropic)   | [console.anthropic.com](https://console.anthropic.com/)     | Yes (`sk-ant-...`) |
+| **Google Gemini** | [/docs/providers/gemini](/docs/providers/gemini)         | [aistudio.google.com](https://aistudio.google.com/apikey)   | Yes (API Key)      |
+| **Ollama**        | [/docs/providers/ollama](/docs/providers/ollama)         | Runs locally on `http://localhost:11434`                    | No API Key         |
+| **OpenRouter**    | [/docs/providers/openrouter](/docs/providers/openrouter) | [openrouter.ai](https://openrouter.ai/keys)                 | Yes (`sk-or-...`)  |
+| **NVIDIA NIM**    | [/docs/providers/nvidia-nim](/docs/providers/nvidia-nim) | [build.nvidia.com](https://build.nvidia.com/)               | Yes (`nvapi-...`)  |
+
+---
+
+## What's Next?
+
+Learn how to customize your workspace and take full advantage of Sythoria's advanced capabilities:
+
+- [Configuration](/docs/configuration) — Customize hyperparameters, web search integrations, keyboard shortcuts, and project workspace directory mounts.
+- [Multi-Provider Chat](/docs/features/multi-provider) — Learn how to switch providers mid-conversation and compare responses side-by-side.
+- [Streaming Responses](/docs/features/streaming) — Learn about Server-Sent Events (SSE) and cancellation controls.
+- [Troubleshooting & Logs](/docs/features/logging-troubleshooting) — How to read local log files, debug MCP servers, and diagnose API issues.
+- [Privacy & Security](/docs/privacy) — Deep dive into our stateless architecture and filesystem structure.
