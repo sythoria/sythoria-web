@@ -15,21 +15,7 @@ Here is a technical deep-dive into how your data is handled, stored, and protect
 
 Sythoria operates as a local-first application. Unlike conventional AI chat platforms that route your traffic through proprietary middleware servers, Sythoria establishes **direct peer-to-endpoint connections** from your device to the designated AI providers.
 
-```mermaid
-graph TD
-    UserDevice["User's Machine (Sythoria App)"]
-    Keychain["OS Credential Store / Keychain"]
-    Provider["AI Provider (e.g., Anthropic, OpenAI, local Ollama)"]
-
-    UserDevice -- "1. Requests API Key" --> Keychain
-    Keychain -- "2. Returns Plaintext Key (In-Memory)" --> UserDevice
-    UserDevice -- "3. Direct HTTPS Request (with Key)" --> Provider
-    Provider -- "4. Direct Streaming Response" --> UserDevice
-
-    style UserDevice fill:#2a2b36,stroke:#4f46e5,stroke-width:2px,color:#fff
-    style Keychain fill:#1e293b,stroke:#0ea5e9,stroke-width:2px,color:#fff
-    style Provider fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#fff
-```
+<DirectRequestFlow />
 
 - **No Proxy Middlemen**: Your prompts, responses, files, and workspace context never pass through Sythoria-owned servers or database layers.
 - **Stateless Request Flow**: Once a request is assembled and dispatched, the associated credentials exist in-memory only for the duration of the HTTP connection and are never logged or stored.
