@@ -17,12 +17,7 @@ For standard text dictation, Sythoria uses a local, native port of `whisper.cpp`
 
 ### How Offline Transcription Works
 
-```
-[ Microphone Capture ] ──► [ Silero VAD (Silence Check) ] ──► [ Resample to 16kHz ]
-                                                                     │
-                                                                     ▼
-[ Transcribed Text in Input ] ◄── [ whisper.cpp Core Engine ] ◄──────┘
-```
+<VoiceTranscriptionFlow />
 
 1. **Microphone Capture**: Clicking the microphone icon initiates audio capture from your default system input device.
 2. **Voice Activity Detection (VAD)**: Sythoria runs a lightweight local VAD pass (powered by WebAssembly Silero VAD) to determine when you begin and end speaking.
@@ -80,12 +75,7 @@ You can select your preferred backend under **Settings > Voice > Hardware Accele
 
 In addition to offline dictation, Sythoria supports **bidirectional voice mode** for interactive conversations. This bypasses text generation entirely and opens a low-latency audio connection with compatible API providers.
 
-```
-[ Local Microphone ] ────(PCM Audio)────► [ Sythoria Desktop Core ]
-                                                   │ (WebSocket / WebRTC)
-                                                   ▼
-[ Local Speakers ] ◄────(PCM Audio)───── [ OpenAI / Gemini Realtime API ]
-```
+<RealtimeAudioFlow />
 
 ### Supported Realtime Protocols
 
