@@ -15,6 +15,7 @@ import {
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { motion } from "framer-motion";
+import CustomBlockquote from "@/components/docs/CustomBlockquote";
 import { Card, Badge } from "@/components/ui";
 import { type GitHubRelease } from "@/lib/changelog";
 
@@ -483,7 +484,12 @@ export default function ChangelogFeed({
 
                       {/* Markdown Release Notes */}
                       <div className="markdown-body mt-2 text-text-secondary leading-relaxed">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            blockquote: CustomBlockquote,
+                          }}
+                        >
                           {release.body ||
                             "*No release notes description provided.*"}
                         </ReactMarkdown>
