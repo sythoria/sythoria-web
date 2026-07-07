@@ -13,27 +13,7 @@ Sythoria leverages high-performance **Server-Sent Events (SSE)** to stream model
 
 The diagram below illustrates how a streaming connection is negotiated, parsed, and rendered:
 
-```
-┌───────────┐           ┌────────────────────┐           ┌───────────────────┐
-│  HTML5    │           │    Tauri / Rust    │           │    AI Provider    │
-│  Chat UI  │           │    App Core        │           │    API Endpoint   │
-└─────┬─────┘           └─────────┬──────────┘           └─────────┬─────────┘
-      │                           │                                │
-      │  1. Submit Message        │                                │
-      ├──────────────────────────►│  2. Open HTTPS Connection       │
-      │                           ├───────────────────────────────►│
-      │                           │                                │
-      │                           │  3. Stream SSE Frames          │
-      │                           │◄───────────────────────────────┤
-      │  4. Send Token Buffer     │                                │
-      │◄──────────────────────────┤                                │
-      │  (requestAnimationFrame)  │                                │
-      │                           │                                │
-      │                           │  5. Send [DONE] Signal         │
-      │                           │◄───────────────────────────────┤
-      │  6. Stream Complete       │                                │
-      │◄──────────────────────────┤                                │
-```
+<StreamingFlowDiagram />
 
 1. **Initiation**: The user submits a prompt. The React UI forwards the payload to the Tauri Rust core.
 2. **HTTP Channel Negotiation**: The Rust core initiates an HTTP client request to the provider using HTTP/2 or HTTP/3 multiplexing. The headers request `Accept: text/event-stream` and `Cache-Control: no-cache`.
