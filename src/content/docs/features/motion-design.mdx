@@ -55,18 +55,7 @@ The interface utilizes hardware-accelerated radial glows (`--theme-glow-primary`
 
 To ensure high frame rates on energy-saving notebooks and older desktops, Sythoria monitors hardware concurrency and system responsiveness in real-time, scaling down animations as needed.
 
-```mermaid
-graph TD
-    A[App Initialization] --> B{Manual "Animations" toggle on?}
-    B -- No --> C[Disable All Motions]
-    B -- Yes --> D{OS: prefers-reduced-motion?}
-    D -- Yes --> C
-    D -- No --> E{Cores: CPU Cores 4 or less?}
-    E -- Yes --> F[Downgrade to Essential Motions]
-    E -- No --> G{FPS Monitor: Under 45 FPS?}
-    G -- Yes --> H[Disable Heavy Filters & Gradients]
-    G -- No --> I[Enable Full Spring-Physics Engine]
-```
+<MotionAdaptiveFlow />
 
 ### 1. Reduced Motion Compliance
 
