@@ -6,6 +6,13 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { getDocBySlug } from "@/lib/docs";
 import { getDocMeta, getAdjacentDocs, getAllDocSlugs } from "@/lib/docs-nav";
 import InstallGuide from "@/components/docs/InstallGuide";
+import CustomBlockquote from "@/components/docs/CustomBlockquote";
+import StreamingFlowDiagram from "@/components/docs/StreamingFlowDiagram";
+import AgenticLoopDiagram from "@/components/docs/AgenticLoopDiagram";
+import VoiceTranscriptionFlow from "@/components/docs/VoiceTranscriptionFlow";
+import RealtimeAudioFlow from "@/components/docs/RealtimeAudioFlow";
+import DirectRequestFlow from "@/components/docs/DirectRequestFlow";
+import MotionAdaptiveFlow from "@/components/docs/MotionAdaptiveFlow";
 
 export function generateStaticParams() {
   return getAllDocSlugs().map((slug) => ({
@@ -54,7 +61,16 @@ export default async function DocPage({
         <MDXRemote
           source={doc.content}
           options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
-          components={{ InstallGuide }}
+          components={{
+            InstallGuide,
+            blockquote: CustomBlockquote,
+            StreamingFlowDiagram,
+            AgenticLoopDiagram,
+            VoiceTranscriptionFlow,
+            RealtimeAudioFlow,
+            DirectRequestFlow,
+            MotionAdaptiveFlow,
+          }}
         />
       </div>
 
