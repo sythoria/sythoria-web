@@ -7,33 +7,7 @@ description: How Sythoria performs multi-step executions, merges native search w
 
 Sythoria features an advanced, stateful **Agentic Tool Loop** that enables supported LLMs to act as autonomous agents. Rather than delivering simple, one-off text responses, the model can decompose complex instructions, execute local or remote tools sequentially, inspect the outcomes, and adjust its plan dynamically until the objective is accomplished.
 
-```
-                  ┌──────────────────────────────┐
-                  │ User inputs goal/instruction │
-                  └──────────────┬───────────────┘
-                                 │
-                                 ▼
-                    ┌──────────────────────────┐
-         ┌─────────►│ Compile Prompts & Context│
-         │          └────────────┬─────────────┘
-         │                       │
-         │                       ▼
-         │          ┌──────────────────────────┐
-         │          │   Invoke LLM Reasoning   │
-         │          └────────────┬─────────────┘
-         │                       │
-         │            Does the model call tools?
-         │             ├── No  ──► [Output final response to User]
-         │             └── Yes ──► [Inspect Tool Call Request]
-         │                           │
-         │                           ▼
-         │                      HITL Gate
-         │                       ├── Deny  ──► [Inject cancellation error] ────┐
-         │                       └── Approve ──► Execute Tool in Sandbox      │
-         │                                         │                          │
-         │                                         ▼                          │
-         └───────────────────────────────── Inject Execution Output ◄─────────┘
-```
+<AgenticLoopDiagram />
 
 ---
 
