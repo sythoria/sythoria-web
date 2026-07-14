@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Download } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { GITHUB_OWNER, GITHUB_REPO } from "@/lib/changelog";
+import { useTheme } from "@/hooks/useTheme";
 
 /* ────────────────────────────────────────── */
 /*  Kinetic line entrance                    */
@@ -38,6 +39,16 @@ export default function Hero({
   latestVersion: string | null;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+  const { dark } = useTheme();
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
+  const activeDark = mounted ? dark : true;
+  const videoSrc = activeDark ? "/darkDemo.mp4" : "/lightDemo.mp4";
 
   const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -184,7 +195,8 @@ export default function Hero({
             {/* Video body */}
             <div className="terminal-body !p-0 overflow-hidden rounded-b-xl aspect-video bg-black flex items-center justify-center">
               <video
-                src="/demo.mp4"
+                key={videoSrc}
+                src={videoSrc}
                 autoPlay
                 loop
                 muted
