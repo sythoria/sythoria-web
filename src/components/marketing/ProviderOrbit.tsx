@@ -2,6 +2,7 @@
 
 import { useReducedMotion } from "framer-motion";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 /* ── Provider data ────────────────────────────────── */
 
@@ -64,7 +65,15 @@ const OUTER_DURATION = 30; // seconds, counter-clockwise
 /* ── Component ────────────────────────────────────── */
 
 export default function ProviderOrbit() {
+  const [mounted, setMounted] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
+  const activeReduceMotion = mounted ? !!shouldReduceMotion : false;
 
   return (
     <div
@@ -88,7 +97,7 @@ export default function ProviderOrbit() {
       {/* ── Center glow ──────────────────────────── */}
       <div
         className="orbit-center-glow"
-        style={shouldReduceMotion ? { animation: "none" } : undefined}
+        style={activeReduceMotion ? { animation: "none" } : undefined}
       />
 
       {/* ── Center logo ──────────────────────────── */}
@@ -118,7 +127,7 @@ export default function ProviderOrbit() {
             key={provider.name}
             className="orbit-item"
             style={
-              shouldReduceMotion
+              activeReduceMotion
                 ? ({
                     "--orbit-radius": `${INNER_RADIUS}px`,
                     animation: "none",
@@ -146,7 +155,7 @@ export default function ProviderOrbit() {
             key={provider.name}
             className="orbit-item orbit-item-reverse"
             style={
-              shouldReduceMotion
+              activeReduceMotion
                 ? ({
                     "--orbit-radius": `${OUTER_RADIUS}px`,
                     animation: "none",
