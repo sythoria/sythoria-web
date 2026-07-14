@@ -4,11 +4,17 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 export default function RefractiveBackground() {
+  const [mounted, setMounted] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
-    if (shouldReduceMotion) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted || shouldReduceMotion) return;
 
     const handleScroll = () => {
       setScrollY(window.scrollY);
@@ -18,14 +24,16 @@ export default function RefractiveBackground() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [shouldReduceMotion]);
+  }, [mounted, shouldReduceMotion]);
+
+  const activeReduceMotion = mounted ? !!shouldReduceMotion : false;
 
   return (
     <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-landing-bg transition-colors duration-500">
       {/* Dot grid pattern with parallax */}
       <motion.div
         className="absolute inset-0 dot-grid-bg"
-        style={shouldReduceMotion ? undefined : { y: -(scrollY * 0.05) }}
+        style={activeReduceMotion ? undefined : { y: -(scrollY * 0.05) }}
       />
 
       {/* Primary gradient orb — large, centered, slow pulse */}
@@ -43,7 +51,7 @@ export default function RefractiveBackground() {
           opacity: 0.35,
         }}
         animate={
-          shouldReduceMotion
+          activeReduceMotion
             ? {}
             : {
                 x: ["-50%", "-46%", "-54%", "-50%"],
@@ -71,7 +79,7 @@ export default function RefractiveBackground() {
           animationDelay: "2s",
         }}
         animate={
-          shouldReduceMotion
+          activeReduceMotion
             ? {}
             : {
                 x: ["0%", "5%", "-3%", "0%"],
