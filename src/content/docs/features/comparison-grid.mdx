@@ -1,0 +1,67 @@
+---
+title: Multi-Model Comparison Grid
+description: Stream and compare up to four AI models side-by-side with synchronized scrollbars in Sythoria Desktop.
+---
+
+# Multi-Model Comparison Grid
+
+Sythoria Desktop includes a powerful **Multi-Model Comparison Grid Mode** that allows you to dispatch a single prompt simultaneously to as many as **four AI models** side-by-side in real time.
+
+Whether evaluating cost vs. reasoning capability, testing model alignment, or benchmarking local Ollama models against hosted frontier endpoints (like OpenAI `gpt-5.6-sol` or Anthropic `claude-fable-5`), the comparison grid provides real-time comparative insights without manual copy-pasting.
+
+---
+
+## Key Comparison Capabilities
+
+- **Parallel Streaming**: All configured model columns receive the request payload at the exact same moment and stream back their responses in synchronized parallel cards.
+- **Synchronized Scrollbars**: Scroll through long model outputs seamlessly across all active columns without losing alignment.
+- **Performance & Latency Insights**: Each column displays live metrics for time-to-first-token (TTFT), tokens per second (t/s), total token consumption, and response completion state.
+- **Independent Settings**: Configure distinct system prompts, temperature levels, or context window sizes per comparison column.
+
+---
+
+## How to Enable Comparison Grid Mode
+
+1. Open a new or existing chat conversation in Sythoria Desktop.
+2. In the top bar or chat header, click the **Grid Comparison View** toggle icon.
+3. Use the column controls to add up to **4 comparison slots**.
+4. Assign a provider and model ID to each column (for example: Column 1 = `OpenAI gpt-5.6-sol`, Column 2 = `Anthropic claude-5-sonnet-latest`, Column 3 = `Ollama deepseek-r1`, Column 4 = `Google gemini-3.5-flash`).
+5. Type your prompt in the chat bar and hit **Send**.
+
+---
+
+## Synchronized Scrolling & Interactive Controls
+
+When comparing verbose outputs (such as code refactoring or multi-page documentation generation), tracking differences across multiple columns can be challenging.
+
+- Toggle **Sync Scroll** in the comparison header to bind the vertical scroll position of all columns together.
+- Click **Copy Output** on any individual column card to copy only that model's response to your clipboard.
+- Click **Continue in Single Chat** to promote a specific model's response as the active thread branch.
+
+---
+
+## Comparing Local vs. Cloud Models
+
+The grid view is ideal for privacy-focused evaluation workflows:
+
+| Use Case              | Column Setup Recommendation                         | Key Benefit                                                                            |
+| :-------------------- | :-------------------------------------------------- | :------------------------------------------------------------------------------------- |
+| **Code Generation**   | `Ollama llama4-maverick` vs. `OpenAI gpt-5.6-sol`   | Check if a local offline model is sufficient before spending cloud API credits.        |
+| **Reasoning & Math**  | `Ollama deepseek-r1` vs. `Anthropic claude-fable-5` | Benchmark step-by-step logic and scratchpad reasoning accuracy.                        |
+| **Latency Benchmark** | `Google gemini-3.5-flash` vs. `NVIDIA NIM`          | Compare network response speeds and token generation rates for real-time applications. |
+
+---
+
+## Hyperparameter Scoping
+
+Each column in the comparison view maintains its own execution parameters:
+
+```json
+{
+  "column_1": { "model": "gpt-5.6-sol", "temperature": 0.2 },
+  "column_2": { "model": "gpt-5.6-sol", "temperature": 0.9 },
+  "column_3": { "model": "claude-fable-5", "temperature": 0.5 }
+}
+```
+
+This makes it easy to test how varying `temperature`, `top_p`, or `system_prompt` instructions affect output quality using the exact same underlying model.
