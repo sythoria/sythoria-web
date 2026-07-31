@@ -39,12 +39,13 @@ To ensure that your sensitive data remains completely confidential, the logging 
 
 ---
 
-## Log Buffer & Rendering Sync
+## Log Buffer & Privacy Controls
 
 - **Logs Buffer**: The application stores a maximum of **500 logs** in an in-memory buffer. When the buffer is full, older logs are discarded.
+- **Privacy & Diagnostic Controls**: Under **Settings > Privacy**, users can toggle **Log Buffering** on/off or disable **Diagnostic Storage** entirely for a zero-footprint local run.
 - **UI Syncing**: To keep the app highly responsive and avoid rendering lag during high-frequency tasks (like SSE streaming), logs are batched and synced to the UI store using `requestAnimationFrame`.
 - **Log Viewer**: You can view, filter (by source and severity), and clear logs under **Settings > Logs**.
-- **Native Logging & Level Filtering**: Native logging is managed by the platform runtime logger (e.g., `@tauri-apps/plugin-log` or `electron-log`).
+- **Native Logging & Level Filtering**: Native logging is managed by the platform runtime logger (`@tauri-apps/plugin-log`).
   - To save disk space and prevent storage wear, only `Warning` and `Error` logs are written to disk.
   - Standard `Info` and `Debug` logs are kept strictly in the in-memory viewer and the developer console.
 
