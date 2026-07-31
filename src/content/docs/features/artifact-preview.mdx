@@ -1,0 +1,53 @@
+---
+title: Sandboxed Workspace Preview
+description: Preview interactive HTML web apps, React components, and SVG artifacts in a secure split-screen canvas.
+---
+
+# Sandboxed Workspace Preview
+
+Sythoria Desktop includes an interactive **Split-Screen Workspace Preview** (also known as the **Artifact Canvas**). When an AI model generates web applications, HTML prototypes, SVG graphics, or React UI components, Sythoria automatically extracts the artifact and renders it live in a split pane right next to your chat conversation.
+
+---
+
+## Features of the Workspace Canvas
+
+- **Split-Screen Layout**: Chat messages remain accessible on the left while your live preview executes on the right.
+- **Sandboxed Execution**: Previews execute inside a sandboxed iframe with strict Content Security Policy (CSP) enforcement.
+- **Opt-In Network Security**: Network access (external fetches, CDNs, API calls) is completely disabled by default for untrusted preview code. Enable network access on demand via a per-preview toggle button.
+- **Live Code Inspection**: Switch between the **Visual Canvas** tab and the **Source Code** tab to inspect or copy generated markup and scripts.
+- **Responsive Viewport Controls**: Test your generated interface across Desktop, Tablet, and Mobile screen dimensions directly inside the preview header.
+
+---
+
+## How It Works
+
+1. **Artifact Detection**: As the model streams its response, Sythoria's parser detects code blocks marked with HTML, SVG, or interactive React/JSX metadata tags (such as `html ``` ` or `xml ``` `).
+2. **Iframe Isolation**: Sythoria mounts an isolated HTML preview container powered by Tauri's security boundary.
+3. **Execution & Rendering**: Scripts, CSS styles, and DOM elements are parsed and rendered instantly.
+
+---
+
+## Network Access & Privacy Controls
+
+To protect your system from malicious code execution or unintended data exfiltration via untrusted HTML artifacts:
+
+- **Offline Sandboxing (Default)**: External resource requests (`http://`, `https://`, external `script` tags, image URLs) are blocked by the preview sandbox.
+- **Per-Preview Network Toggle**: If an artifact requires loading an external font, CSS library (like Google Fonts), or API endpoint, click **Enable Network** in the top right of the preview frame.
+- **Local Asset Isolation**: Local file access is strictly prohibited inside preview frames. Artifacts cannot read your local disk or workspace files without explicit native user consent.
+
+---
+
+## Supported Preview Types
+
+| Type                 | Metadata                 | Output                                                             |
+| :------------------- | :----------------------- | :----------------------------------------------------------------- |
+| **Web Apps & HTML**  | `html ``` `              | Full interactive HTML, JavaScript logic, and CSS layout rendering. |
+| **SVG Visuals**      | `xml ``` ` or `svg ``` ` | Scalable vector graphics with pan and zoom capabilities.           |
+| **Markdown / Cards** | `markdown ``` `          | Formatted rich markdown components and documentation cards.        |
+
+---
+
+## Keyboard Shortcuts
+
+- `⌘` + `Shift` + `P` (macOS) / `Ctrl` + `Shift` + `P` (Windows/Linux): Toggle split-screen preview pane.
+- `Escape`: Close active preview pane and return focus to chat.
