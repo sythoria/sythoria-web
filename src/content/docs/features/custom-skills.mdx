@@ -1,0 +1,77 @@
+---
+title: Reusable Custom Skills
+description: Define, manage, and execute reusable system instructions, prompt templates, and custom skills in Sythoria Desktop v0.4.1.
+---
+
+# Reusable Custom Skills
+
+Sythoria Desktop **v0.4.1** features a comprehensive **Custom Skills Engine** and built-in **Skills Marketplace**. Skills allow you to package complex agent instructions, system prompts, coding conventions, and tool usage guidelines into modular, reusable components that can be activated on demand or automatically attached to project conversations.
+
+---
+
+## What is a Sythoria Skill?
+
+A **Skill** is a structured folder or instruction file containing YAML frontmatter metadata and clear instructions for the AI model.
+
+```markdown
+---
+name: code-reviewer
+description: Performs rigorous security and performance code reviews following team standards.
+tags: [coding, security, review]
+---
+
+# Security & Performance Code Reviewer
+
+When reviewing code submissions, analyze the diff for the following:
+
+1. Memory leaks and improper resource management.
+2. Unsanitized user inputs and potential injection vectors.
+3. Performance bottlenecks and unindexed query executions.
+```
+
+In Sythoria Desktop v0.4.1, skills feature automatic directory metadata caching (`useSkillStore.ts`) to instantly register skills without slowing down app startup times.
+
+---
+
+## Key Capabilities of Custom Skills
+
+- **Reusable Prompt Routines**: Avoid re-typing complex prompt instructions across chats.
+- **Skill Marketplace Integration**: Browse, install, and update curated community skills directly from **Settings > Skills Marketplace**.
+- **Project-Level Binding**: Bind specific skills to your local developer workspace folder alongside your `AGENTS.md` instructions.
+- **Dynamic Skill Ingestion**: Models in an Agentic Tool Loop can inspect and load skills dynamically when relevant to the user request.
+
+---
+
+## Creating and Managing Skills
+
+### Creating a Skill via Settings
+
+1. Open **Settings** (`⌘,` or `Ctrl+,`) and navigate to **Skills**.
+2. Click **Create Skill**.
+3. Fill in the **Skill Name**, **Description**, and **Prompt Instructions**.
+4. Click **Save**.
+
+### Creating a Skill via Filesystem (`.agents/skills/`)
+
+You can also place skills directly inside your workspace directory under `.agents/skills/<skill-name>/SKILL.md`:
+
+```text
+my-project/
+├── .agents/
+│   └── skills/
+│       └── db-migrator/
+│           ├── SKILL.md
+│           └── references/
+│               └── schema.sql
+├── AGENTS.md
+└── src/
+```
+
+Sythoria v0.4.1 automatically detects local workspace skills, parses their metadata, and caches them for zero-latency execution.
+
+---
+
+## Invoking Skills in Conversations
+
+- **Slash Command**: Type `/` in the chat compose box to display the active skills menu (e.g., `/code-reviewer`).
+- **Auto-Activation**: If an agentic conversation encounters a task matching an installed skill's trigger description, the tool loop will automatically load the skill's instructions into context.
