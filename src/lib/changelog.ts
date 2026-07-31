@@ -160,3 +160,11 @@ export async function getReleases(): Promise<GitHubRelease[]> {
     return FALLBACK_RELEASES;
   }
 }
+
+export async function getLatestVersion(): Promise<string> {
+  const releases = await getReleases();
+  if (releases && releases.length > 0) {
+    return releases[0].tag_name;
+  }
+  return FALLBACK_RELEASES[0].tag_name;
+}
