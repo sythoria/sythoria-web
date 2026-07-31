@@ -72,8 +72,20 @@ Sythoria enforces strict process isolation to ensure that compromised frontend c
 
 When utilizing developer integrations (such as local Git operations or MCP servers):
 
+- **`FileTokenRegistry` Security Boundary**: Filesystem access uses a short-lived token registry in the Tauri backend rather than exposing raw filesystem paths directly to the webview interface.
 - **Directory Scoping**: Filesystem operations are strictly bound to folders you explicitly register as workspaces. The backend rejects attempts to read or write files outside these directories.
-- **Isolated Subprocesses**: Local Model Context Protocol (MCP) servers run as isolated child processes. They are spawned with a minimized environment variable footprint, preventing secrets from leaking into the child process space.
+- **Isolated Subprocesses**: Local Model Context Protocol (MCP) servers run as isolated child processes with minimized environment variable footprints.
+- **SSRF Protections**: Network fetchers (Firecrawl, Jina Reader, search queries) strictly validate target addresses to block loopback addresses, local network subnets, and cloud metadata endpoints (e.g. AWS/GCP metadata URLs).
+
+---
+
+## Privacy Settings & Log Control
+
+Sythoria Desktop provides full user control over local diagnostic logs under **Settings > Privacy**:
+
+- **Log Buffering Control**: Enable or disable in-memory log buffering for developer diagnostics.
+- **Diagnostic Storage Toggle**: Turn off all diagnostic log writing to disk if you require complete zero-footprint operation.
+- **Local Storage Isolation**: Credentials and tokens are stored in the OS Keychain (`com.sythoria.sythoria-desktop`), while non-sensitive preferences remain in local storage.
 
 ---
 
