@@ -39,7 +39,9 @@ export default function Hero({
   latestVersion: string | null;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [mounted, setMounted] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
   const { dark } = useTheme();
 
   useEffect(() => {
@@ -49,6 +51,22 @@ export default function Hero({
 
   const activeDark = mounted ? dark : true;
   const videoSrc = activeDark ? "/darkDemo.mp4" : "/lightDemo.mp4";
+
+  // Imperatively control video playback and reset loading state when src changes
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setVideoLoaded(false);
+    const video = videoRef.current;
+    if (video) {
+      video.load();
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Autoplay was prevented by browser policy or media power saver
+        });
+      }
+    }
+  }, [videoSrc]);
 
   const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -193,15 +211,28 @@ export default function Hero({
             </div>
 
             {/* Video body */}
-            <div className="terminal-body !p-0 overflow-hidden rounded-b-xl aspect-video bg-black flex items-center justify-center">
+            <div className="terminal-body !p-0 overflow-hidden rounded-b-xl aspect-video bg-surface/90 relative flex items-center justify-center border-t border-border/20">
+              {!videoLoaded && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface/80 backdrop-blur-sm z-10 gap-3">
+                  <div className="w-7 h-7 rounded-full border-2 border-accent border-t-transparent animate-spin" />
+                  <span className="text-xs font-mono text-text-muted">
+                    Loading interface demo...
+                  </span>
+                </div>
+              )}
               <video
+                ref={videoRef}
                 key={videoSrc}
                 src={videoSrc}
                 autoPlay
                 loop
                 muted
                 playsInline
-                className="w-full h-full object-cover"
+                onCanPlay={() => setVideoLoaded(true)}
+                onLoadedData={() => setVideoLoaded(true)}
+                className={`w-full h-full object-cover transition-opacity duration-500 ${
+                  videoLoaded ? "opacity-100" : "opacity-0"
+                }`}
               />
             </div>
           </div>
