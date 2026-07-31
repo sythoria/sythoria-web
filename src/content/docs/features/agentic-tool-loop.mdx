@@ -26,11 +26,28 @@ The agentic execution loop runs iteratively up to a configurable ceiling (defaul
 
 ## Sandboxing & Workspace Isolation
 
-To prevent destructive file operations and system corruption, Sythoria implements isolated execution layers:
+To prevent destructive file operations and system corruption, Sythoria Desktop v0.4.1 implements isolated execution layers:
 
-- **Path Canonicalization**: Every read and write tool call resolves its path to a canonical absolute path. The core Tauri engine validates that the target path resides strictly within the active project directory boundaries. Attempting to pass paths outside (e.g., `../../etc/passwd`) returns an access denied error directly to the model.
-- **Git Worktree Isolation**: When writing or editing code inside a Git repository, Sythoria creates an isolated temporary worktree in a separate system directory. The agent conducts edits and runs validation scripts within this worktree. If validation passes, the changes are committed and merged back into the main workspace. If it fails, the temporary worktree is destroyed, leaving your primary repository clean.
+- **Path Canonicalization & `FileTokenRegistry`**: Every file read and write tool resolves its path through the Tauri backend's `FileTokenRegistry`. The core engine validates that target paths reside strictly within registered project directory boundaries. Attempting to access paths outside (e.g., `../../etc/passwd`) returns an instant permission denied error directly to the model.
+- **Git Worktree Sandbox & Apply/Discard Workflow**: When running an agent loop in a Git repository workspace, Sythoria automatically creates a temporary isolated Git worktree before tool execution begins. File edits, writes, and shell validation tests run inside this temporary worktree. The active chat thread displays pending file diffs with **[Apply Changes]** and **[Discard Changes]** action buttons. Your primary working branch remains completely clean until you explicitly click **Apply**.
 - **Stateful Shell Execution**: The `project_bash` command executes inside a persistent shell subprocess managed by Sythoria. Environment variables, aliases, and working directory state are maintained across turns in the same conversation thread, permitting multi-step compilation and build checks.
+
+---
+
+## Interactive Clarifying Questions (`<question>` XML Parsing)
+
+During complex autonomous tool execution, models may require user input or clarification before proceeding. Sythoria Desktop parses `<question>` XML blocks emitted by LLMs into interactive UI cards in the chat timeline:
+
+```xml
+<question>
+  <prompt>Which database migration strategy would you like to apply?</prompt>
+  <option>Option 1: Destructive schema sync (drop non-matching columns)</option>
+  <option>Option 2: Safe additive migration (append new fields only)</option>
+</question>
+```
+
+- **Interactive Selection Cards**: Users can click an option card directly inside the message timeline or type a custom write-in response.
+- **Automated Response Injection**: Clicking an option immediately packages the selection as a user response turn and resumes the agent loop without breaking context.
 
 ---
 
