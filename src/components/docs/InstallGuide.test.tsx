@@ -47,7 +47,7 @@ describe("InstallGuide", () => {
     // Checks header
     expect(screen.getByText("Windows Desktop")).toBeInTheDocument();
     // Checks button text
-    expect(screen.getByText("Download for Windows (.exe)")).toBeInTheDocument();
+    expect(screen.getByText("Windows x64 (.exe)")).toBeInTheDocument();
     // Checks steps specific text
     expect(screen.getByText("Download the executable")).toBeInTheDocument();
   });
@@ -62,7 +62,7 @@ describe("InstallGuide", () => {
     });
 
     expect(screen.getByText("macOS Desktop")).toBeInTheDocument();
-    expect(screen.getByText("Download for macOS (.dmg)")).toBeInTheDocument();
+    expect(screen.getByText("macOS arm64 (.dmg)")).toBeInTheDocument();
     expect(screen.getByText("Download the disk image")).toBeInTheDocument();
   });
 
@@ -74,9 +74,7 @@ describe("InstallGuide", () => {
     });
 
     expect(screen.getByText("Linux Desktop")).toBeInTheDocument();
-    expect(
-      screen.getByText("Download for Linux (.AppImage)")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Linux amd64 (.AppImage)")).toBeInTheDocument();
     expect(screen.getByText("Download the AppImage")).toBeInTheDocument();
     expect(
       screen.getByText("chmod +x Sythoria-*.AppImage")
@@ -94,14 +92,14 @@ describe("InstallGuide", () => {
     expect(screen.getByText("Windows Desktop")).toBeInTheDocument();
 
     // Click macOS tab
-    const macTabButton = screen.getByRole("button", { name: /macos/i });
+    const macTabButton = screen.getByRole("tab", { name: /macos/i });
     fireEvent.click(macTabButton);
 
     expect(screen.getByText("macOS Desktop")).toBeInTheDocument();
     expect(screen.queryByText("Windows Desktop")).not.toBeInTheDocument();
 
     // Click Linux tab
-    const linuxTabButton = screen.getByRole("button", { name: /linux/i });
+    const linuxTabButton = screen.getByRole("tab", { name: /linux/i });
     fireEvent.click(linuxTabButton);
 
     expect(screen.getByText("Linux Desktop")).toBeInTheDocument();
@@ -115,9 +113,9 @@ describe("InstallGuide", () => {
       vi.runAllTimers();
     });
 
-    // Get the first copy button (for chmod +x)
+    // Get copy buttons (chmod +x, launch command)
     const copyButtons = screen.getAllByTitle("Copy to clipboard");
-    expect(copyButtons.length).toBe(2); // One for chmod, one for launch
+    expect(copyButtons.length).toBe(2);
 
     await act(async () => {
       fireEvent.click(copyButtons[0]);
