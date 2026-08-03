@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,6 +16,8 @@ import { useRouter } from "next/navigation";
 import { FileText, Search, X } from "lucide-react";
 import { docsNav } from "@/lib/docs-nav";
 import { useDialogFocus } from "@/hooks/useDialogFocus";
+
+const emptySubscribe = () => () => {};
 
 const allDocs = docsNav.flatMap((group) =>
   group.items.map((item) => ({ ...item, group: group.title }))
@@ -27,7 +30,11 @@ export default function DocsSearch({
 }: {
   variant?: SearchVariant;
 }) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -69,10 +76,6 @@ export default function DocsSearch({
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
-
-  useEffect(() => {
-    setMounted(true);
   }, []);
 
   const openSearch = () => setOpen(true);
@@ -162,92 +165,92 @@ export default function DocsSearch({
                   tabIndex={-1}
                   className="bg-surface relative w-full max-w-2xl overflow-hidden rounded-2xl border border-border/50 shadow-2xl shadow-black/30"
                 >
-              <h2 id={dialogTitleId} className="sr-only">
-                Search documentation
-              </h2>
-              <div className="flex items-center gap-3 border-b border-border/30 px-5 py-4">
-                <Search
-                  size={20}
-                  aria-hidden="true"
-                  className="shrink-0 text-text-muted"
-                />
-                <input
-                  ref={inputRef}
-                  value={query}
-                  onChange={(event) => {
-                    setQuery(event.target.value);
-                    setActiveIndex(0);
-                  }}
-                  onKeyDown={handleInputKeyDown}
-                  placeholder="Search documentation..."
-                  role="combobox"
-                  aria-label="Search documentation"
-                  aria-autocomplete="list"
-                  aria-controls={listboxId}
-                  aria-expanded="true"
-                  aria-activedescendant={
-                    activeResult
-                      ? `${listboxId}-option-${activeIndex}`
-                      : undefined
-                  }
-                  className="min-w-0 flex-1 bg-transparent text-base text-text-primary outline-none placeholder:text-text-muted"
-                />
-                <button
-                  type="button"
-                  onClick={handleClose}
-                  className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-hover hover:text-text-secondary"
-                  aria-label="Close search"
-                >
-                  <X size={18} aria-hidden="true" />
-                </button>
-              </div>
-              <p className="sr-only" aria-live="polite">
-                {results.length} result{results.length === 1 ? "" : "s"}
-              </p>
-              {results.length > 0 ? (
-                <ul
-                  id={listboxId}
-                  role="listbox"
-                  aria-label="Documentation search results"
-                  className="max-h-80 space-y-0.5 overflow-y-auto p-3"
-                >
-                  {results.map((item, index) => (
-                    <li
-                      key={item.slug}
-                      id={`${listboxId}-option-${index}`}
-                      role="option"
-                      aria-selected={index === activeIndex}
+                  <h2 id={dialogTitleId} className="sr-only">
+                    Search documentation
+                  </h2>
+                  <div className="flex items-center gap-3 border-b border-border/30 px-5 py-4">
+                    <Search
+                      size={20}
+                      aria-hidden="true"
+                      className="shrink-0 text-text-muted"
+                    />
+                    <input
+                      ref={inputRef}
+                      value={query}
+                      onChange={(event) => {
+                        setQuery(event.target.value);
+                        setActiveIndex(0);
+                      }}
+                      onKeyDown={handleInputKeyDown}
+                      placeholder="Search documentation..."
+                      role="combobox"
+                      aria-label="Search documentation"
+                      aria-autocomplete="list"
+                      aria-controls={listboxId}
+                      aria-expanded="true"
+                      aria-activedescendant={
+                        activeResult
+                          ? `${listboxId}-option-${activeIndex}`
+                          : undefined
+                      }
+                      className="min-w-0 flex-1 bg-transparent text-base text-text-primary outline-none placeholder:text-text-muted"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleClose}
+                      className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-hover hover:text-text-secondary"
+                      aria-label="Close search"
                     >
-                      <Link
-                        href={`/docs/${item.slug}`}
-                        onClick={handleClose}
-                        onMouseEnter={() => setActiveIndex(index)}
-                        className={`flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
-                          index === activeIndex
-                            ? "bg-hover text-text-primary"
-                            : "text-text-secondary hover:bg-hover hover:text-text-primary"
-                        }`}
-                      >
-                        <FileText
-                          size={15}
-                          aria-hidden="true"
-                          className="shrink-0 text-text-muted"
-                        />
-                        <span className="flex-1">{item.label}</span>
-                        <span className="text-xs text-text-muted">
-                          {item.group}
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <div className="py-12 text-center text-sm text-text-muted">
-                  No results found
-                </div>
-              )}
-            </motion.div>
-          </div>
+                      <X size={18} aria-hidden="true" />
+                    </button>
+                  </div>
+                  <p className="sr-only" aria-live="polite">
+                    {results.length} result{results.length === 1 ? "" : "s"}
+                  </p>
+                  {results.length > 0 ? (
+                    <ul
+                      id={listboxId}
+                      role="listbox"
+                      aria-label="Documentation search results"
+                      className="max-h-80 space-y-0.5 overflow-y-auto p-3"
+                    >
+                      {results.map((item, index) => (
+                        <li
+                          key={item.slug}
+                          id={`${listboxId}-option-${index}`}
+                          role="option"
+                          aria-selected={index === activeIndex}
+                        >
+                          <Link
+                            href={`/docs/${item.slug}`}
+                            onClick={handleClose}
+                            onMouseEnter={() => setActiveIndex(index)}
+                            className={`flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
+                              index === activeIndex
+                                ? "bg-hover text-text-primary"
+                                : "text-text-secondary hover:bg-hover hover:text-text-primary"
+                            }`}
+                          >
+                            <FileText
+                              size={15}
+                              aria-hidden="true"
+                              className="shrink-0 text-text-muted"
+                            />
+                            <span className="flex-1">{item.label}</span>
+                            <span className="text-xs text-text-muted">
+                              {item.group}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="py-12 text-center text-sm text-text-muted">
+                      No results found
+                    </div>
+                  )}
+                </motion.div>
+              </div>
             )}
           </AnimatePresence>,
           document.body
