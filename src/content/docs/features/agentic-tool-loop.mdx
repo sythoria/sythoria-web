@@ -1,159 +1,58 @@
 ---
 title: Agentic Tool Loop
-description: How Sythoria performs multi-step executions, merges native search with project workspace controls, and manages user consent gates.
+description: How Sythoria plans and runs approved tools inside an isolated project workspace.
+lastVerifiedVersion: v0.4.2
+lastVerifiedDate: 2026-08-02
+source: sythoria-desktop project_tools.rs and agent tool loop
 ---
 
 # Agentic Tool Loop
 
-Sythoria features an advanced, stateful **Agentic Tool Loop** that enables supported LLMs to act as autonomous agents. Rather than delivering simple, one-off text responses, the model can decompose complex instructions, execute local or remote tools sequentially, inspect the outcomes, and adjust its plan dynamically until the objective is accomplished.
+Agentic mode allows a model to propose multiple tool calls while working on a registered project. Tool output is returned to the model until the task completes, reaches the configured step limit, or you stop it.
 
 <AgenticLoopDiagram />
 
----
+## Trust boundary
 
-## Architecture of the Tool Loop
+A model-generated terminal command is still an arbitrary command. It can modify files, start processes, access credentials available to your user account, or send data over the network. Read the command and its working directory before approving it.
 
-The agentic execution loop runs iteratively up to a configurable ceiling (default: 25 steps) and consists of the following phases:
+Sythoria v0.4.2 adds workspace-boundary and symlink checks to native project tools, but those checks do not make every command harmless. A shell launched inside a workspace can still invoke programs with broader permissions.
 
-1. **Context & Prompt Assembly**: Sythoria aggregates your chat history, registers active project boundaries, reads repository guidelines (like `AGENTS.md`), compiles namespaced MCP schemas, and constructs the system prompt.
-2. **LLM Reasoning & Thinking**: The compiled prompt is sent to the model. For reasoning-heavy models (e.g., Claude 3.7 Sonnet, DeepSeek-R1, or OpenAI o3-mini), Sythoria parses and displays the thinking process separately in the UI while streaming.
-3. **Parallel Tool Dispatch**: If the model decides to run one or more tools, it outputs structural tool calls. Sythoria inspects these requests. If they are independent, Sythoria handles dispatch and scheduling in parallel to minimize latency.
-4. **Execution & Sandboxing**: Sythoria executes tools inside local sandboxes managed via Tauri. For filesystem writes and command execution, Sythoria uses workspace constraints to ensure files aren't modified outside the workspace root.
-5. **Human-In-The-Loop (HITL) Gate**: For write-level or shell-level actions, the loop pauses. Sythoria prompts the user for consent. Only upon manual confirmation is the tool allowed to execute.
-6. **Feedback Injection**: The tool's output—including exit codes, stderr, diffs, or base64-encoded images—is formatted into tool responses and appended to the history, triggering the next iteration.
+## Safer workflow
 
----
+1. Use a repository with a clean status or create a dedicated branch/worktree.
+2. Back up irreplaceable files outside the workspace.
+3. Give the task a narrow objective and name the files it may change.
+4. Review every command, network call, and file write before approval.
+5. Inspect the diff and run project tests before accepting the result.
+6. Stop the loop if it requests unrelated credentials, broad filesystem access, or destructive operations.
 
-## Sandboxing & Workspace Isolation
+Check current changes with:
 
-To prevent destructive file operations and system corruption, Sythoria Desktop v0.4.1 implements isolated execution layers:
-
-- **Path Canonicalization & `FileTokenRegistry`**: Every file read and write tool resolves its path through the Tauri backend's `FileTokenRegistry`. The core engine validates that target paths reside strictly within registered project directory boundaries. Attempting to access paths outside (e.g., `../../etc/passwd`) returns an instant permission denied error directly to the model.
-- **Git Worktree Sandbox & Apply/Discard Workflow**: When running an agent loop in a Git repository workspace, Sythoria automatically creates a temporary isolated Git worktree before tool execution begins. File edits, writes, and shell validation tests run inside this temporary worktree. The active chat thread displays pending file diffs with **[Apply Changes]** and **[Discard Changes]** action buttons. Your primary working branch remains completely clean until you explicitly click **Apply**.
-- **Stateful Shell Execution**: The `project_bash` command executes inside a persistent shell subprocess managed by Sythoria. Environment variables, aliases, and working directory state are maintained across turns in the same conversation thread, permitting multi-step compilation and build checks.
-
----
-
-## Interactive Clarifying Questions (`<question>` XML Parsing)
-
-During complex autonomous tool execution, models may require user input or clarification before proceeding. Sythoria Desktop parses `<question>` XML blocks emitted by LLMs into interactive UI cards in the chat timeline:
-
-```xml
-<question>
-  <prompt>Which database migration strategy would you like to apply?</prompt>
-  <option>Option 1: Destructive schema sync (drop non-matching columns)</option>
-  <option>Option 2: Safe additive migration (append new fields only)</option>
-</question>
+```bash
+git status --short
+git diff --stat
+git diff
 ```
 
-- **Interactive Selection Cards**: Users can click an option card directly inside the message timeline or type a custom write-in response.
-- **Automated Response Injection**: Clicking an option immediately packages the selection as a user response turn and resumes the agent loop without breaking context.
+To discard a single reviewed file, first confirm the exact path, then use:
 
----
-
-## Merged Tool Directory
-
-Sythoria maps three categories of tools into a unified schema list passed to the LLM:
-
-### 1. Native Web Search Tools
-
-Activated when a search service (Google API, SearXNG, Firecrawl, or Tavily) is configured in settings:
-
-- `search_query(query: string)`: Searches the internet for pages matching the query.
-- `fetch_url(url: string)`: Fetches a URL, strips HTML boilerplate, and returns readable Markdown.
-
-### 2. Native Project Tools
-
-Activated automatically when working inside an open project workspace folder:
-
-- `project_glob(pattern: string)`: Searches for file paths matching a glob pattern (e.g., `src/**/*.ts`).
-- `project_grep(query: string, path?: string)`: Runs a fast regex search through workspace files (similar to ripgrep).
-- `project_list_dir(dir_path: string)`: Lists directories and files immediately under `dir_path`.
-- `project_read(file_path: string, start_line?: number, end_line?: number)`: Reads the content of `file_path`, supporting line-range pagination.
-- `project_git_status()`: Returns modified, untracked, and staged files.
-- `project_git_diff()`: Returns the current unstaged diff of the workspace.
-- `project_write(file_path: string, content: string)`: Writes the specified content to `file_path`, creating parent folders if necessary.
-- `project_edit(file_path: string, target_content: string, replacement_content: string)`: Replaces a specific block of text in `file_path` with `replacement_content` using precise target matching.
-- `project_git_commit(message: string)`: Stages all changes and commits them with the given message.
-- `project_bash(command: string)`: Runs a shell command in a persistent shell terminal.
-
-### 3. Model Context Protocol (MCP) Tools
-
-Custom tools exposed by active local or remote MCP servers. These are namespaced dynamically to prevent name collisions:
-
-```
-mcp_tool_name = server_name__tool_name
+```bash
+git restore -- path/to/file
 ```
 
----
+This permanently discards uncommitted changes in that file. Prefer Sythoria's worktree review/apply/discard flow where available, and never use a repository-wide restore command as a generic troubleshooting step.
 
-## Security & Human-In-The-Loop (HITL) Gates
+## Processes and development servers
 
-To balance autonomy and security, Sythoria uses a granular safety permission matrix:
+Run development servers in a visible terminal you can stop and inspect. Do not copy examples that detach an unknown command with `nohup` or shell backgrounding. Confirm the requested port is free, know the process ID, and stop the exact process when the task ends.
 
-| Tool Category / Name                                               | Permission Level  | UI Behavior & Actions                                                                        |
-| :----------------------------------------------------------------- | :---------------- | :------------------------------------------------------------------------------------------- |
-| `project_read`, `project_glob`, `project_grep`, `project_list_dir` | **Auto-Approve**  | Executes silently. Results are fed back immediately to maintain fluid reasoning.             |
-| `search_query`, `fetch_url`                                        | **Auto-Approve**  | Executes silently. Allows agent to research facts in the background.                         |
-| Trusted MCP Servers                                                | **Auto-Approve**  | Automatically runs tools. Defined by marking the server "Trusted" in Settings.               |
-| Untrusted MCP Servers                                              | **Confirm Once**  | Pauses loop and displays a popup. User can click "Approve" or "Approve for Session".         |
-| `project_write`, `project_edit`                                    | **Await Consent** | Displays a visual diff showing exactly what lines will change. Requires manual confirmation. |
-| `project_bash`, `project_git_commit`                               | **Await Consent** | Pauses loop. Displays the exact command string. Requires manual approval or edit before run. |
+## Recovery
 
----
+If a task behaves unexpectedly:
 
-## Walkthrough: A Multi-Step Loop Trace
-
-Here is a typical execution trace showing how Sythoria's tool loop solves a problem:
-
-1. **User Input**: _"Find the function `calculateTotal` in the repository, edit it to include tax calculation, and make sure tests pass."_
-2. **Step 1 (LLM Reasoning)**: The model determines it must search for the function definition.
-   - _Tool Call_: `project_grep(query: "function calculateTotal")`
-   - _Output_: Found in `src/utils/billing.ts` on line 42.
-3. **Step 2 (LLM Reasoning)**: The model reads the file contents around line 42 to understand the code context.
-   - _Tool Call_: `project_read(file_path: "src/utils/billing.ts", start_line: 30, end_line: 60)`
-   - _Output_: Retreived code block showing `calculateTotal(items) { return items.reduce((a, b) => a + b.price, 0); }`.
-4. **Step 3 (LLM Reasoning)**: The model plans the replacement to include tax. It issues an edit call.
-   - _Tool Call_: `project_edit(file_path: "src/utils/billing.ts", target_content: "return items.reduce((a, b) => a + b.price, 0);", replacement_content: "const subtotal = items.reduce((a, b) => a + b.price, 0);\n  return subtotal + (subtotal * 0.15); // Adding 15% tax")`
-   - _HITL Intervention_: Sythoria intercepts the call, displays a side-by-side git diff of `src/utils/billing.ts`, and prompts: **[Approve Change / Reject]**.
-   - _User Action_: User clicks **[Approve Change]**. The file is modified on disk.
-5. **Step 4 (LLM Reasoning)**: The model wants to verify if the test suite runs and passes.
-   - _Tool Call_: `project_bash(command: "npm test")`
-   - _HITL Intervention_: Sythoria pauses, displaying: **[Allow command "npm test" to run? / Deny / Edit]**.
-   - _User Action_: User clicks **[Allow]**. The command runs, returning: `Tests: 12 passed, 0 failed`.
-6. **Step 5 (LLM Reasoning)**: The model sees everything works. It summarizes the work done and completes the task.
-   - _Output to User_: _"I have updated `calculateTotal` in `src/utils/billing.ts` to include a 15% tax and ran the test suite, which passed successfully."_
-
----
-
-## Configuration & Optimization
-
-Customize loop behavior by navigating to **Settings > Configuration**:
-
-- **Max Tool Steps**: Set limits between 1 and 100 steps. This guards against runaway token consumption.
-- **Context Caching**: When using providers that support prompt caching (such as Anthropic, DeepSeek, or Gemini), Sythoria structures tool responses and system prompts to take advantage of cache hits. This reduces token costs by up to $90\%$ and decreases latency on subsequent loops.
-
----
-
-## Troubleshooting Agent Loops
-
-### 1. Infinite Loops (Reasoning Hallucination)
-
-- **Symptom**: The model repeatedly calls the same tool with the same arguments, or bounces between two tools without making progress.
-- **Resolution**:
-  1. Click **Stop Generation** in the UI to halt the loop.
-  2. Provide a steering chat message pointing out the loop, e.g., _"You are stuck in a loop trying to run the build. The build is failing because of a missing import in file X. Fix Y first."_
-
-### 2. Tool Execution Timeouts
-
-- **Symptom**: Commands run via `project_bash` (such as launching a persistent dev server like `npm run dev`) hang indefinitely.
-- **Resolution**:
-  - The shell execution tool expects commands to terminate. Do not launch persistent background processes using `project_bash`.
-  - If a command hangs, click **Kill Task** in the execution terminal card. Use non-blocking commands or background daemons with `&` or nohup if strictly necessary, although starting interactive servers is not recommended in the chat loop.
-
-### 3. Recovering From Bad Edits
-
-- **Symptom**: The model introduces linting or logical errors, leaving the codebase in a broken state.
-- **Resolution**:
-  1. Run `project_git_diff()` or check git status in the UI to see changes.
-  2. Send a command to revert changes: `project_bash(command: "git checkout -- .")`, or reject future edits until you revert.
+1. stop the tool loop;
+2. do not approve additional cleanup commands;
+3. inspect `git status`, the worktree, and running processes;
+4. preserve useful logs after removing secrets; and
+5. restore only reviewed paths from a known commit or backup.
