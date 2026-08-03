@@ -1,13 +1,16 @@
 ---
 title: Model Context Protocol (MCP)
 description: Connect Sythoria to local and remote tools using the Model Context Protocol (MCP).
+lastVerifiedVersion: v0.4.2
+lastVerifiedDate: 2026-08-02
+source: sythoria-desktop MCP store and Rust MCP commands
 ---
 
 # Model Context Protocol (MCP)
 
-Sythoria fully supports the **Model Context Protocol (MCP)**, an open standard that enables secure integrations between AI models and local or remote data sources and tools.
+Sythoria supports the **Model Context Protocol (MCP)** over stdio, SSE, and Streamable HTTP. An MCP connection is a trust boundary, not a security guarantee.
 
-With MCP, you can plug in custom toolkits—such as database clients, filesystem managers, web searchers, or API clients—and make them instantly available to your models.
+MCP servers can expose tools such as database clients, filesystem operations, search, or API calls. Every server and tool remains code from its author and can receive the arguments Sythoria sends.
 
 ## Supported Transports
 
