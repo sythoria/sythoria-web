@@ -1,19 +1,28 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import DocsSearch from "@/components/docs/Search";
-import { GITHUB_OWNER, GITHUB_REPO } from "@/lib/changelog";
+import { Button } from "@/components/ui";
+import {
+  GITHUB_LATEST_RELEASE_URL,
+  GITHUB_REPOSITORY_URL,
+} from "@/lib/site-config";
 import { useTheme } from "@/hooks/useTheme";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
+import { useScrolled } from "@/hooks/useScrolled";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
+  const scrolled = useScrolled();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [iconKey, setIconKey] = useState(0);
+  const mobileDialogRef = useRef<HTMLDivElement>(null);
+  const firstMobileLinkRef = useRef<HTMLAnchorElement>(null);
+  const mobileDialogId = useId();
 
   const { dark, toggleTheme: baseToggleTheme } = useTheme();
 
@@ -22,27 +31,14 @@ export default function Navbar() {
     setIconKey((k) => k + 1);
   }, [baseToggleTheme]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Lock body scroll when mobile menu is open
-  useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [mobileOpen]);
-
   const closeMobile = useCallback(() => setMobileOpen(false), []);
+
+  useDialogFocus({
+    open: mobileOpen,
+    onClose: closeMobile,
+    dialogRef: mobileDialogRef,
+    initialFocusRef: firstMobileLinkRef,
+  });
 
   return (
     <>
@@ -87,13 +83,15 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/changelog"
+                prefetch={false}
                 className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-hover"
               >
                 Changelog
               </Link>
               <Link
-                href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}`}
+                href={GITHUB_REPOSITORY_URL}
                 target="_blank"
+                rel="noopener noreferrer"
                 className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-hover"
               >
                 GitHub
@@ -123,7 +121,7 @@ export default function Navbar() {
 
               {/* Desktop download app */}
               <a
-                href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`}
+                href={GITHUB_LATEST_RELEASE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden md:block relative group overflow-hidden rounded-full p-[1px]"
@@ -139,6 +137,9 @@ export default function Navbar() {
                 onClick={() => setMobileOpen((o) => !o)}
                 className="md:hidden p-2 rounded-full text-text-muted hover:text-text-primary hover:bg-white/10 dark:hover:bg-white/5 transition-colors"
                 aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                aria-expanded={mobileOpen}
+                aria-controls={mobileDialogId}
+                aria-haspopup="dialog"
               >
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
@@ -148,41 +149,64 @@ export default function Navbar() {
       </div>
 
       {/* Mobile nav overlay */}
-      <div className={`mobile-nav-overlay ${mobileOpen ? "open" : ""}`}>
-        <div className="flex flex-col items-center justify-center h-full gap-2 px-8">
-          <Link href="/" onClick={closeMobile} className="mobile-nav-link">
-            Home
-          </Link>
-          <Link href="/docs" onClick={closeMobile} className="mobile-nav-link">
-            Docs
-          </Link>
-          <Link
-            href="/changelog"
-            onClick={closeMobile}
-            className="mobile-nav-link"
+      {mobileOpen && (
+        <div
+          ref={mobileDialogRef}
+          id={mobileDialogId}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Site navigation"
+          tabIndex={-1}
+          className="mobile-nav-overlay open"
+        >
+          <nav
+            aria-label="Mobile site navigation"
+            className="flex h-full flex-col items-center justify-center gap-2 px-8"
           >
-            Changelog
-          </Link>
-          <a
-            href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeMobile}
-            className="mobile-nav-link"
-          >
-            GitHub
-          </a>
-          <a
-            href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeMobile}
-            className="mobile-nav-link"
-          >
-            Download
-          </a>
+            <Link
+              ref={firstMobileLinkRef}
+              href="/"
+              onClick={closeMobile}
+              className="mobile-nav-link"
+            >
+              Home
+            </Link>
+            <Link
+              href="/docs"
+              onClick={closeMobile}
+              className="mobile-nav-link"
+            >
+              Docs
+            </Link>
+            <Link
+              href="/changelog"
+              prefetch={false}
+              onClick={closeMobile}
+              className="mobile-nav-link"
+            >
+              Changelog
+            </Link>
+            <a
+              href={GITHUB_REPOSITORY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={closeMobile}
+              className="mobile-nav-link"
+            >
+              GitHub
+            </a>
+            <a
+              href={GITHUB_LATEST_RELEASE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={closeMobile}
+              className="mobile-nav-link"
+            >
+              Download
+            </a>
+          </nav>
         </div>
-      </div>
+      )}
     </>
   );
 }
