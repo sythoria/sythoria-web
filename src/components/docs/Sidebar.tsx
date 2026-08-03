@@ -1,15 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { docsNav, type DocNavGroup } from "@/lib/docs-nav";
-
-function toSentenceCase(str: string): string {
-  if (!str) return "";
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-}
 
 function NavGroup({
   group,
@@ -22,21 +17,27 @@ function NavGroup({
 }) {
   const hasActiveChild = group.items.some((item) => currentSlug === item.slug);
   const [open, setOpen] = useState(group.defaultOpen ?? hasActiveChild);
+  const listId = useId();
+
+  const expanded = hasActiveChild || open;
 
   return (
     <div className="mb-4">
       <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold text-text-muted hover:text-text-secondary transition-colors"
+        type="button"
+        onClick={() => setOpen(!expanded)}
+        aria-expanded={expanded}
+        aria-controls={listId}
+        className="flex w-full items-center justify-between px-3 py-1.5 text-xs font-semibold text-text-muted transition-colors hover:text-text-secondary"
       >
-        {toSentenceCase(group.title)}
+        {group.title}
         <ChevronDown
           size={14}
-          className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          className={`transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
         />
       </button>
-      {open && (
-        <ul className="space-y-0.5 mt-1">
+      {expanded && (
+        <ul id={listId} className="mt-1 space-y-0.5">
           {group.items.map((item) => {
             const isActive = currentSlug === item.slug;
             const href = `/docs/${item.slug}`;
@@ -44,8 +45,10 @@ function NavGroup({
               <li key={item.slug}>
                 <Link
                   href={href}
+                  prefetch={false}
                   onClick={onItemClick}
-                  className={`block px-3 py-1.5 text-sm rounded-lg transition-colors duration-200 ${
+                  aria-current={isActive ? "page" : undefined}
+                  className={`block rounded-lg px-3 py-1.5 text-sm transition-colors duration-200 ${
                     isActive
                       ? "text-accent-hover dark:text-accent-hover bg-accent-soft/80 dark:bg-accent-soft/30 font-semibold"
                       : "text-text-secondary hover:text-text-primary hover:bg-hover"
@@ -73,7 +76,10 @@ export default function DocsSidebar({
   const currentSlug = pathname.replace("/docs/", "").replace("/docs", "");
 
   const navContent = (
-    <nav className="overflow-y-auto scrollbar-none pr-2">
+    <nav
+      aria-label="Documentation sections"
+      className="overflow-y-auto scrollbar-none pr-2"
+    >
       {docsNav.map((group) => (
         <NavGroup
           key={group.title}
