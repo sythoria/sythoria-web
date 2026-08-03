@@ -3,17 +3,20 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useScrollInView } from "@/hooks/useScrollInView";
-import { GITHUB_OWNER, GITHUB_REPO } from "@/lib/changelog";
+import {
+  GITHUB_LATEST_RELEASE_URL,
+  GITHUB_REPOSITORY_URL,
+} from "@/lib/site-config";
 
 const navLinks = [
   {
     label: "Download",
-    href: `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`,
+    href: GITHUB_LATEST_RELEASE_URL,
   },
   { label: "Docs", href: "/docs" },
   {
     label: "GitHub",
-    href: `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}`,
+    href: GITHUB_REPOSITORY_URL,
   },
 ];
 
@@ -42,7 +45,7 @@ export default function Footer() {
           >
             <Image
               src="/logonobg.png"
-              alt="Sythoria - Privacy-focused desktop AI client logo"
+              alt=""
               width={32}
               height={32}
               className="w-8 h-8"
@@ -75,7 +78,7 @@ export default function Footer() {
         >
           <p className="text-[11px] text-text-muted">&copy; 2026 Sythoria</p>
           <p className="text-[11px] text-text-muted">
-            Open source · MIT license · Built with privacy in mind
+            Desktop source and release files are available on GitHub
           </p>
         </div>
       </div>
