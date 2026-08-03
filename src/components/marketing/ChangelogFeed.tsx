@@ -57,7 +57,8 @@ function ReleaseNotes({ body }: { body: string }) {
   if (!body) {
     return (
       <p className="text-sm text-text-secondary">
-        No release note text available for this build. Open the GitHub release for details.
+        No release note text available for this build. Open the GitHub release
+        for details.
       </p>
     );
   }
@@ -117,11 +118,13 @@ export default function ChangelogFeed({
   query: initialQuery,
   filter: initialFilter,
 }: ChangelogFeedProps) {
-  const [activeFilter, setActiveFilter] = useState<"all" | "stable" | "prerelease">(
-    initialFilter
-  );
+  const [activeFilter, setActiveFilter] = useState<
+    "all" | "stable" | "prerelease"
+  >(initialFilter);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
-  const [selectedRelease, setSelectedRelease] = useState<GitHubRelease | null>(null);
+  const [selectedRelease, setSelectedRelease] = useState<GitHubRelease | null>(
+    null
+  );
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
   const filtered = feed.releases.filter((release) => {
@@ -137,7 +140,8 @@ export default function ChangelogFeed({
   // VIEW 2: FULL RELEASE DETAIL VIEW (Screenshot 2)
   // ──────────────────────────────────────────
   if (selectedRelease) {
-    const releaseTitle = selectedRelease.name || `Sythoria ${selectedRelease.tag_name}`;
+    const releaseTitle =
+      selectedRelease.name || `Sythoria ${selectedRelease.tag_name}`;
 
     return (
       <div className="space-y-8 animate-fade-in">
@@ -185,7 +189,7 @@ export default function ChangelogFeed({
         <div className="pt-6 border-t border-border/40 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold tracking-tight text-text-primary flex items-center gap-2">
-              <span>What's Changed</span>
+              <span>What&apos;s Changed</span>
               <a
                 href={selectedRelease.html_url}
                 target="_blank"
@@ -230,7 +234,10 @@ export default function ChangelogFeed({
                       </span>
                     )}
                   </span>
-                  <ChevronRight size={16} className="shrink-0 text-text-muted" />
+                  <ChevronRight
+                    size={16}
+                    className="shrink-0 text-text-muted"
+                  />
                 </a>
               ))}
             </div>
@@ -359,7 +366,10 @@ export default function ChangelogFeed({
                 >
                   {/* Metadata Row */}
                   <div className="flex flex-wrap items-center gap-3 text-xs text-text-muted">
-                    <time dateTime={release.published_at} className="font-medium text-text-secondary">
+                    <time
+                      dateTime={release.published_at}
+                      className="font-medium text-text-secondary"
+                    >
                       {formatDate(release.published_at)}
                     </time>
 
@@ -409,5 +419,3 @@ export default function ChangelogFeed({
     </div>
   );
 }
-
-
