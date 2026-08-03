@@ -7,7 +7,6 @@ import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import {
   DESKTOP_PLATFORMS,
-  DESKTOP_VERSION,
   GITHUB_LATEST_RELEASE_URL,
 } from "@/lib/site-config";
 
