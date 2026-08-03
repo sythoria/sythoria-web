@@ -1,11 +1,14 @@
 ---
 title: Sandboxed Workspace Preview
-description: Preview interactive HTML web apps, React components, and SVG artifacts in a secure split-screen canvas.
+description: Preview supported HTML and SVG artifacts in a sandboxed workspace.
+lastVerifiedVersion: v0.4.2
+lastVerifiedDate: 2026-08-02
+source: sythoria-desktop artifact preview and network policy
 ---
 
 # Sandboxed Workspace Preview
 
-Sythoria Desktop includes an interactive **Split-Screen Workspace Preview** (also known as the **Artifact Canvas**). When an AI model generates web applications, HTML prototypes, SVG graphics, or React UI components, Sythoria automatically extracts the artifact and renders it live in a split pane right next to your chat conversation.
+Sythoria Desktop includes a split-screen artifact preview. Generated HTML and SVG output can be inspected beside the conversation. Treat generated content as untrusted even when it came from a model you selected.
 
 ---
 
@@ -23,7 +26,7 @@ Sythoria Desktop includes an interactive **Split-Screen Workspace Preview** (als
 
 1. **Artifact Detection**: As the model streams its response, Sythoria's parser detects code blocks marked with HTML, SVG, or interactive React/JSX metadata tags (such as `html ``` ` or `xml ``` `).
 2. **Iframe Isolation**: Sythoria mounts an isolated HTML preview container powered by Tauri's security boundary.
-3. **Execution & Rendering**: Scripts, CSS styles, and DOM elements are parsed and rendered instantly.
+3. **Execution and rendering**: Supported markup, styles, and scripts are parsed inside the preview boundary.
 
 ---
 
