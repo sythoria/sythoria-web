@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import DocsSearch from "./Search";
 
@@ -19,7 +19,9 @@ describe("DocsSearch", () => {
     expect(screen.getByRole("combobox")).toHaveFocus();
 
     await user.keyboard("{Escape}");
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
     expect(trigger).toHaveFocus();
   });
 
