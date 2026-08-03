@@ -1,11 +1,14 @@
 ---
 title: Multi-Model Comparison Grid
 description: Stream and compare up to four AI models side-by-side with synchronized scrollbars in Sythoria Desktop.
+lastVerifiedVersion: v0.4.2
+lastVerifiedDate: 2026-08-02
+source: sythoria-desktop comparison grid components
 ---
 
 # Multi-Model Comparison Grid
 
-Sythoria Desktop includes a powerful **Multi-Model Comparison Grid Mode** that allows you to dispatch a single prompt simultaneously to as many as **four AI models** side-by-side in real time.
+Sythoria Desktop can send one prompt to as many as **four configured models** and display their streamed responses in adjacent columns.
 
 Whether evaluating cost vs. reasoning capability, testing model alignment, or benchmarking local Ollama models against hosted frontier endpoints (like OpenAI `gpt-5.6-sol` or Anthropic `claude-fable-5`), the comparison grid provides real-time comparative insights without manual copy-pasting.
 
@@ -14,7 +17,7 @@ Whether evaluating cost vs. reasoning capability, testing model alignment, or be
 ## Key Comparison Capabilities
 
 - **Parallel Streaming**: All configured model columns receive the request payload at the exact same moment and stream back their responses in synchronized parallel cards.
-- **Synchronized Scrollbars**: Scroll through long model outputs seamlessly across all active columns without losing alignment.
+- **Synchronized scrolling**: When enabled in the current interface, scrolling keeps active output columns aligned.
 - **Performance & Latency Insights**: Each column displays live metrics for time-to-first-token (TTFT), tokens per second (t/s), total token consumption, and response completion state.
 - **Independent Settings**: Configure distinct system prompts, temperature levels, or context window sizes per comparison column.
 
