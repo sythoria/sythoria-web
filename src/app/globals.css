@@ -2211,7 +2211,10 @@
 }
 
 .glass-edge-hover {
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
 }
 
 .glass-edge-hover:hover {
@@ -2237,4 +2240,3 @@
 .animate-ambient-pulse {
   animation: ambient-pulse 12s ease-in-out infinite alternate;
 }
-
