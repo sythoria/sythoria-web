@@ -1,6 +1,9 @@
 ---
 title: Configuration
-description: Customize Sythoria with model selection, temperature, system prompts, web search, and more.
+description: Configure providers, models, appearance, tools, and application behavior in Sythoria Desktop.
+lastVerifiedVersion: v0.4.2
+lastVerifiedDate: 2026-08-02
+source: sythoria-desktop providerPresets.ts and useModelStore.ts
 ---
 
 # Configuration
@@ -18,7 +21,7 @@ You can switch your active LLM at any time using the **model dropdown** located 
 1. Open **Settings** and scroll to **Model Providers**.
 2. Click **Add Model** to define a new endpoint.
 3. Select a **Provider Preset** (OpenAI, Anthropic, Gemini, Ollama, etc.) to auto-populate the endpoint URL and model name, or choose **Custom** to enter your own OpenAI-compatible endpoint (e.g., LM Studio, Groq, Together AI, or a private vLLM server).
-4. Fill in the **Model ID** matching the exact identifier expected by the provider (e.g., `gpt-4o` or `claude-3-5-sonnet-latest`).
+4. Fill in the **Model ID** matching the exact identifier expected by the provider (e.g., `gpt-4o` or `claude-opus-4-8`).
 
 ### Connection Health Indicators
 
@@ -66,7 +69,7 @@ Configured under **Settings > General**, this prompt is applied to all new chats
 If you mount a local folder as a developer workspace, Sythoria inspects the root of that folder for a file named `AGENTS.md`. If detected:
 
 - The contents of `AGENTS.md` are **automatically read** and appended directly to the model's system prompt prior to every message sent in that workspace.
-- This allows you to define project-specific conventions, code styling rules, or API schemas that the AI will follow seamlessly without manual copying.
+- This lets you define project-specific conventions, code-style rules, or API schemas without copying the same text into each prompt.
 
 ---
 
@@ -80,7 +83,7 @@ To protect your file system, you must configure a security permission level when
 
 | Permission Level | Permitted Tools                                                                          | Security / HITL Behavior                                                                                                                                            |
 | :--------------- | :--------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Read-Only**    | `project_glob`, `project_grep`, `project_list_dir`, `project_read`, `project_git_status` | **Auto-approve**: The model can navigate and inspect your workspace code instantly.                                                                                 |
+| **Read-Only**    | `project_glob`, `project_grep`, `project_list_dir`, `project_read`, `project_git_status` | The current policy can auto-approve these workspace inspection operations. Review project scope and symlink boundaries before enabling tools.                       |
 | **Write/Commit** | _All Read-Only tools_ + `project_write`, `project_edit`, `project_git_commit`            | **Human-In-The-Loop**: The app pauses and shows a diff viewer when the model attempts to write or replace text. Files are only modified when you click **Approve**. |
 | **Full (Bash)**  | _All Write tools_ + `project_bash`                                                       | **Strict Await Consent**: The app displays the command line string that the model wants to run in your terminal. You must review and click **Execute** to run it.   |
 
@@ -131,7 +134,7 @@ All keyboard shortcuts can be configured under **Settings > Keyboard Shortcuts**
 | :---------------- | :-------------------- | :------------------------------------------------------------------- | :----------- |
 | `⌥` + `Space`     | `Alt` + `Space`       | Open **Spotlight Window** (desktop floating prompt bar)              | System       |
 | `⌘` + `K`         | `Ctrl` + `K`          | Open **Command Palette** (quick actions, settings, model selector)   | Navigation   |
-| `Enter`           | `Enter`               | Send message (toggles to `⌘` + `Enter`/`Ctrl` + `Enter` in settings) | General      |
+| `Enter`           | `Enter`               | Send message (toggles to `⌘` + `Enter` / `Ctrl` + `Enter` in settings) | General      |
 | `Shift` + `Enter` | `Shift` + `Enter`     | Insert new line                                                      | General      |
 | `Escape`          | `Escape`              | Stop model response generation/streaming                             | General      |
 | `⌘` + `,`         | `Ctrl` + `,`          | Open the Settings dashboard                                          | Navigation   |
@@ -165,23 +168,21 @@ To prevent application rendering lag and ensure memory stability, the following 
 
 ## Data Management & Storage Locations
 
-Sythoria is completely stateless on the server side. All data is saved on your local hard drive.
+Sythoria is completely stateless on the server side. All data is saved locally on your drive.
 
 ### Filesystem Storage Locations
 
-Settings, chat history databases, and cache folders are located in the user application support directory:
+Encrypted settings, conversation history, and cache folders are located in the user application support directory:
 
 - **macOS**: `~/Library/Application Support/com.sythoria.sythoria-desktop/`
 - **Windows**: `%APPDATA%\com.sythoria.sythoria-desktop\`
 - **Linux**: `~/.local/share/com.sythoria.sythoria-desktop/`
 
-### Configuration Files Structure
+### Encrypted Storage Architecture
 
-Within the storage directory, the following JSON files contain your data:
-
-- `sythoria-store.json`: Contains your chat threads, conversation histories, UI preferences, keybinds, and MCP/search server connection endpoints.
-- `config.json`: Contains model provider configurations (excluding credentials). Sensitive API keys are stripped out before saving to this file, as they are delegated directly to the OS keychain.
-- `projects.json`: Stores details of your local project workspaces and their permission boundaries.
+- **AES-256-GCM Encryption**: Conversation snapshots, model preferences, workspace metadata, and custom skill configurations are encrypted using domain-separated AES-256-GCM encryption before writing to disk.
+- **OS Keychain Credentials**: Sensitive provider API keys, bearer tokens, and MCP secrets are delegated directly to the native operating system credential vault (Keychain on macOS, Credential Manager on Windows, Secret Service/KWallet on Linux). Secrets are never written to unencrypted JSON files.
+- `projects.json`: Stores local project workspace configurations and tool permission boundaries.
 
 ### Exporting and Resetting Data
 
