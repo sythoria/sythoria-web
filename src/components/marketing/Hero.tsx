@@ -62,34 +62,39 @@ export default function Hero({
     return () => observer.disconnect();
   }, []);
 
-  const videoSrc =
-    mounted && videoVisible
-      ? dark
-        ? "/darkDemo.mp4"
-        : "/lightDemo.mp4"
-      : undefined;
+  const videoSrc = mounted
+    ? dark
+      ? "/darkDemo.mp4"
+      : "/lightDemo.mp4"
+    : undefined;
   const posterSrc = mounted
     ? dark
       ? "/darkDemo-poster.webp"
       : "/lightDemo-poster.webp"
     : undefined;
 
-  // Imperatively control video playback and reset loading state when src changes
+  const prevSrcRef = useRef<string | undefined>(undefined);
+
+  // Imperatively control video playback and track theme src updates
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
-    setVideoLoaded(false);
-    if (!videoSrc) {
-      video.pause();
-      video.removeAttribute("src");
+    if (!video || !videoSrc) return;
+
+    if (prevSrcRef.current !== videoSrc) {
+      prevSrcRef.current = videoSrc;
+      setVideoLoaded(false);
       video.load();
-      return;
     }
-    video.load();
+
     if (videoVisible) {
-      video.play().catch(() => {
-        // The stable placeholder remains visible when autoplay is unavailable.
-      });
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Autoplay was prevented
+        });
+      }
+    } else {
+      video.pause();
     }
   }, [videoSrc, videoVisible]);
 
@@ -256,12 +261,12 @@ export default function Hero({
                 loop
                 muted
                 playsInline
-                preload={videoSrc ? "metadata" : "none"}
+                preload={videoSrc ? "auto" : "none"}
                 aria-hidden="true"
                 tabIndex={-1}
                 onCanPlay={() => setVideoLoaded(true)}
                 onLoadedData={() => setVideoLoaded(true)}
-                className={`h-full w-[calc(100%+2rem)] max-w-none shrink-0 object-cover object-right sm:w-full sm:object-center transition-opacity duration-500 ${
+                className={`h-full w-[calc(100%+2rem)] max-w-none shrink-0 object-cover object-right sm:w-full sm:object-center transition-opacity duration-500 transform-gpu [transform:translateZ(0)] ${
                   videoLoaded ? "opacity-100" : "opacity-0"
                 }`}
               />
