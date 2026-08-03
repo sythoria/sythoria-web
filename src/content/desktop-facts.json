@@ -1,0 +1,58 @@
+{
+  "version": "v0.4.2",
+  "sourceRevision": "423cf87e5bfa33490ebeb308db78e5f2637f9957",
+  "verifiedAt": "2026-08-02",
+  "platforms": {
+    "windows": {
+      "label": "Windows 10/11",
+      "architectures": ["x64"],
+      "assetSuffix": "x64-setup.exe"
+    },
+    "macos": {
+      "label": "macOS 12 or later",
+      "architectures": ["Apple silicon (arm64)"],
+      "assetSuffix": "aarch64.dmg"
+    },
+    "linux": {
+      "label": "Linux",
+      "architectures": ["x86_64/amd64"],
+      "assetSuffix": "amd64.AppImage"
+    }
+  },
+  "shortcuts": {
+    "spotlight": "Alt+Space",
+    "appshot": "Alt+Shift+S"
+  },
+  "providers": {
+    "openai": {
+      "label": "OpenAI",
+      "apiBase": "https://api.openai.com/v1/chat/completions",
+      "defaultModel": "gpt-4o"
+    },
+    "gemini": {
+      "label": "Google Gemini",
+      "apiBase": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+      "defaultModel": "gemini-2.5-pro"
+    },
+    "anthropic": {
+      "label": "Anthropic",
+      "apiBase": "https://api.anthropic.com/v1/messages",
+      "defaultModel": "claude-opus-4-8"
+    },
+    "ollama": {
+      "label": "Ollama (Local)",
+      "apiBase": "http://localhost:11434/v1/chat/completions",
+      "defaultModel": "llama3.1"
+    },
+    "nim": {
+      "label": "NVIDIA NIM",
+      "apiBase": "https://integrate.api.nvidia.com/v1/chat/completions",
+      "defaultModel": "meta/llama-3.3-70b-instruct"
+    },
+    "openrouter": {
+      "label": "OpenRouter",
+      "apiBase": "https://openrouter.ai/api/v1/chat/completions",
+      "defaultModel": "anthropic/claude-3.5-sonnet"
+    }
+  }
+}
