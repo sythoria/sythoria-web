@@ -13,7 +13,7 @@ describe("Button", () => {
 
   it("renders as a button by default", () => {
     render(<Button>Test</Button>);
-    expect(screen.getByRole("button")).toBeInTheDocument();
+    expect(screen.getByRole("button")).toHaveAttribute("type", "button");
   });
 
   it("renders as an anchor when href is provided", () => {
@@ -74,5 +74,25 @@ describe("Button", () => {
   it("is disabled when disabled prop is set", () => {
     render(<Button disabled>Disabled</Button>);
     expect(screen.getByRole("button")).toBeDisabled();
+  });
+
+  it("prevents navigation and focus when a link button is disabled", async () => {
+    const user = userEvent.setup();
+    let clicked = false;
+    render(
+      <Button href="/docs" disabled onClick={() => (clicked = true)}>
+        Disabled link
+      </Button>
+    );
+    const link = screen.getByRole("link", { name: /disabled link/i });
+    expect(link).toHaveAttribute("aria-disabled", "true");
+    expect(link).toHaveAttribute("tabindex", "-1");
+    await user.click(link);
+    expect(clicked).toBe(false);
+  });
+
+  it("renders a numeric zero child", () => {
+    render(<Button>{0}</Button>);
+    expect(screen.getByRole("button", { name: "0" })).toBeInTheDocument();
   });
 });
