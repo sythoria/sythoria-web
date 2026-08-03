@@ -6,7 +6,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import DocsSearch from "@/components/docs/Search";
-import { Button } from "@/components/ui";
 import {
   GITHUB_LATEST_RELEASE_URL,
   GITHUB_REPOSITORY_URL,
