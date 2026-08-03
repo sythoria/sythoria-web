@@ -24,6 +24,7 @@ describe("Hero", () => {
     mockMatchMedia(true);
     // Mock HTMLMediaElement play and load methods
     window.HTMLMediaElement.prototype.load = vi.fn();
+    window.HTMLMediaElement.prototype.pause = vi.fn();
     window.HTMLMediaElement.prototype.play = vi
       .fn()
       .mockImplementation(() => Promise.resolve());
@@ -57,5 +58,16 @@ describe("Hero", () => {
     const video = container.querySelector("video");
     expect(video).toBeInTheDocument();
     expect(video).toHaveAttribute("playsinline");
+    expect(video).toHaveClass(
+      "w-[calc(100%+2rem)]",
+      "object-right",
+      "sm:w-full",
+      "sm:object-center"
+    );
+    expect(screen.getByTestId("demo-video-viewport")).toHaveClass(
+      "aspect-[4/3]",
+      "sm:aspect-video",
+      "!min-h-0"
+    );
   });
 });
