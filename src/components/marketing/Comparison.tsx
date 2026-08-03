@@ -1,245 +1,198 @@
 "use client";
 
-import { Check, X, Shield } from "lucide-react";
-import { useScrollInView } from "@/hooks/useScrollInView";
+import { Check, Info, Shield } from "lucide-react";
 import { motion } from "framer-motion";
-import { useRef, useState, useCallback, type MouseEvent } from "react";
-
-const NOISE_SVG = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`;
+import { useRef, type PointerEvent } from "react";
+import { useScrollInView } from "@/hooks/useScrollInView";
 
 interface ComparisonRow {
   feature: string;
-  sythoriaVal: boolean;
   sythoriaText: string;
-  othersVal: boolean;
-  othersText: string;
+  boundary: string;
 }
 
 const comparisons: ComparisonRow[] = [
   {
-    feature: "API Keys Storage",
-    sythoriaVal: true,
-    sythoriaText:
-      "Stored locally in secure OS Keychain (configs & chats saved offline on disk)",
-    othersVal: false,
-    othersText:
-      "Uploaded to platform databases & decrypted on cloud proxy servers",
+    feature: "API key storage",
+    sythoriaText: "Stored through the operating system keychain.",
+    boundary:
+      "The selected provider receives its key when Sythoria makes an authenticated request.",
   },
   {
-    feature: "Telemetry & Tracking",
-    sythoriaVal: true,
+    feature: "Prompt routing",
     sythoriaText:
-      "Zero Telemetry. Clean compilation with no PostHog or Segment hooks",
-    othersVal: false,
-    othersText:
-      "Constant background interaction tracking and session cookie logging",
+      "The Rust backend connects directly to the endpoint configured for the selected model.",
+    boundary:
+      "Hosted providers process prompts under their own retention, billing, and privacy terms.",
   },
   {
-    feature: "Account Requirement",
-    sythoriaVal: true,
-    sythoriaText:
-      "No Accounts. 1-click execution out of the box with zero signups",
-    othersVal: false,
-    othersText: "Mandatory web registration, email profiles, and passwords",
+    feature: "Sythoria account",
+    sythoriaText: "No Sythoria account is required for the desktop client.",
+    boundary:
+      "Hosted model, search, and other external services can require their own accounts.",
   },
   {
-    feature: "Local Models (Ollama)",
-    sythoriaVal: true,
+    feature: "Local models",
     sythoriaText:
-      "Offline Port. Direct loopback connection to local models via localhost",
-    othersVal: false,
-    othersText: "Locked out. Entirely dependent on external cloud API networks",
+      "A loopback Ollama endpoint can provide a local model path after its model files are installed.",
+    boundary:
+      "Updates, hosted tools, cloud transcription, MCP, and remote artifacts can still use the network.",
   },
   {
-    feature: "Data Ownership",
-    sythoriaVal: true,
+    feature: "Conversation storage",
     sythoriaText:
-      "Local Database. Stored in client state with 1-click Markdown export",
-    othersVal: false,
-    othersText:
-      "Platform Custody. Stored on their databases, potentially trained on",
+      "Conversation snapshots and non-secret configuration use AES-256-GCM encrypted local files.",
+    boundary:
+      "Device access, backups, exports, and the operating system keychain remain part of the threat model.",
   },
   {
-    feature: "Multi-Provider Support",
-    sythoriaVal: true,
+    feature: "Provider choice",
     sythoriaText:
-      "Select and switch between OpenAI, Anthropic, Gemini, DeepSeek instantly",
-    othersVal: false,
-    othersText:
-      "Locked vendor stacks. Subscription walls isolate different providers",
+      "Presets cover OpenAI, Anthropic, Gemini, Ollama, NVIDIA NIM, and OpenRouter, plus compatible endpoints.",
+    boundary:
+      "Model availability, context limits, pricing, and retention change independently at each provider.",
   },
   {
-    feature: "Pricing Model",
-    sythoriaVal: true,
+    feature: "Telemetry",
     sythoriaText:
-      "Free & Open Source. Pay-as-you-go API consumption with 0% markups",
-    othersVal: false,
-    othersText:
-      "$20/month flat fee per provider, regardless of actual message usage",
+      "The audited desktop version does not include a Sythoria analytics or hosted prompt service.",
+    boundary:
+      "Network integrations and providers may collect operational data; review their settings and policies.",
   },
   {
-    feature: "Response Streaming",
-    sythoriaVal: true,
+    feature: "Streaming",
     sythoriaText:
-      "Yes. Real-time Server-Sent Events (SSE) stream token-by-token",
-    othersVal: true,
-    othersText: "Yes. Standard cloud streaming supported",
-  },
-  {
-    feature: "Markdown Rendering",
-    sythoriaVal: true,
-    sythoriaText:
-      "Yes. Full LaTeX mathematical, code blocks, and table rendering",
-    othersVal: true,
-    othersText: "Yes. Standard markdown formatting supported",
+      "Sythoria displays provider response chunks as the backend receives them.",
+    boundary:
+      "Time to first token and throughput depend on the model, provider, network, and local device.",
   },
 ];
 
 export default function Comparison() {
   const { ref: headingRef, visible: headingVisible } = useScrollInView();
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = useCallback((e: MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  }, []);
+  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    const card = cardRef.current;
+    if (!card) return;
+    const bounds = card.getBoundingClientRect();
+    card.style.setProperty(
+      "--comparison-glow-x",
+      `${event.clientX - bounds.left}px`
+    );
+    card.style.setProperty(
+      "--comparison-glow-y",
+      `${event.clientY - bounds.top}px`
+    );
+  };
 
   return (
-    <section className="py-20 px-6 relative">
+    <section className="relative px-6 py-20">
       <div className="landing-section-divider mb-20" />
 
-      {/* Heading */}
-      <div ref={headingRef} className="max-w-2xl mx-auto text-center mb-14">
+      <div ref={headingRef} className="mx-auto mb-14 max-w-2xl text-center">
         <div
           className={`scroll-animate scroll-fade-in-up stagger-1 ${headingVisible ? "in-view" : ""}`}
         >
-          <span className="text-xs font-medium uppercase tracking-widest text-accent flex items-center justify-center gap-2">
-            <Shield size={13} strokeWidth={1.5} />
-            Why Sythoria
+          <span className="flex items-center justify-center gap-2 text-xs font-medium uppercase tracking-widest text-accent">
+            <Shield size={13} strokeWidth={1.5} aria-hidden="true" />
+            Data boundaries
           </span>
         </div>
         <h2
-          className={`mt-4 text-3xl sm:text-4xl font-bold text-text-primary tracking-[-0.035em] scroll-animate scroll-fade-in-up stagger-2 ${headingVisible ? "in-view" : ""}`}
+          className={`scroll-animate scroll-fade-in-up stagger-2 mt-4 text-3xl font-bold tracking-[-0.035em] text-text-primary sm:text-4xl ${headingVisible ? "in-view" : ""}`}
         >
-          Privacy isn&apos;t a feature.
-          <br className="hidden sm:block" />
-          It&apos;s the default.
+          Local control, documented limits.
         </h2>
         <p
-          className={`mt-3 text-text-secondary max-w-lg mx-auto text-base scroll-animate scroll-fade-in-up stagger-3 ${headingVisible ? "in-view" : ""}`}
+          className={`scroll-animate scroll-fade-in-up stagger-3 mx-auto mt-3 max-w-lg text-base text-text-secondary ${headingVisible ? "in-view" : ""}`}
         >
-          Unlike other AI chat interfaces, Sythoria never compromises your data.
+          What Sythoria handles locally, and what remains the responsibility of
+          the operating system or configured service.
         </p>
       </div>
 
-      {/* Premium Table Container */}
       <motion.div
         ref={cardRef}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onPointerMove={handlePointerMove}
         initial={{ opacity: 0, y: 24, scale: 0.98 }}
         whileInView={{ opacity: 1, y: 0, scale: 1 }}
         viewport={{ once: true, margin: "-60px" }}
-        transition={{
-          duration: 0.8,
-          delay: 0.1,
-          ease: [0.16, 1, 0.3, 1],
-        }}
-        className="max-w-5xl mx-auto rounded-[1.25rem] bento-card overflow-hidden"
+        transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+        className="bento-card group relative mx-auto max-w-5xl overflow-hidden rounded-[1.25rem]"
       >
-        {/* ── Accent corner gradient (top-left) ──── */}
         <div
-          className="pointer-events-none absolute top-0 left-0 h-32 w-32 rounded-tl-[1.25rem] opacity-20 transition-opacity duration-500"
+          aria-hidden="true"
+          className="pointer-events-none absolute h-52 w-52 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent opacity-0 blur-3xl transition-opacity group-hover:opacity-[0.12]"
           style={{
-            background: `radial-gradient(ellipse at 0% 0%, var(--color-accent), transparent 70%)`,
-            opacity: isHovered ? 0.35 : 0.15,
+            left: "var(--comparison-glow-x, 50%)",
+            top: "var(--comparison-glow-y, 50%)",
           }}
         />
 
-        {/* ── Mouse-tracking glow ────────────────── */}
         <div
-          className="bento-card-glow"
-          style={{
-            background: "var(--color-accent)",
-            left: mousePos.x - 100,
-            top: mousePos.y - 100,
-            opacity: isHovered ? 0.15 : 0,
-          }}
-        />
-
-        {/* ── Noise texture overlay ──────────────── */}
-        <div
-          className="pointer-events-none absolute inset-0 rounded-[1.25rem] opacity-[0.015] dark:opacity-[0.03]"
-          style={{ backgroundImage: NOISE_SVG }}
-        />
-
-        <div className="overflow-x-auto relative z-10">
-          <table className="w-full border-collapse text-left min-w-[700px]">
-            {/* Table Header */}
+          className="content-scroll-region relative z-10 !m-0 rounded-[1.25rem]"
+          role="region"
+          aria-label="Sythoria data boundaries"
+          tabIndex={0}
+        >
+          <table className="w-full min-w-[760px] border-collapse text-left">
+            <caption className="sr-only">
+              Sythoria version 0.4.2 storage and network boundaries
+            </caption>
             <thead>
               <tr className="border-b border-border/30">
-                <th className="py-5 px-6 text-[10px] font-mono uppercase tracking-wider text-text-muted w-1/4">
-                  Feature / Spec
+                <th
+                  scope="col"
+                  className="w-1/4 px-6 py-5 text-[11px] font-mono uppercase tracking-wider text-text-muted"
+                >
+                  Area
                 </th>
-                <th className="py-5 px-6 bg-accent-soft border-x border-border/40 text-xs sm:text-sm font-bold text-text-primary w-5/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>Sythoria Desktop Client</span>
-                  </div>
+                <th
+                  scope="col"
+                  className="w-5/12 border-x border-border/40 bg-accent-soft px-6 py-5 text-sm font-bold text-text-primary"
+                >
+                  Sythoria v0.4.2
                 </th>
-                <th className="py-5 px-6 text-xs sm:text-sm font-medium text-text-secondary w-5/12">
-                  Traditional SaaS Clients
+                <th
+                  scope="col"
+                  className="w-5/12 px-6 py-5 text-sm font-medium text-text-secondary"
+                >
+                  Boundary to understand
                 </th>
               </tr>
             </thead>
-
-            {/* Table Body */}
             <tbody className="divide-y divide-border/40">
               {comparisons.map((row) => (
                 <tr
                   key={row.feature}
-                  className="hover:bg-hover/20 dark:hover:bg-white/[0.01] transition-colors duration-200"
+                  className="transition-colors hover:bg-hover/20"
                 >
-                  {/* Feature Title */}
-                  <td className="py-4.5 px-6 text-xs sm:text-sm font-semibold text-text-primary tracking-wide">
+                  <th
+                    scope="row"
+                    className="px-6 py-4 text-sm font-semibold text-text-primary"
+                  >
                     {row.feature}
+                  </th>
+                  <td className="border-x border-border/40 bg-accent-soft px-6 py-4 text-sm leading-relaxed text-text-primary">
+                    <span className="flex items-start gap-2">
+                      <Check
+                        size={14}
+                        aria-hidden="true"
+                        className="mt-0.5 shrink-0 text-emerald-600 dark:text-emerald-400"
+                      />
+                      {row.sythoriaText}
+                    </span>
                   </td>
-
-                  {/* Sythoria Spec (Highlighted Column) */}
-                  <td className="py-4.5 px-6 bg-accent-soft border-x border-border/40 text-xs sm:text-sm text-text-primary font-medium leading-relaxed">
-                    <div className="flex items-start gap-2">
-                      <span className="p-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0">
-                        <Check size={12} strokeWidth={3} />
-                      </span>
-                      <span>{row.sythoriaText}</span>
-                    </div>
-                  </td>
-
-                  {/* Competitor Spec */}
-                  <td className="py-4.5 px-6 text-xs sm:text-sm text-text-secondary font-light leading-relaxed">
-                    <div className="flex items-start gap-2">
-                      <span
-                        className={`p-0.5 rounded mt-0.5 shrink-0 ${
-                          row.othersVal
-                            ? "bg-emerald-500/5 border border-emerald-500/10 text-emerald-600/70 dark:text-emerald-400/70"
-                            : "bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400"
-                        }`}
-                      >
-                        {row.othersVal ? (
-                          <Check size={12} strokeWidth={2.5} />
-                        ) : (
-                          <X size={12} strokeWidth={2.5} />
-                        )}
-                      </span>
-                      <span>{row.othersText}</span>
-                    </div>
+                  <td className="px-6 py-4 text-sm leading-relaxed text-text-secondary">
+                    <span className="flex items-start gap-2">
+                      <Info
+                        size={14}
+                        aria-hidden="true"
+                        className="mt-0.5 shrink-0 text-accent"
+                      />
+                      {row.boundary}
+                    </span>
                   </td>
                 </tr>
               ))}
