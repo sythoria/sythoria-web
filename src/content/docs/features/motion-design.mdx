@@ -1,114 +1,23 @@
 ---
-title: Adaptive Motion Design
-description: Explore Sythoria's spring-physics motion framework and its performance-adaptive animation scaling.
+title: Motion & Reduced Motion
+description: Understand Sythoria's motion settings and reduced-motion behavior.
+lastVerifiedVersion: v0.4.2
+lastVerifiedDate: 2026-08-02
+source: sythoria-desktop motion preferences and UI styles
 ---
 
-# Adaptive Motion Design
+# Motion & Reduced Motion
 
-Sythoria is built with a premium desktop-grade aesthetic, delivering a fluid, tactile user interface that mirrors the responsiveness of native operating system window managers. Rather than relying on simple linear transitions, Sythoria utilizes a bespoke **motion design system** backed by custom spring-physics equations, hardware-aware performance scaling, and glassmorphic UI components.
+Sythoria uses short transitions to explain opening, closing, selection, and layout changes. Motion is cosmetic; it should not be required to understand or complete a task.
 
----
+## Reduced motion
 
-## Spring-Physics Engine
+When the operating system requests reduced motion, the interface should replace long or repeating movement with stable states and near-instant transitions. This includes decorative particles, pulsing indicators that do not represent live status, parallax, and autoplay demonstrations.
 
-To mimic the behavior of physical materials, Sythoria replaces traditional cubic-bezier transition timelines with mass-tension-friction (spring-physics) calculations. This prevents animations from feeling robotic, ensuring that panels, modals, and buttons decelerate and settle with real-world momentum.
+The application and website must implement this behavior explicitly. The audited source does not support claims about automatic FPS measurement, `hardwareConcurrency` tiers, or a guaranteed frame rate, so those mechanisms are not part of this contract.
 
-The core framework exposes three spring tokens:
+## Report a problem
 
-| Token                | Stiffness (Tension) | Damping (Friction) | Mass  | Typical Use Cases                                                  |
-| :------------------- | :------------------ | :----------------- | :---- | :----------------------------------------------------------------- |
-| **`springs.snappy`** | `300`               | `30`               | `1.0` | Sidebar toggling, icon state transitions, tooltips, toast entries  |
-| **`springs.gentle`** | `120`               | `14`               | `1.0` | Modal windows, settings panel transitions, large bento cards       |
-| **`springs.bouncy`** | `400`               | `10`               | `0.8` | Onboarding sequences, welcome banners, dynamic notification alerts |
+Include the operating system, reduced-motion setting, Sythoria version, and the screen where motion continues. A short recording can help, but check it for private prompts, paths, notifications, and account details before sharing.
 
-### Micro-Scaling (Tactile Feedback)
-
-Sythoria applies micro-scaling properties to interactable components, providing immediate visual weight to user actions:
-
-- **Hover (`pop`)**: Scales items outward to `1.04` using `springs.snappy` to indicate interactive focus.
-- **Active Click (`press`)**: Compresses controls down to `0.95` scale, giving buttons a physically responsive "depress" sensation.
-- **Secondary Actions (`subtle`)**: A minor compression to `0.98` scale, reserved for inline text links and dropdown selectors.
-
----
-
-## Glassmorphism & Visual Layering
-
-Sythoria's aesthetic relies on glassmorphic paneling, mimicking sandblasted acrylic overlays. This design relies on precise CSS and Tailwind CSS v4 configurations to maintain readability and visual hierarchy:
-
-```css
-/* Core glassmorphic overlay variables in globals.css */
-.glass-panel {
-  background-color: var(--theme-landing-card);
-  backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-}
-```
-
-### Ambient Glows & Radial Gradients
-
-The interface utilizes hardware-accelerated radial glows (`--theme-glow-primary` and `--theme-glow-secondary`) that track cursor coordinates on bento-cards. As the mouse glides across a card, a dynamic mask shifts the lighting source, illuminating the underlying glass panel borders.
-
----
-
-## Performance-Adaptive Motion Architecture
-
-To ensure high frame rates on energy-saving notebooks and older desktops, Sythoria monitors hardware concurrency and system responsiveness in real-time, scaling down animations as needed.
-
-<MotionAdaptiveFlow />
-
-### 1. Reduced Motion Compliance
-
-Sythoria respects accessibility preferences at the operating system level. If the media query `prefers-reduced-motion: reduce` is detected:
-
-- All spatial translations, spring scales, and offset movements are disabled.
-- Transitions default to instantaneous visibility swaps or basic crossfades.
-- This behavior can also be toggled manually in the application settings under **Accessibility > Enable Motion**.
-
-### 2. Hardware Concurrency Checks
-
-During initialization, the client evaluates `navigator.hardwareConcurrency`:
-
-- **Low-Core Threshold (4 or fewer threads)**: The client automatically enters **Performance Saver Mode**.
-- Dynamic backdrop filters (`backdrop-blur`) and heavy canvas rendering loops (e.g., interactive particle spheres) are replaced with solid, opaque CSS backgrounds to conserve CPU cycles.
-
-### 3. Real-Time FPS Drop Recovery
-
-If the frame rate drops below **45 FPS** for more than 10 consecutive frames:
-
-- Non-essential background animations (such as floating ambient gradients or orbit path animations) are dynamically paused.
-- Spring stiffness settings are clamped to simplified, hardware-accelerated CSS keyframe transitions to restore UI fluidity.
-
----
-
-## Framer Motion Integration Guide
-
-For developers contributing to Sythoria components, standard layout animations are wrapped with customized Framer Motion configurations.
-
-### Custom Dynamic Button Example
-
-```tsx
-import { motion } from "framer-motion";
-
-export const MotionButton = ({ children, onClick }) => {
-  return (
-    <motion.button
-      whileHover={{ scale: 1.04 }}
-      whileTap={{ scale: 0.95 }}
-      transition={{
-        type: "spring",
-        stiffness: 300,
-        damping: 30,
-      }}
-      className="px-4 py-2 bg-accent text-text-primary rounded-lg glass-panel"
-      onClick={onClick}
-    >
-      {children}
-    </motion.button>
-  );
-};
-```
-
-### Collapsible Layout Panels
-
-To avoid layout thrashing during panel expanding or collapsing (e.g., the Chat History Sidebar), the width container is animated using CSS grid-template-rows or dynamic flex-basis styling. This permits adjacent text content fields to scale gracefully without stuttering or truncating awkwardly during transitions.
+Motion that lasts more than a few seconds should have a pause/stop path or settle into a static state. Focus, keyboard operation, and content order must remain identical when animation is disabled.
