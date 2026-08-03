@@ -13,6 +13,7 @@ type BaseProps = {
   fullWidth?: boolean;
   icon?: React.ReactNode;
   iconRight?: React.ReactNode;
+  disabled?: boolean;
 };
 
 type ButtonAsButton = BaseProps &
@@ -55,6 +56,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
       fullWidth = false,
       icon,
       iconRight,
+      disabled = false,
       className = "",
       children,
       ...props
@@ -66,6 +68,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
       variantClasses[variant],
       sizeClasses[size],
       fullWidth ? "w-full" : "",
+      disabled ? "cursor-not-allowed opacity-60 !transform-none" : "",
       className,
     ]
       .filter(Boolean)
@@ -78,7 +81,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
         )}
         <span className="relative z-[1] inline-flex items-center justify-center [&]:gap-[inherit]">
           {icon && <span className="shrink-0">{icon}</span>}
-          {children && <span>{children}</span>}
+          {children != null && <span>{children}</span>}
           {iconRight && (
             <span className="shrink-0 transition-transform duration-300 group-hover:translate-x-0.5">
               {iconRight}
@@ -89,12 +92,21 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
     );
 
     if ("href" in props && props.href) {
-      const { href, ...rest } = props as ButtonAsAnchor;
+      const { href, onClick, tabIndex, ...rest } = props as ButtonAsAnchor;
       return (
         <a
           ref={ref as React.Ref<HTMLAnchorElement>}
           href={href}
           className={classes}
+          aria-disabled={disabled || undefined}
+          tabIndex={disabled ? -1 : tabIndex}
+          onClick={(event) => {
+            if (disabled) {
+              event.preventDefault();
+              return;
+            }
+            onClick?.(event);
+          }}
           {...rest}
         >
           {content}
@@ -108,6 +120,8 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
         ref={ref as React.Ref<HTMLButtonElement>}
         className={classes}
         {...buttonProps}
+        type={buttonProps.type ?? "button"}
+        disabled={disabled}
       >
         {content}
       </button>
