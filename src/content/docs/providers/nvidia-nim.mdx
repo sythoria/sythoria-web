@@ -1,104 +1,54 @@
 ---
 title: NVIDIA NIM
-description: Connect Sythoria to NVIDIA's NIM inference endpoints for GPU-optimized open-source models.
+description: Connect Sythoria to a hosted or self-managed NVIDIA NIM endpoint.
+lastVerifiedVersion: v0.4.2
+lastVerifiedDate: 2026-08-02
+source: sythoria-desktop providerPresets.ts and NVIDIA NIM documentation
 ---
 
 # NVIDIA NIM
 
-NVIDIA NIM (NVIDIA Inference Microservices) provides optimized serverless inference endpoints for state-of-the-art open-source models running on accelerated NVIDIA GPU infrastructure. Get production-grade performance, high throughput, and low latency from models like Llama 4, Gemma 4, Nemotron, Mixtral, and more without managing your own GPU hardware.
+Sythoria uses NVIDIA's OpenAI-compatible chat-completions endpoint for the NVIDIA NIM preset. Hosted requests are processed by NVIDIA under the account, model license, and service terms you accept.
 
-## Prerequisites
+## Hosted API setup
 
-- An NVIDIA Developer account
-- An API key generated from the NVIDIA API Catalog
+1. Sign in at [build.nvidia.com](https://build.nvidia.com/).
+2. Choose a model, accept any required license terms, and create an API key.
+3. In Sythoria, open **Settings**, add a model, and select **NVIDIA NIM**.
+4. Confirm the preset and paste the key.
+5. Save and run the connection check.
 
-## Setup
+| Setting       | Desktop v0.4.2 value                                   |
+| ------------- | ------------------------------------------------------ |
+| API base      | `https://integrate.api.nvidia.com/v1/chat/completions` |
+| Default model | `meta/llama-3.3-70b-instruct`                          |
+| API format    | OpenAI-compatible chat completions                     |
 
-### Using the Serverless Cloud API
+Use the exact ID shown in NVIDIA's current catalog. Model availability and identifiers change independently of Sythoria. One separately verified Nemotron identifier is `nvidia/nemotron-3-ultra-550b-a55b`; omitting the suffix selects no valid route.
 
-1. Go to [build.nvidia.com](https://build.nvidia.com/)
-2. Sign in with your NVIDIA account (new developer accounts receive free credits)
-3. Click **Get API Key** or generate a new key from your profile dashboard (keys begin with `nvapi-`)
-4. In Sythoria, open **Settings** from the sidebar
-5. Select **NVIDIA NIM** from the **Provider Preset** dropdown — the API base URL and default model fill in automatically
-6. Paste your API key into the **API Key** field
-7. The connection indicator should turn **green** within a few seconds
+See the [NVIDIA API catalog](https://build.nvidia.com/explore/discover) and [Nemotron 3 Ultra reference](https://docs.api.nvidia.com/nim/re/reference/nvidia-nemotron-3-ultra-550b-a55b) for current details.
 
-> Your API key is stored securely in your OS keychain. It is never sent to Sythoria's servers. See [Privacy & Security](/docs/privacy).
+## Self-managed NIM
 
-## Default configuration
+For a NIM container you operate, create a **Custom** model and enter its complete chat-completions URL and model ID.
 
-| Setting           | Value                                                  |
-| ----------------- | ------------------------------------------------------ |
-| **API Base**      | `https://integrate.api.nvidia.com/v1/chat/completions` |
-| **Default Model** | `meta/llama-4-maverick`                                |
-| **API Format**    | OpenAI Chat Completions                                |
-| **Streaming**     | Supported                                              |
+Loopback is appropriate for a service on the same machine. For another host:
 
-## Available models
-
-NVIDIA NIM hosts optimized versions of popular open-source models. Model IDs use the `provider/model-name` format:
-
-| Model ID                                   | Base model               | Best for                                                    | Context / Details            |
-| :----------------------------------------- | :----------------------- | :---------------------------------------------------------- | :--------------------------- |
-| **Llama 4 Series**                         |                          |                                                             |                              |
-| `meta/llama-4-maverick`                    | Llama 4 Maverick         | Complex vision-language tasks and deep reasoning            | 1M token context window      |
-| `meta/llama-4-scout`                       | Llama 4 Scout            | Lightweight multimodal tasks and long-context processing    | 10M token context window     |
-| **Gemma 4 Series**                         |                          |                                                             |                              |
-| `google/gemma-4-31b-it`                    | Gemma 4 31B              | Frontier reasoning, multilingual alignment, and agents      | 128K token context window    |
-| `google/gemma-4-12b`                       | Gemma 4 12B              | Unified multimodal tasks (text, image, audio)               | Efficient encoder-free model |
-| **Llama 3.3 Series**                       |                          |                                                             |                              |
-| `meta/llama-3.3-70b-instruct`              | Llama 3.3 70B Instruct   | General reasoning, coding, and multilingual agentic tasks   | 128K token context window    |
-| **Llama 3.1 Series**                       |                          |                                                             |                              |
-| `meta/llama-3.1-405b-instruct`             | Llama 3.1 405B Instruct  | Large-scale synthetic data generation and complex reasoning | 128K token context window    |
-| `meta/llama-3.1-70b-instruct`              | Llama 3.1 70B Instruct   | Balanced reasoning, coding, and instruction following       | 128K token context window    |
-| `meta/llama-3.1-8b-instruct`               | Llama 3.1 8B Instruct    | Ultra-fast agent sub-tasks and basic text processing        | 128K token context window    |
-| **NVIDIA Nemotron Series**                 |                          |                                                             |                              |
-| `nvidia/llama-3.3-nemotron-super-49b-v1.5` | Llama 3.3 Nemotron Super | High-quality conversational flow and preference alignment   | 128K token context window    |
-| `nvidia/nemotron-4-340b-instruct`          | Nemotron-4 340B          | Frontier reasoning and aligned synthetic data generation    | 4K token context window      |
-| `nvidia/nemotron-3-ultra-550b`             | Nemotron-3 Ultra 550B    | Frontier-scale reasoning and agentic orchestration          | 550B hybrid LatentMoE model  |
-| **Mistral & Mixtral Series**               |                          |                                                             |                              |
-| `mistralai/mixtral-8x22b-instruct-v0.1`    | Mixtral 8x22B Instruct   | Multi-language tasks, complex coding, and MoE efficiency    | 64K token context window     |
-| `mistralai/mixtral-8x7b-instruct-v0.1`     | Mixtral 8x7B Instruct    | Fast general-purpose chat and low-latency operations        | 32K token context window     |
-| **Gemma 2 Series**                         |                          |                                                             |                              |
-| `google/gemma-2-27b-it`                    | Gemma 2 27B Instruct     | Math, coding, logical reasoning, and efficient generation   | 8K token context window      |
-| `google/gemma-2-9b-it`                     | Gemma 2 9B Instruct      | Fast, lightweight chat and instruction following            | 8K token context window      |
-
-Browse the full catalog of models at [build.nvidia.com/explore/discover](https://build.nvidia.com/explore/discover).
-
-## Model ID format
-
-NVIDIA NIM uses the `provider/model-name` naming scheme. When entering a model in Sythoria's **Model ID** field, use the exact ID from [build.nvidia.com/explore/discover](https://build.nvidia.com/explore/discover). Examples:
-
-- `meta/llama-4-maverick`
-- `meta/llama-3.3-70b-instruct`
-- `nvidia/llama-3.3-nemotron-super-49b-v1.5`
-- `google/gemma-4-31b-it`
-
-> Ensure you include the provider prefix (e.g., `meta/`, `google/`, `nvidia/`) to avoid API gateway routing errors.
-
-## Running NVIDIA NIM locally
-
-If you are running self-hosted NVIDIA NIM containers on local GPU hardware or a private cloud, you can connect them to Sythoria using a **Custom** provider configuration:
-
-1. Under **Settings**, click **Add Model**
-2. Choose **Custom** from the provider dropdown
-3. Enter your local server's endpoint in the **API Base URL** field (e.g., `http://localhost:8000/v1/chat/completions` or `http://<your-gpu-server-ip>:8000/v1/chat/completions`)
-4. Set the **Model ID** to match the model running inside your container (e.g., `meta/llama3-8b-instruct`)
-5. If your container does not require authentication, you can leave the **API Key** field blank
-
-## Pricing
-
-NVIDIA offers **free credits** for new developer accounts, with pay-per-token pricing afterward. Check [build.nvidia.com](https://build.nvidia.com/) for current rates, credit balances, and commercial licensing guidelines.
+- keep the endpoint on a private network;
+- require authentication even if the container defaults to none;
+- terminate TLS with a certificate trusted by the client;
+- restrict source addresses and ports with a firewall;
+- enable Sythoria local-network access only when the private address is intentional; and
+- do not expose an unauthenticated inference port to the public internet.
 
 ## Troubleshooting
 
-| Error                        | Cause                                                | Fix                                                                                                        |
-| :--------------------------- | :--------------------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
-| **401 Unauthorized**         | API key is invalid, incorrectly copied, or expired   | Generate a new key at [build.nvidia.com](https://build.nvidia.com/) and ensure it starts with `nvapi-`     |
-| **403 Forbidden**            | Missing model licensing terms or account permissions | Log in to the build portal, accept the model's licensing terms, or verify your account level               |
-| **404 Model not found**      | Incorrect model ID or deprecated model version       | Use the exact model ID from [build.nvidia.com/explore/discover](https://build.nvidia.com/explore/discover) |
-| **429 Rate Limit**           | Exceeded free tier or concurrent usage limits        | Wait a moment and retry, or add a billing method to your NVIDIA developer account                          |
-| **503 Service unavailable**  | Model endpoint is scaling up or temporarily down     | Wait a moment and retry — NVIDIA scales serverless endpoints dynamically                                   |
-| **504 Gateway Timeout**      | The model endpoint failed to respond in time         | Reduce context length, or retry after peak demand subsides                                                 |
-| **Connection indicator red** | Network issue or invalid configuration               | Verify the API base URL is `https://integrate.api.nvidia.com/v1/chat/completions` and click **Refresh**    |
+| Status  | Check                                            |
+| ------- | ------------------------------------------------ |
+| 401     | Key validity and accidental whitespace           |
+| 403     | Model license acceptance and account access      |
+| 404     | Exact model identifier from the current catalog  |
+| 429     | Account rate/concurrency limits                  |
+| 503/504 | Endpoint health, model startup, and request size |
+
+Do not publish the key, request body, private endpoint, or response in a support log.
