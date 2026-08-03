@@ -5,8 +5,10 @@ import DocsMobileDrawer from "@/components/docs/MobileDrawer";
 import RefractiveBackground from "@/components/marketing/RefractiveBackground";
 
 export const metadata: Metadata = {
-  title: "Sythoria Docs",
-  description: "Documentation for Sythoria — privacy-first AI chat interface",
+  title: "Documentation",
+  description:
+    "Set up Sythoria Desktop, connect model providers, configure local tools, and understand how data is stored and transmitted.",
+  alternates: { canonical: "/docs" },
 };
 
 export default function DocsLayout({
@@ -20,7 +22,7 @@ export default function DocsLayout({
       <DocsTopBar />
       <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 pt-28 pb-16 flex gap-6 lg:gap-8">
         <DocsSidebar />
-        <main className="flex-1 min-w-0">
+        <main id="main-content" className="flex-1 min-w-0">
           <div className="bg-surface/60 backdrop-blur-3xl border border-border/50 rounded-3xl p-8 sm:p-12 shadow-2xl shadow-black/5 dark:shadow-black/20 prose-docs max-w-none min-h-[calc(100vh-10rem)]">
             {children}
           </div>
