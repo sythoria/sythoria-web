@@ -1,143 +1,60 @@
 ---
 title: Troubleshooting & Logs
-description: How to view application logs, diagnose connection issues, and troubleshoot API and MCP execution errors.
+description: Diagnose provider, tool, and application errors without exposing secrets.
+lastVerifiedVersion: v0.4.2
+lastVerifiedDate: 2026-08-02
+source: sythoria-desktop tauri log setup and UI log buffer
 ---
 
 # Troubleshooting & Logs
 
-Sythoria is built with developer-friendly diagnostics, including structured logs, connection indicators, and specific troubleshooting hints when an API or local command fails to execute.
+Start with the smallest reproducible action and preserve the exact status code. Do not paste raw keys, prompts, transcripts, repository paths, authorization headers, or tool arguments into a public issue.
 
----
+## What v0.4.2 records
 
-## Structured Logging System
+The native log plugin is configured at **warning** level and writes to standard output. The interface also exposes a bounded in-memory log view with up to 500 entries. The audited configuration does not promise a persistent rotating log file.
 
-The desktop application maintains a structured log of its operations to help locate integration bugs without compromising your privacy. **All logs are strictly local and never phone home.**
+Version 0.4.2 added redaction across several error paths. Redaction can miss a new provider shape or value, so inspect every line before sharing it.
 
-### Log Sources & Namespaces
+## Provider connection checklist
 
-Logs are categorized into nine operational namespaces:
+1. Confirm the device is online for a hosted provider.
+2. Compare the API base and model ID with the provider guide and account console.
+3. Check that the key belongs to the same provider and has billing/access.
+4. Send a short test with no attachment or tool.
+5. Record the HTTP status and a sanitized error summary.
 
-- `general`: Core startup, lifecycle events, and window management.
-- `chat`: Message history, exports, database operations, and user inputs.
-- `model`: Provider config loading, presets, and health-checks.
-- `search`: Web search queries, scrapers, and IP blocks.
-- `mcp`: MCP server starts, stops, tool calls, and namespaces.
-- `storage`: File reads, saves, and keychain credentials.
-- `stream`: SSE connection chunks and WebSocket events.
-- `git`: Local Git integration (worktrees, commits, repository status).
-- `appshots`: Screen capture utility processes, auto-cleanups, and cache directories.
+| Status | Typical category                              | Next check                                            |
+| ------ | --------------------------------------------- | ----------------------------------------------------- |
+| 400    | Unsupported request/model parameter           | Reset custom parameters and verify API format         |
+| 401    | Missing, revoked, or incorrect credential     | Revoke if exposed, then create and save a replacement |
+| 403    | Region, model, policy, or account restriction | Check the provider console and official support       |
+| 404    | Wrong endpoint or model ID                    | Copy the exact current value from the provider        |
+| 429    | Rate, quota, concurrency, or credit limit     | Check provider usage/billing and retry later          |
+| 5xx    | Provider or endpoint failure                  | Check service status and retry a minimal request      |
 
----
+## MCP and command failures
 
-## Log Privacy & Sanitization
+For stdio MCP, verify the executable is installed and visible to the desktop application's environment. Prefer an absolute executable path when PATH differs from an interactive shell. Keep the server in the foreground while diagnosing it.
 
-To ensure that your sensitive data remains completely confidential, the logging pipeline applies real-time sanitization rules before writing any log entry to memory or disk:
+Useful non-destructive checks include:
 
-1. **Credential Masking**: Any log containing strings matching common API key formats (such as `sk-proj-...`, `sk-ant-...`, etc.) or bearer token patterns is automatically redacted.
-2. **HTTP Header Stripping**: Connection logs filter out HTTP authorization and cookie headers (e.g., `Authorization: Bearer [REDACTED]`).
-3. **Payload Exclusion**: Raw prompt strings, system instructions, and model responses are never captured in the logs. Only metadata (e.g., token counts, request duration, status codes) is tracked.
+```bash
+node --version
+python --version
+git status --short
+```
 
----
+Do not start an unknown server as an unmanaged background process, and do not run repository-wide restore/delete commands as a troubleshooting shortcut.
 
-## Log Buffer & Privacy Controls
+## Preparing a support report
 
-- **Logs Buffer**: The application stores a maximum of **500 logs** in an in-memory buffer. When the buffer is full, older logs are discarded.
-- **Privacy & Diagnostic Controls**: Under **Settings > Privacy**, users can toggle **Log Buffering** on/off or disable **Diagnostic Storage** entirely for a zero-footprint local run.
-- **UI Syncing**: To keep the app highly responsive and avoid rendering lag during high-frequency tasks (like SSE streaming), logs are batched and synced to the UI store using `requestAnimationFrame`.
-- **Log Viewer**: You can view, filter (by source and severity), and clear logs under **Settings > Logs**.
-- **Native Logging & Level Filtering**: Native logging is managed by the platform runtime logger (`@tauri-apps/plugin-log`).
-  - To save disk space and prevent storage wear, only `Warning` and `Error` logs are written to disk.
-  - Standard `Info` and `Debug` logs are kept strictly in the in-memory viewer and the developer console.
+Include:
 
----
+- Sythoria version, operating system, and architecture;
+- provider/tool type and sanitized endpoint host;
+- the minimal steps and expected/actual result;
+- sanitized status code and error text; and
+- whether the issue reproduces in a new empty conversation/project.
 
-## Platform-Specific Log Locations
-
-If you need to extract logs for troubleshooting or debugging, you can access them directly from the following directories on your system:
-
-### macOS
-
-- **Tauri / Native Build**: `~/Library/Logs/com.sythoria.sythoria-desktop/webapp.log`
-- **Electron / Next.js Build**: `~/Library/Logs/com.sythoria.sythoria-desktop/main.log`
-
-### Windows
-
-- **Tauri / Native Build**: `%APPDATA%\com.sythoria.sythoria-desktop\logs\webapp.log`
-- **Electron / Next.js Build**: `%USERPROFILE%\AppData\Roaming\com.sythoria.sythoria-desktop\logs\main.log`
-  _(Note: `%APPDATA%` typically resolves to `C:\Users\<Username>\AppData\Roaming\`)_
-
-### Linux
-
-- **Tauri / Native Build**: `~/.config/com.sythoria.sythoria-desktop/logs/webapp.log` (or `~/.local/state/com.sythoria.sythoria-desktop/logs/webapp.log` depending on distribution defaults)
-- **Electron / Next.js Build**: `~/.config/com.sythoria.sythoria-desktop/logs/main.log`
-  _(Note: These directories respect the `$XDG_CONFIG_HOME` and `$XDG_STATE_HOME` environment variables)_
-
----
-
-## Troubleshooting Secure Keychains
-
-Because Sythoria stores credentials in the operating system's native keychain, configuration issues can occasionally prevent the application from saving or retrieving API keys.
-
-### 1. Linux Secret Service & D-Bus Failures
-
-On Linux, Sythoria requires a running Secret Service daemon (GNOME Keyring, KWallet, or KeePassXC) communicating over D-Bus.
-
-- **Symptom**: The application fails to save API keys, throws `keyring not found` or `D-Bus timeout` errors, or prompts for credentials repeatedly.
-- **Headless or Minimal Window Managers**: If you use a minimal setup (like i3, sway, or Hyprland), the D-Bus secret agent might not launch automatically.
-  - _Fix_: Install `libsecret-tools` or `gnome-keyring` and ensure the daemon is initialized in your startup script:
-    ```bash
-    dbus-update-activation-environment --all
-    eval $(gnome-keyring-daemon --start)
-    export SSH_AUTH_SOCK
-    ```
-- **Sandboxed Environment Confines (Snap / Flatpak)**:
-  - If running a **Snap** package, verify that the `password-manager-service` plug is connected:
-    ```bash
-    snap connect sythoria-desktop:password-manager-service
-    ```
-  - If running a **Flatpak**, ensure the application has permission to access the `org.freedesktop.secrets` D-Bus interface or uses the Desktop Portal (`secret-portal`).
-
-### 2. macOS Keychain Permissions
-
-- **Symptom**: A prompt appears asking for permission to access `com.sythoria.sythoria-desktop` in the Keychain, or Keychain operations throw access control errors.
-- **Fix**: This usually occurs if the application's digital signature changes (e.g., after updating a local dev build). Open the **Keychain Access** app on macOS, search for `com.sythoria.sythoria-desktop`, inspect its properties, and verify that the application has permissions under the "Access Control" tab.
-
-### 3. Windows DPAPI Decryption Issues
-
-- **Symptom**: Decryption fails with `DPAPI Decryption Error` or `Key not valid for use in specified state`.
-- **Cause**: DPAPI encrypts data using keys bound to the current Windows user account. If your Windows user password was reset externally (without logging in and updating the credential vault), DPAPI may fail to decrypt existing secrets.
-- **Fix**: You must reset the application configuration database. Deleting the `config.json` and `sythoria-store.json` files in `%APPDATA%\com.sythoria.sythoria-desktop\` will regenerate the encryption environment.
-
----
-
-## Troubleshooting Common Errors
-
-### 1. Model Connection Health Failures (Red Dots)
-
-If a model preset shows a **Red Connection Dot**:
-
-- Verify that your internet connection is active.
-- Double-check that the **API Key** is typed correctly (under Settings > Model Providers).
-- If using a local model (Ollama), make sure your local server is running (`ollama run <model>`) and that the API base URL matches `http://localhost:11434/v1/chat/completions`.
-
-### 2. MCP Server Launch Failures (Stdio)
-
-When a local stdio MCP server fails to start, Sythoria inspects the spawn error and suggests missing runtimes:
-
-| Spawn Failure                      | Detected Command      | Actionable Fix                                                                                    |
-| :--------------------------------- | :-------------------- | :------------------------------------------------------------------------------------------------ |
-| **`npx` not found**                | `npx`                 | Node.js is missing. Install Node.js from [nodejs.org](https://nodejs.org).                        |
-| **`uvx` / `uv` not found**         | `uvx` or `uv`         | Astral uv is missing. Install uv from [astral.sh](https://docs.astral.sh/uv/).                    |
-| **`python` / `python3` not found** | `python` or `python3` | Python is missing. Install Python from [python.org](https://www.python.org/downloads/).           |
-| **`pipx` not found**               | `pipx`                | pipx is missing. Run `python -m pip install --user pipx` to install.                              |
-| **`docker` not found**             | `docker`              | Docker is missing. Install Docker Desktop from [docker.com](https://docs.docker.com/get-docker/). |
-
-> [!TIP]
-> **Command Formatting**: For stdio transport, the **Command** field should contain the executable name _only_ (e.g. `npx`). All extra parameters (e.g. `-y`, `@modelcontextprotocol/server-postgres`) must be added separately in the **Arguments** input list. Alternatively, you can use the absolute path to the binary (e.g. `/usr/local/bin/npx`).
-
-### 3. MCP Connection Refused or Timeout (SSE)
-
-If connecting to an SSE or HTTP MCP server times out or returns connection refused:
-
-- Verify that the server process is running and bound to the correct port.
-- If the server is running on `localhost` or a local IP (e.g., `192.168.1.100`), ensure that **Allow Local Network** is explicitly enabled in that server's settings configuration.
+Before posting, search the report for key prefixes, `Authorization`, `Bearer`, home-directory paths, remote URLs, email addresses, prompts, and transcripts.
