@@ -4,7 +4,10 @@ import { useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui";
 import { useScrollInView } from "@/hooks/useScrollInView";
-import { GITHUB_OWNER, GITHUB_REPO } from "@/lib/changelog";
+import {
+  GITHUB_LATEST_RELEASE_URL,
+  GITHUB_REPOSITORY_URL,
+} from "@/lib/site-config";
 
 function GithubIcon({ size = 18 }: { size?: number }) {
   return (
@@ -69,8 +72,8 @@ export default function CTA() {
         <p
           className={`mt-6 text-text-secondary text-lg sm:text-xl max-w-xl mx-auto leading-relaxed scroll-animate scroll-fade-in-up stagger-2 ${visible ? "in-view" : ""}`}
         >
-          No sign-up, no subscription, no tracking. Just bring your API key and
-          go.
+          No Sythoria account or hosted prompt relay. Bring a provider key, or
+          connect a local Ollama model.
         </p>
 
         <div
@@ -79,7 +82,7 @@ export default function CTA() {
           <Button
             variant="primary"
             size="xl"
-            href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`}
+            href={GITHUB_LATEST_RELEASE_URL}
             target="_blank"
             rel="noopener noreferrer"
             iconRight={<ArrowRight size={18} strokeWidth={1.5} />}
@@ -92,7 +95,7 @@ export default function CTA() {
           className={`mt-6 scroll-animate scroll-fade-in-up stagger-4 ${visible ? "in-view" : ""}`}
         >
           <a
-            href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}`}
+            href={GITHUB_REPOSITORY_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors duration-300"
