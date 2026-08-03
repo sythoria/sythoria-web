@@ -1,99 +1,42 @@
 ---
 title: OpenRouter
-description: Access hundreds of models through a single OpenRouter API key.
+description: Connect Sythoria to OpenRouter and choose a model route available to your account.
+lastVerifiedVersion: v0.4.2
+lastVerifiedDate: 2026-08-02
+source: sythoria-desktop providerPresets.ts and OpenRouter documentation
 ---
 
 # OpenRouter
 
-OpenRouter provides a unified API to hundreds of AI models from different providers — including flagship models like OpenAI's GPT-5.6 Sol, Anthropic's Claude Fable 5, Meta's Llama 4 Maverick, Google's Gemini 3.1 Pro, and DeepSeek R1. Use it to access models you might not have direct API access to, all through a single key.
+OpenRouter routes requests to model providers under its own account, routing, logging, retention, and billing settings. This adds another service boundary beyond Sythoria and the eventual inference provider.
 
-## Prerequisites
+## Configure Sythoria
 
-- An OpenRouter account
-- An API key from the OpenRouter dashboard
-- Credits in your OpenRouter account (some models are free)
+1. Create a key at [openrouter.ai/keys](https://openrouter.ai/keys).
+2. Review OpenRouter privacy and provider-routing controls.
+3. In Sythoria, open **Settings**, add a model, and select **OpenRouter**.
+4. Confirm the preset, paste the key, save, and run the connection check.
 
-## Setup
+| Setting       | Desktop v0.4.2 value                            |
+| ------------- | ----------------------------------------------- |
+| API base      | `https://openrouter.ai/api/v1/chat/completions` |
+| Default model | `anthropic/claude-3.5-sonnet`                   |
+| API format    | OpenAI-compatible chat completions              |
 
-1. Go to [openrouter.ai/keys](https://openrouter.ai/keys)
-2. Click **Create Key** and copy it
-3. In Sythoria, open **Settings** from the sidebar
-4. Select **OpenRouter** from the **Provider Preset** dropdown — the API base URL and default model fill in automatically
-5. Paste your API key into the **API Key** field
-6. The connection indicator should turn **green** within a few seconds
+The preset ID can become unavailable. Copy an exact current route from the [OpenRouter model catalog](https://openrouter.ai/models). The catalog is the source for current providers, prices, context, availability, and modality.
 
-> [!NOTE]
-> Your API key is stored securely in your OS keychain. It is never sent to Sythoria's servers. See [Privacy & Security](/docs/privacy).
+## Routing and privacy
 
-## Default configuration
-
-| Setting           | Value                                           |
-| ----------------- | ----------------------------------------------- |
-| **API Base**      | `https://openrouter.ai/api/v1/chat/completions` |
-| **Default Model** | `openai/gpt-5.6-sol`                            |
-| **API Format**    | OpenAI Chat Completions                         |
-| **Streaming**     | Supported                                       |
-
-## Available models
-
-OpenRouter supports models from dozens of providers. Model IDs use the `provider/model-name` format:
-
-| Model ID                               | Best for                                                     | Context window / details                       |
-| :------------------------------------- | :----------------------------------------------------------- | :--------------------------------------------- |
-| `openai/gpt-5.6-sol`                   | Flagship reasoning, coding, and cybersecurity                | ~1.5M tokens, state-of-the-art capability      |
-| `openai/gpt-5`                         | Advanced general-purpose reasoning and instruction following | 400K tokens, next-generation core model        |
-| `openai/gpt-4o`                        | High-speed multimodal tasks, conversational agentic loops    | 128K tokens, OpenAI's flagship omni model      |
-| `openai/o1`                            | Deep reasoning, complex mathematics, and science             | 200K tokens, advanced reasoning architecture   |
-| `openai/o3-mini`                       | High-speed reasoning, cost-effective math and coding         | 200K tokens, optimized low-latency reasoning   |
-| `anthropic/claude-fable-5`             | Complex reasoning and long-horizon agentic tasks             | 1M tokens, Anthropic's flagship model          |
-| `anthropic/claude-5-sonnet-latest`     | Balanced performance — everyday tasks, coding, analysis      | 1M tokens, high-efficiency flagship model      |
-| `anthropic/claude-3.7-sonnet`          | Specialized coding, agentic workflows, and tool use          | 200K tokens, advanced reasoning/agentic hybrid |
-| `anthropic/claude-3.5-sonnet`          | Industry-standard coding, analysis, and reasoning            | 200K tokens, highly popular generalist model   |
-| `google/gemini-3.1-pro`                | Creative coding, multimodal input processing, and reasoning  | 1M tokens, advanced Google model               |
-| `google/gemini-2.5-pro`                | Multimodal analysis, long-context reasoning, and coding      | 2M tokens, massive context capability          |
-| `google/gemini-2.0-flash-thinking-exp` | Highly fast step-by-step reasoning and deep thinking         | 1M tokens, reasoning-focused model             |
-| `deepseek/deepseek-r1`                 | Advanced reasoning, coding, and step-by-step logic           | 128K tokens, state-of-the-art reasoning model  |
-| `deepseek/deepseek-chat`               | Highly cost-efficient coding, chat, and reasoning (V3)       | 64K / 128K tokens, extremely cost-effective    |
-| `meta-llama/llama-4-maverick`          | Natively multimodal tasks, cost-effective scaling            | 1M tokens, 17B active MoE parameters           |
-| `qwen/qwen-2.5-72b-instruct`           | Highly capable open-source multilingual chat and reasoning   | 128K tokens, leading open-weights model        |
-| `qwen/qwen-2.5-coder-32b-instruct`     | State-of-the-art open-source code generation and analysis    | 128K tokens, optimized for programming         |
-
-Browse the full catalog at [openrouter.ai/models](https://openrouter.ai/models) with live pricing and availability.
-
-## Model ID format
-
-OpenRouter uses a `provider/model-name` naming scheme. When entering a model in Sythoria's **Model ID** field, use the exact ID from [openrouter.ai/models](https://openrouter.ai/models). Examples:
-
-- `openai/gpt-5.6-sol`
-- `anthropic/claude-fable-5`
-- `meta-llama/llama-4-maverick`
-- `deepseek/deepseek-r1`
-- `qwen/qwen-2.5-72b-instruct`
-
-## Why use OpenRouter?
-
-| Benefit                 | Description                                                    |
-| ----------------------- | -------------------------------------------------------------- |
-| **Single API key**      | One key for hundreds of models — no separate accounts needed   |
-| **Automatic fallback**  | If a provider is down, OpenRouter can route to an alternative  |
-| **Transparent pricing** | Pay only for what you use; see costs before you send           |
-| **Free models**         | Some models are free to use (rate-limited) — great for testing |
-
-> [!TIP]
-> OpenRouter supports automatic model routing. Check their website to configure routing fallbacks, so if one host of a model is down, it seamlessly routes to another.
-
-## Pricing
-
-OpenRouter passes through provider pricing with a small markup. Some models are free (rate-limited). Check [openrouter.ai/models](https://openrouter.ai/models) for per-model pricing. Add credits at [openrouter.ai/credits](https://openrouter.ai/credits).
+Automatic fallback can send the same request to a different underlying provider. Configure provider preferences and data-policy filters in OpenRouter before using sensitive content. A “free” or cheaper route can have different logging, rate limits, uptime, and data terms.
 
 ## Troubleshooting
 
-| Error                        | Cause                                                                                | Fix                                                                                              |
-| ---------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| **401 Unauthorized**         | Invalid API key or no credits                                                        | Check your key at [openrouter.ai/keys](https://openrouter.ai/keys) and add credits if needed     |
-| **403 Model not available**  | Some models require accepting provider terms first, or are geographically restricted | Visit [openrouter.ai/models](https://openrouter.ai/models), find the model, and accept its terms |
-| **400 Bad Request**          | Missing required client headers or malformed payload                                 | Ensure Sythoria is updated. OpenRouter requires standard API format headers                      |
-| **429 Rate Limit**           | Exceeded free tier or usage limits                                                   | Wait and retry, or upgrade your OpenRouter plan                                                  |
-| **Model not found**          | Incorrect model ID format                                                            | Use the exact `provider/model-name` ID from [openrouter.ai/models](https://openrouter.ai/models) |
-| **502/503 Service Error**    | The upstream provider endpoint is down or timing out                                 | Try again later or switch to a different provider/model on OpenRouter                            |
-| **Connection indicator red** | Network issue or invalid configuration                                               | Verify the API base URL and key, then click **Refresh**                                          |
+| Status | Check                                        |
+| ------ | -------------------------------------------- |
+| 401    | OpenRouter key and account                   |
+| 402    | OpenRouter credit balance                    |
+| 403    | Route/provider terms or account restrictions |
+| 404    | Exact `provider/model` identifier            |
+| 429    | OpenRouter or upstream provider limits       |
+
+Revoke an exposed key at OpenRouter; removing it only from Sythoria does not invalidate it.
