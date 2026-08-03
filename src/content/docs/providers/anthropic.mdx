@@ -1,101 +1,47 @@
 ---
 title: Anthropic
-description: Connect Sythoria to Anthropic's Claude models for nuanced, thoughtful responses.
+description: Connect Sythoria to Anthropic using your own API key and an available Claude model ID.
+lastVerifiedVersion: v0.4.2
+lastVerifiedDate: 2026-08-02
+source: sythoria-desktop providerPresets.ts and Anthropic model documentation
 ---
 
 # Anthropic
 
-Connect Sythoria to Anthropic's API to chat with the Claude family of models. Sythoria supports the latest next-generation Claude 5 series (including Claude Fable 5, Claude Mythos 5, and Claude Sonnet 5), the powerful Claude 4 series (Claude Opus 4.8 and Claude Haiku 4.5), and legacy Claude 3 and 3.5 models. Claude excels at nuanced reasoning, long-context understanding, programming, and careful instruction following.
+Use the Anthropic preset to send messages through Anthropic's Messages API. Prompts, included conversation context, attachments, and request metadata are processed by Anthropic under your account and Anthropic's current terms.
 
 ## Prerequisites
 
-- An Anthropic Console account.
-- An API key generated from the Anthropic dashboard.
-- Active billing/credits on your Anthropic account.
+- An Anthropic Console account in a supported region
+- An API key and active billing or credits
+- Access to the model ID you plan to use
 
-## Setup
+## Configure Sythoria
 
-1. Go to the [Anthropic Console](https://console.anthropic.com/).
-2. Navigate to **API Keys**, click **Create Key**, give it a name, and copy the key.
-3. In Sythoria, open **Settings** from the sidebar.
-4. Select **Anthropic** from the **Provider Preset** dropdown — the API base URL and default model will fill in automatically.
-5. Paste your API key into the **API Key** field.
-6. The connection indicator in the sidebar or settings panel should turn **green** within a few seconds, indicating a successful handshake.
+1. Create a key in the [Anthropic Console](https://console.anthropic.com/).
+2. In Sythoria, open **Settings** and add a model.
+3. Select **Anthropic**.
+4. Confirm the preset values and paste the API key.
+5. Save and run the connection check.
 
-> [!NOTE]
-> Your API key is stored securely in your operating system's native keychain (such as Keychain Access on macOS, Secret Service on Linux, or Credential Manager on Windows). It is never transmitted to Sythoria's servers or any third party. For more details, see [Privacy & Security](/docs/privacy).
+| Setting       | Desktop v0.4.2 value                    |
+| ------------- | --------------------------------------- |
+| API base      | `https://api.anthropic.com/v1/messages` |
+| Default model | `claude-opus-4-8`                       |
+| API format    | Anthropic Messages API                  |
 
-## Default configuration
+The default comes from the desktop source and can become unavailable. Check the [official Anthropic model overview](https://platform.claude.com/docs/en/about-claude/models/overview) and use an exact model ID available to your key. For example, the verified Sonnet 5 ID is `claude-sonnet-5`, not a guessed `latest` alias.
 
-By default, Sythoria configures the following settings when selecting the Anthropic preset:
+Some models have limited eligibility or additional retention terms. Confirm access and data retention in Anthropic's current documentation before using sensitive content.
 
-| Setting           | Value                                                         |
-| :---------------- | :------------------------------------------------------------ |
-| **API Base**      | `https://api.anthropic.com/v1/messages`                       |
-| **Default Model** | `claude-5-sonnet-latest`                                      |
-| **API Format**    | Anthropic Messages API (translated automatically by Sythoria) |
-| **Streaming**     | Supported (via Server-Sent Events)                            |
+## Errors
 
-## Available models
+| Symptom    | Check                                                                                                           |
+| ---------- | --------------------------------------------------------------------------------------------------------------- |
+| 401        | Replace a revoked/incorrect key and ensure whitespace was not copied                                            |
+| 403 region | Check Anthropic's supported-region policy and contact Anthropic support; do not circumvent account restrictions |
+| 403 model  | Choose a model enabled for the account                                                                          |
+| 404 model  | Copy the exact current model ID from the Console or official model page                                         |
+| 429/529    | Wait for the provider limit or overload condition to clear, then retry                                          |
 
-Anthropic provides several classes of models tailored for different speed, cost, and intelligence requirements. You can type any valid Anthropic model ID into the Model ID field, or select from the pre-populated dropdown.
-
-### Flagship & Active Models
-
-| Model ID                 | Model Name       | Best for                                                                                                         | Context Window |
-| :----------------------- | :--------------- | :--------------------------------------------------------------------------------------------------------------- | :------------- |
-| `claude-fable-5`         | Claude Fable 5   | Highest capability — complex logic, long-horizon agentic workflows, and deep scientific research.                | 1M tokens      |
-| `claude-mythos-5`        | Claude Mythos 5  | Specialized enterprise-grade intelligence. Access is restricted to approved accounts via Project Glasswing.      | 1M tokens      |
-| `claude-5-sonnet-latest` | Claude Sonnet 5  | Balanced daily driver — industry-leading coding, analysis, and general-purpose reasoning.                        | 1M tokens      |
-| `claude-opus-4-8`        | Claude Opus 4.8  | Advanced 4-series flagship — complex multi-step reasoning, mathematical problem solving, and agency.             | 200K tokens    |
-| `claude-haiku-4-5`       | Claude Haiku 4.5 | Ultra-fast, highly cost-efficient — optimized for high-volume operations, prompt caching, and low-latency tasks. | 200K tokens    |
-
-### Legacy & Specialty Support
-
-If you need to run evaluations, maintain behavior consistency, or access specific legacy checkpoints, Sythoria also supports:
-
-| Model ID                   | Model Name        | Best for                                                                                             | Context Window |
-| :------------------------- | :---------------- | :--------------------------------------------------------------------------------------------------- | :------------- |
-| `claude-3-5-sonnet-latest` | Claude 3.5 Sonnet | Legacy developer standard — highly consistent, well-suited for codebases designed around 3.5 Sonnet. | 200K tokens    |
-| `claude-3-5-haiku-latest`  | Claude 3.5 Haiku  | Legacy lightweight tasks — fast response times and solid code/text editing capabilities.             | 200K tokens    |
-| `claude-3-5-opus-latest`   | Claude 3.5 Opus   | Deep cognitive logic and creative generation.                                                        | 200K tokens    |
-| `claude-3-opus-latest`     | Claude 3 Opus     | Original Claude 3 flagship — long narrative generation and nuanced sentiment analysis.               | 200K tokens    |
-
-Check the [Anthropic Model Catalog](https://docs.anthropic.com/en/docs/about-claude/models) for the full list of versioned aliases and deprecation schedules.
-
-## Important: API format differences
-
-Unlike many other providers, Anthropic does not natively use the OpenAI Chat Completions format. Instead, they use the **Anthropic Messages API** protocol.
-
-Sythoria **handles this translation completely automatically in the background**. It translates your chat history, formats system prompts, handles prefill responses (if configured), and parses Anthropic's Server-Sent Events (SSE) stream back into the unified chat UI. You do not need to worry about formatting differences or schema mismatches.
-
-## Switching models mid-conversation
-
-You can switch models dynamically using the model selection dropdown in the chat input bar. Each new turn in the conversation will use the currently selected model. This allows for highly cost-efficient workflows:
-
-- Start a conversation with a fast, inexpensive model like **Claude Haiku 4.5** for context gathering or simple questions.
-- Switch to **Claude Sonnet 5** or **Claude Fable 5** for complex coding, synthesis, or deep reasoning steps.
-- The entire chat history remains intact.
-
-## Pricing
-
-Anthropic charges per token based on input, output, and caching usage.
-
-- **Prompt Caching**: If you send long, repetitive system instructions or large codebases, Claude models automatically cache these blocks, offering up to a **90% discount** on prompt input tokens.
-- Rates vary significantly between the lightweight Haiku series and the flagship Fable/Opus series.
-- Check [anthropic.com/pricing](https://www.anthropic.com/pricing) for the latest per-token rates.
-
-## Troubleshooting
-
-If you encounter issues while using the Anthropic provider, refer to the following common errors and solutions:
-
-| Error Code / Symptom                       | Possible Cause                                                                                       | Solution                                                                                                                                       |
-| :----------------------------------------- | :--------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| **401 Unauthorized**                       | API key is invalid, expired, or copied incorrectly.                                                  | Generate a new API key at the [Anthropic Console](https://console.anthropic.com/) and paste it again.                                          |
-| **403 Forbidden (Country Not Supported)**  | You are accessing the API from an unsupported region, or your account has been flagged.              | Verify Anthropic's regional availability or use a proxy/VPN. Ensure your billing address matches supported countries.                          |
-| **403 Forbidden (Model Restricted)**       | Attempting to access a restricted model (e.g., `claude-mythos-5`) without appropriate authorization. | Request access through Anthropic (e.g., Project Glasswing) or switch to a publicly available model like `claude-5-sonnet-latest`.              |
-| **404 Not Found**                          | The model ID is incorrect, has been deprecated, or is not enabled for your tier.                     | Double-check the spelling of the model ID in settings. Check the Models tab in the Console to see which models are available to your key.      |
-| **429 Rate Limit**                         | You have hit your usage tier limit (requests per minute or tokens per minute).                       | Wait a few moments before retrying. Consider upgrading your tier in the Anthropic Console by purchasing additional credits.                    |
-| **429 Overloaded / 529 Server Overloaded** | Anthropic's servers are temporarily overloaded with high traffic.                                    | Sythoria will attempt a retry, but if it fails, wait a few minutes or switch to a less heavily loaded model (e.g., from Fable 5 to Haiku 4.5). |
-| **400 Bad Request**                        | Invalid parameter sent or syntax issue.                                                              | This usually occurs with legacy custom parameters. Reset the model settings to default, or start a new conversation.                           |
-| **Connection indicator red**               | Network timeout, DNS issue, or blocked request.                                                      | Verify you have an active internet connection. Check that the API base URL is set to `https://api.anthropic.com/v1/messages`.                  |
+If a key may have appeared in a prompt, log, screenshot, or repository, revoke it in the Anthropic Console before creating a replacement.
