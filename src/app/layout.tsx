@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
-import { GITHUB_LATEST_RELEASE_URL, SITE_URL } from "@/lib/site-config";
+import {
+  GITHUB_LATEST_RELEASE_URL,
+  SITE_URL,
+} from "@/lib/site-config";
 import "./globals.css";
 
 const inter = Inter({
