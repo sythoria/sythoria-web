@@ -9,6 +9,9 @@ export interface DocContent {
   description: string;
   content: string;
   frontmatter: Record<string, unknown>;
+  lastVerifiedVersion: string;
+  lastVerifiedDate: string;
+  source: string;
 }
 
 function parseFrontmatter(raw: string) {
@@ -34,8 +37,18 @@ function parseFrontmatter(raw: string) {
 }
 
 export function getDocBySlug(slug: string): DocContent | null {
-  const filePath = path.join(CONTENT_DIR, `${slug}.mdx`);
+  if (!slug || slug.split("/").some((part) => !/^[a-z0-9-]+$/.test(part))) {
+    return null;
+  }
+
+  const contentRoot = path.resolve(CONTENT_DIR);
+  const filePath = path.resolve(contentRoot, `${slug}.mdx`);
+  const normalizedRoot = `${contentRoot.toLowerCase()}${path.sep}`;
+  if (!filePath.toLowerCase().startsWith(normalizedRoot)) return null;
   if (!fs.existsSync(filePath)) return null;
+
+  const realPath = fs.realpathSync(filePath);
+  if (!realPath.toLowerCase().startsWith(normalizedRoot)) return null;
 
   const raw = fs.readFileSync(filePath, "utf-8");
   const { data, content } = parseFrontmatter(raw);
@@ -46,6 +59,9 @@ export function getDocBySlug(slug: string): DocContent | null {
     description: (data.description as string) || "",
     content,
     frontmatter: data,
+    lastVerifiedVersion: (data.lastVerifiedVersion as string) || "",
+    lastVerifiedDate: (data.lastVerifiedDate as string) || "",
+    source: (data.source as string) || "",
   };
 }
 
@@ -73,5 +89,5 @@ export function getAllDocs(): DocContent[] {
   }
 
   if (!fs.existsSync(CONTENT_DIR)) return [];
-  return walk(CONTENT_DIR);
+  return walk(CONTENT_DIR).sort((a, b) => a.slug.localeCompare(b.slug));
 }
