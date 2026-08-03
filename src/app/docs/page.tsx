@@ -13,14 +13,14 @@ const categories = [
   {
     icon: Zap,
     title: "Getting Started",
-    description: "Get up and running with Sythoria in under a minute.",
+    description: "Download a supported build and connect your first model.",
     href: "/docs/getting-started",
   },
   {
     icon: MessageSquare,
     title: "Features",
     description:
-      "Streaming, multi-provider support, and everything in between.",
+      "Learn how streaming, tools, voice, artifacts, and workspaces behave.",
     href: "/docs/features/streaming",
   },
   {
@@ -39,7 +39,7 @@ const categories = [
   {
     icon: Shield,
     title: "Privacy & Security",
-    description: "How Sythoria keeps your API keys and data safe.",
+    description: "Understand local storage and every documented network path.",
     href: "/docs/privacy",
   },
 ];
@@ -52,8 +52,8 @@ export default function DocsLanding() {
           Documentation
         </h1>
         <p className="mt-3 text-lg text-text-secondary leading-relaxed max-w-xl">
-          Everything you need to know about Sythoria — from quickstart to
-          advanced configuration.
+          Set up Sythoria Desktop, connect model providers, configure local
+          tools, and understand how data is stored and transmitted.
         </p>
       </div>
 
@@ -67,9 +67,9 @@ export default function DocsLanding() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-base font-semibold text-text-primary">
+                    <h2 className="text-base font-semibold text-text-primary">
                       {title}
-                    </h3>
+                    </h2>
                     <ArrowRight
                       size={16}
                       className="text-text-muted group-hover:text-accent group-hover:translate-x-0.5 transition-all duration-200"
