@@ -16,10 +16,12 @@ export default async function LandingPage() {
       <RefractiveBackground />
       <Navbar />
       <SpatialCanvas>
-        <Hero latestVersion={latestVersion} />
-        <Features />
-        <Comparison />
-        <CTA />
+        <main id="main-content">
+          <Hero latestVersion={latestVersion} />
+          <Features />
+          <Comparison />
+          <CTA />
+        </main>
         <Footer />
       </SpatialCanvas>
     </div>
