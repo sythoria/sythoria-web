@@ -4,7 +4,6 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Moon, Sun } from "lucide-react";
-import { Button } from "@/components/ui";
 import DocsSearch from "./Search";
 import { GITHUB_LATEST_RELEASE_URL } from "@/lib/site-config";
 import { useTheme } from "@/hooks/useTheme";
@@ -79,16 +78,16 @@ export default function DocsTopBar() {
             </Link>
 
             <a
-                href={GITHUB_LATEST_RELEASE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden md:block relative group overflow-hidden rounded-full p-[1px]"
-              >
-                <span className="absolute inset-0 bg-gradient-to-r from-chrome-glow via-white to-chrome-glow opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full" />
-                <div className="relative bg-text-primary text-surface px-4 py-1.5 rounded-full text-sm font-medium transition-transform group-hover:scale-[0.98]">
-                  Download
-                </div>
-              </a>
+              href={GITHUB_LATEST_RELEASE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:block relative group overflow-hidden rounded-full p-[1px]"
+            >
+              <span className="absolute inset-0 bg-gradient-to-r from-chrome-glow via-white to-chrome-glow opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full" />
+              <div className="relative bg-text-primary text-surface px-4 py-1.5 rounded-full text-sm font-medium transition-transform group-hover:scale-[0.98]">
+                Download
+              </div>
+            </a>
           </div>
         </div>
       </nav>
