@@ -1,8 +1,37 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useReducedMotion } from "framer-motion";
 import Image from "next/image";
+import { useReducedMotion } from "framer-motion";
+
+interface Particle {
+  theta: number;
+  phi: number;
+  radius: number;
+  size: number;
+  color: string;
+}
+
+interface ProjectedParticle {
+  x: number;
+  y: number;
+  z: number;
+  size: number;
+  color: string;
+}
+
+const PARTICLE_COUNT = 160;
+const particles: Particle[] = Array.from(
+  { length: PARTICLE_COUNT },
+  (_, index) => ({
+    theta: Math.acos(1 - 2 * (index / PARTICLE_COUNT)),
+    phi: Math.PI * (1 + Math.sqrt(5)) * index,
+    radius: 130 + ((index * 17) % 10),
+    size: 1.2 + ((index * 13) % 15) / 10,
+    color:
+      index % 2 === 0 ? "rgba(142, 157, 204, 0.7)" : "rgba(217, 219, 241, 0.5)",
+  })
+);
 
 export default function InteractiveGlowSphere() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -12,247 +41,172 @@ export default function InteractiveGlowSphere() {
   useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
-    if (!canvas || !container) return;
+    const context = canvas?.getContext("2d");
+    if (!canvas || !container || !context) return;
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animationFrameId: number;
-    canvas.width = 450;
-    canvas.height = 450;
-
-    // Handle high DPI screens
-    const resize = () => {
-      const rect = container.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      canvas.style.width = `${rect.width}px`;
-      canvas.style.height = `${rect.height}px`;
-      ctx.scale(dpr, dpr);
-    };
-
-    resize();
-    window.addEventListener("resize", resize);
-
-    // Particle structure
-    interface Particle {
-      theta: number; // angle 1
-      phi: number; // angle 2
-      baseRadius: number;
-      speed: number;
-      color: string;
-      size: number;
-    }
-
-    const particles: Particle[] = [];
-    const particleCount = 280;
-
-    // Generate particles on a sphere
-    for (let i = 0; i < particleCount; i++) {
-      // Golden spiral distribution for even spacing on sphere
-      const theta = Math.acos(1 - 2 * (i / particleCount));
-      const phi = Math.PI * (1 + Math.sqrt(5)) * i;
-
-      particles.push({
-        theta,
-        phi,
-        baseRadius: 130 + Math.random() * 10,
-        speed: 0.005 + Math.random() * 0.005,
-        color:
-          i % 2 === 0 ? "rgba(142, 157, 204, 0.7)" : "rgba(217, 219, 241, 0.5)",
-        size: 1.2 + Math.random() * 1.5,
-      });
-    }
-
-    let hovered = false;
+    let frameId = 0;
+    let visible = true;
+    let lastFrame = 0;
+    let time = 0;
     let targetX = 0;
     let targetY = 0;
+    let rotationX = 0;
+    let rotationY = 0;
+    let width = 450;
+    let height = 450;
+    const projected: ProjectedParticle[] = particles.map(() => ({
+      x: 0,
+      y: 0,
+      z: 0,
+      size: 0,
+      color: "",
+    }));
 
-    let rotX = 0;
-    let rotY = 0;
-    let time = 0;
-    let pulse = 0;
-
-    // Track mouse
-    const handleMouseMove = (e: MouseEvent) => {
+    const resize = () => {
       const rect = container.getBoundingClientRect();
-      const x = e.clientX - rect.left - rect.width / 2;
-      const y = e.clientY - rect.top - rect.height / 2;
-      targetX = x * 0.003;
-      targetY = y * 0.003;
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      width = rect.width;
+      height = rect.height;
+      canvas.width = Math.max(1, Math.round(width * dpr));
+      canvas.height = Math.max(1, Math.round(height * dpr));
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    const handleMouseEnter = () => {
-      hovered = true;
+    const draw = () => {
+      context.clearRect(0, 0, width, height);
+      const dark = document.documentElement.classList.contains("dark");
+      const glow = context.createRadialGradient(
+        width / 2,
+        height / 2,
+        0,
+        width / 2,
+        height / 2,
+        200
+      );
+      glow.addColorStop(
+        0,
+        dark ? "rgba(142, 157, 204, 0.15)" : "rgba(142, 157, 204, 0.1)"
+      );
+      glow.addColorStop(0.5, "rgba(217, 219, 241, 0.02)");
+      glow.addColorStop(1, "rgba(0, 0, 0, 0)");
+      context.fillStyle = glow;
+      context.beginPath();
+      context.arc(width / 2, height / 2, 200, 0, Math.PI * 2);
+      context.fill();
+
+      rotationX += (targetY - rotationX) * 0.08;
+      rotationY += (targetX - rotationY) * 0.08;
+      const currentX = rotationX + time * 0.15;
+      const currentY = rotationY + time * 0.25;
+      const cosX = Math.cos(currentX);
+      const sinX = Math.sin(currentX);
+      const cosY = Math.cos(currentY);
+      const sinY = Math.sin(currentY);
+
+      particles.forEach((particle, index) => {
+        const morph =
+          Math.sin(time * 3 + particle.theta * 4) *
+          Math.cos(time * 2 + particle.phi * 5) *
+          12;
+        const radius = particle.radius + morph;
+        const x = radius * Math.sin(particle.theta) * Math.cos(particle.phi);
+        const y = radius * Math.sin(particle.theta) * Math.sin(particle.phi);
+        const z = radius * Math.cos(particle.theta);
+        const rotatedY = y * cosX - z * sinX;
+        const rotatedZ = y * sinX + z * cosX;
+        const rotatedX = x * cosY - rotatedZ * sinY;
+        const depth = x * sinY + rotatedZ * cosY;
+        const scale = 400 / (400 + depth);
+        const output = projected[index];
+        output.x = width / 2 + rotatedX * scale;
+        output.y = height / 2 + rotatedY * scale;
+        output.z = depth;
+        output.size = particle.size * scale;
+        output.color = particle.color;
+      });
+
+      projected.sort((a, b) => b.z - a.z);
+      for (const particle of projected) {
+        const opacity = Math.max(0.1, Math.min(0.85, (300 - particle.z) / 400));
+        context.beginPath();
+        context.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        context.fillStyle = particle.color.replace(/[\d.]+\)$/, `${opacity})`);
+        context.fill();
+      }
     };
-    const handleMouseLeave = () => {
-      hovered = false;
+
+    const animate = (timestamp: number) => {
+      if (!visible || document.hidden || shouldReduceMotion) return;
+      if (timestamp - lastFrame >= 1000 / 30) {
+        lastFrame = timestamp;
+        time += 0.008;
+        draw();
+      }
+      frameId = window.requestAnimationFrame(animate);
+    };
+
+    const start = () => {
+      window.cancelAnimationFrame(frameId);
+      if (visible && !document.hidden && !shouldReduceMotion) {
+        frameId = window.requestAnimationFrame(animate);
+      } else {
+        draw();
+      }
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      const rect = container.getBoundingClientRect();
+      targetX = (event.clientX - rect.left - rect.width / 2) * 0.003;
+      targetY = (event.clientY - rect.top - rect.height / 2) * 0.003;
+    };
+    const resetPointer = () => {
       targetX = 0;
       targetY = 0;
     };
+    const handleVisibility = () => start();
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        start();
+      },
+      { rootMargin: "100px" }
+    );
 
-    const handleClick = () => {
-      pulse = 1.8; // Trigger pulse effect
-    };
-
-    container.addEventListener("mousemove", handleMouseMove);
-    container.addEventListener("mouseenter", handleMouseEnter);
-    container.addEventListener("mouseleave", handleMouseLeave);
-    container.addEventListener("click", handleClick);
-
-    // Render loop
-    const render = () => {
-      const dpr = window.devicePixelRatio || 1;
-      const w = canvas.width / dpr;
-      const h = canvas.height / dpr;
-
-      ctx.clearRect(0, 0, w, h);
-      time += 0.004;
-
-      // Decay pulse
-      if (pulse > 0) {
-        pulse += (0 - pulse) * 0.08;
-      }
-
-      // Smooth mouse rotation
-      if (!shouldReduceMotion) {
-        rotX += (targetY - rotX) * 0.08;
-        rotY += (targetX - rotY) * 0.08;
-      }
-
-      // Standard slow auto rotation
-      const currentRotX = rotX + time * 0.15;
-      const currentRotY = rotY + time * 0.25;
-
-      // Draw background ambient glow inside canvas
-      const glowGrad = ctx.createRadialGradient(
-        w / 2,
-        h / 2,
-        0,
-        w / 2,
-        h / 2,
-        200
-      );
-      const isDark = document.documentElement.classList.contains("dark");
-
-      glowGrad.addColorStop(
-        0,
-        isDark ? "rgba(142, 157, 204, 0.15)" : "rgba(142, 157, 204, 0.1)"
-      );
-      glowGrad.addColorStop(0.5, "rgba(217, 219, 241, 0.02)");
-      glowGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
-      ctx.fillStyle = glowGrad;
-      ctx.beginPath();
-      ctx.arc(w / 2, h / 2, 200, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Transform and project particles
-      const projected: {
-        x: number;
-        y: number;
-        z: number;
-        size: number;
-        color: string;
-      }[] = [];
-
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-
-        // Morph sphere radius organically using sine/cosine waves (perlin approximation)
-        const morph =
-          Math.sin(time * 3 + p.theta * 4) *
-          Math.cos(time * 2 + p.phi * 5) *
-          12;
-        const radius =
-          p.baseRadius + morph + pulse * 30 * Math.sin(p.theta * 5);
-
-        // Spherical to 3D Cartesian coordinates
-        const x = radius * Math.sin(p.theta) * Math.cos(p.phi);
-        const y = radius * Math.sin(p.theta) * Math.sin(p.phi);
-        const z = radius * Math.cos(p.theta);
-
-        // Rotate on X axis
-        const cosX = Math.cos(currentRotX);
-        const sinX = Math.sin(currentRotX);
-        const y1 = y * cosX - z * sinX;
-        const z1 = y * sinX + z * cosX;
-
-        // Rotate on Y axis
-        const cosY = Math.cos(currentRotY);
-        const sinY = Math.sin(currentRotY);
-        const x2 = x * cosY - z1 * sinY;
-        const z2 = x * sinY + z1 * cosY;
-
-        // 3D perspective projection
-        const cameraDistance = 400;
-        const scale = cameraDistance / (cameraDistance + z2);
-
-        projected.push({
-          x: w / 2 + x2 * scale,
-          y: h / 2 + y1 * scale,
-          z: z2, // keep depth for sorting
-          size: p.size * scale * (hovered ? 1.15 : 1),
-          color: p.color,
-        });
-      }
-
-      // Sort by depth (Z-buffer) from back to front
-      projected.sort((a, b) => b.z - a.z);
-
-      // Draw projected particles
-      for (let i = 0; i < projected.length; i++) {
-        const p = projected[i];
-
-        // Calculate depth opacity (further away = fainter)
-        const depthOpacity = Math.max(0.1, Math.min(1, (300 - p.z) / 400));
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-
-        // Adjust particle color with depth opacity
-        const colorWithDepth = p.color.replace(
-          /[\d.]+\)$/,
-          `${depthOpacity * 0.85})`
-        );
-
-        ctx.fillStyle = colorWithDepth;
-        ctx.shadowBlur = hovered ? 6 : 2;
-        ctx.shadowColor = "rgba(142, 157, 204, 0.4)";
-        ctx.fill();
-        ctx.shadowBlur = 0; // reset
-      }
-
-      animationFrameId = requestAnimationFrame(render);
-    };
-
-    render();
+    resize();
+    draw();
+    start();
+    observer.observe(container);
+    window.addEventListener("resize", resize, { passive: true });
+    document.addEventListener("visibilitychange", handleVisibility);
+    container.addEventListener("pointermove", handlePointerMove);
+    container.addEventListener("pointerleave", resetPointer);
 
     return () => {
+      window.cancelAnimationFrame(frameId);
+      observer.disconnect();
       window.removeEventListener("resize", resize);
-      container.removeEventListener("mousemove", handleMouseMove);
-      container.removeEventListener("mouseenter", handleMouseEnter);
-      container.removeEventListener("mouseleave", handleMouseLeave);
-      container.removeEventListener("click", handleClick);
-      cancelAnimationFrame(animationFrameId);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      container.removeEventListener("pointermove", handlePointerMove);
+      container.removeEventListener("pointerleave", resetPointer);
     };
   }, [shouldReduceMotion]);
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[400px] sm:h-[450px] flex items-center justify-center cursor-pointer select-none"
+      className="relative flex h-[400px] w-full select-none items-center justify-center sm:h-[450px]"
+      aria-hidden="true"
     >
-      <canvas ref={canvasRef} className="absolute pointer-events-none" />
-
-      {/* Decorative center ring overlay */}
-      <div className="absolute w-44 h-44 rounded-full border border-white/5 dark:border-white/5 bg-gradient-to-tr from-white/5 via-transparent to-white/5 backdrop-blur-[2px] pointer-events-none flex items-center justify-center shadow-inner">
+      <canvas ref={canvasRef} className="pointer-events-none absolute" />
+      <div className="pointer-events-none absolute flex h-44 w-44 items-center justify-center rounded-full border border-white/5 bg-gradient-to-tr from-white/5 via-transparent to-white/5 shadow-inner backdrop-blur-[2px]">
         <Image
           src="/logonobg.png"
-          alt="Sythoria Logo"
+          alt=""
           width={64}
           height={64}
-          className="w-16 h-16 opacity-85 hover:scale-110 transition-transform duration-500 ease-out"
+          className="h-16 w-16 opacity-85"
         />
       </div>
     </div>
