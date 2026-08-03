@@ -4,6 +4,7 @@ import Navbar from "./Navbar";
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/",
+  useRouter: () => ({ push: vi.fn() }),
 }));
 
 function mockMatchMedia(matches: boolean) {
