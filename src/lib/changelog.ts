@@ -1,3 +1,12 @@
+import "server-only";
+
+import {
+  DESKTOP_FACTS_VERIFIED_AT,
+  GITHUB_OWNER,
+  GITHUB_REPO,
+  GITHUB_REPOSITORY_URL,
+} from "@/lib/site-config";
+
 export interface ReleaseAsset {
   name: string;
   browser_download_url: string;
@@ -17,154 +26,207 @@ export interface GitHubRelease {
   assets: ReleaseAsset[];
 }
 
-export const FALLBACK_RELEASES: GitHubRelease[] = [
+export interface ReleaseFeed {
+  releases: GitHubRelease[];
+  source: "github" | "verified-snapshot";
+  fetchedAt: string;
+  warning: string | null;
+}
+
+const VERIFIED_RELEASE_SNAPSHOT: GitHubRelease[] = [
   {
-    id: 1,
-    tag_name: "v1.2.0",
-    name: "v1.2.0: Multi-Provider Chat & Performance Leap",
-    published_at: "2026-06-25T14:30:00Z",
+    id: 363673098,
+    tag_name: "v0.4.2",
+    name: "Sythoria v0.4.2",
+    published_at: "2026-08-02T02:07:13Z",
     prerelease: false,
     draft: false,
-    html_url:
-      "https://github.com/sythoria/sythoria-desktop/releases/tag/v1.2.0",
-    body: `## What's New
-
-We are thrilled to release Sythoria v1.2.0! This release brings full multi-provider support, allowing you to connect to Ollama, OpenAI, Anthropic, Gemini, and custom endpoints seamlessly.
-
-### Features
-- **Multi-Provider Support**: Seamless setup for OpenAI, Anthropic, Gemini, NVIDIA NIM, and local Ollama.
-- **Improved Performance**: Reduced startup delay by 40% and improved chat streaming responsiveness.
-- **Enhanced Privacy**: Local stateless execution. API keys never leave your machine.
-
-### Bug Fixes
-- Fixed theme toggling layout shift on slower screens.
-- Corrected streaming completion truncation issues on longer text responses.
-`,
+    html_url: `${GITHUB_REPOSITORY_URL}/releases/tag/v0.4.2`,
+    body: "",
     assets: [
       {
-        name: "Sythoria-1.2.0.dmg",
-        browser_download_url:
-          "https://github.com/sythoria/sythoria-desktop/releases/download/v1.2.0/Sythoria-1.2.0.dmg",
-        size: 82431920,
-        download_count: 312,
+        name: "Sythoria_0.4.2_aarch64.dmg",
+        browser_download_url: `${GITHUB_REPOSITORY_URL}/releases/download/v0.4.2/Sythoria_0.4.2_aarch64.dmg`,
+        size: 13_959_363,
+        download_count: 0,
       },
       {
-        name: "Sythoria-1.2.0.exe",
-        browser_download_url:
-          "https://github.com/sythoria/sythoria-desktop/releases/download/v1.2.0/Sythoria-1.2.0.exe",
-        size: 94832104,
-        download_count: 521,
+        name: "Sythoria_0.4.2_amd64.AppImage",
+        browser_download_url: `${GITHUB_REPOSITORY_URL}/releases/download/v0.4.2/Sythoria_0.4.2_amd64.AppImage`,
+        size: 89_451_000,
+        download_count: 0,
       },
       {
-        name: "Sythoria-1.2.0.AppImage",
-        browser_download_url:
-          "https://github.com/sythoria/sythoria-desktop/releases/download/v1.2.0/Sythoria-1.2.0.AppImage",
-        size: 104857600,
-        download_count: 142,
-      },
-    ],
-  },
-  {
-    id: 2,
-    tag_name: "v1.1.0-beta",
-    name: "v1.1.0-beta: Streaming Chat & Glassmorphic UI Refinements",
-    published_at: "2026-05-18T10:15:00Z",
-    prerelease: true,
-    draft: false,
-    html_url:
-      "https://github.com/sythoria/sythoria-desktop/releases/tag/v1.1.0-beta",
-    body: `## Beta Release
-
-This is a pre-release version of Sythoria featuring our brand new canvas-based particle spheres and fluid layout transitions.
-
-### Key Additions
-- **Real-Time Streaming**: Highly optimized token streaming for OpenAI and Anthropic APIs.
-- **Glassmorphic UI**: Upgraded all layout panels to support a custom glassmorphism style sheet with radial glow backdrops.
-
-> [!WARNING]
-> This is a beta release. You might experience minor layout issues on mobile devices or custom resolution configurations. Please report bugs to the GitHub Issues tracker.
-`,
-    assets: [
-      {
-        name: "Sythoria-1.1.0-beta.dmg",
-        browser_download_url:
-          "https://github.com/sythoria/sythoria-desktop/releases/download/v1.1.0-beta/Sythoria-1.1.0-beta.dmg",
-        size: 82431900,
-        download_count: 45,
-      },
-      {
-        name: "Sythoria-1.1.0-beta.exe",
-        browser_download_url:
-          "https://github.com/sythoria/sythoria-desktop/releases/download/v1.1.0-beta/Sythoria-1.1.0-beta.exe",
-        size: 94832000,
-        download_count: 89,
+        name: "Sythoria_0.4.2_x64-setup.exe",
+        browser_download_url: `${GITHUB_REPOSITORY_URL}/releases/download/v0.4.2/Sythoria_0.4.2_x64-setup.exe`,
+        size: 12_013_701,
+        download_count: 0,
       },
     ],
   },
 ];
 
-export const GITHUB_OWNER =
-  process.env.GITHUB_OWNER ||
-  process.env.NEXT_PUBLIC_GITHUB_OWNER ||
-  "sythoria";
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
 
-export const GITHUB_REPO =
-  process.env.GITHUB_REPO ||
-  process.env.NEXT_PUBLIC_GITHUB_REPO ||
-  "sythoria-desktop";
-
-export async function getReleases(): Promise<GitHubRelease[]> {
+function isSafeGitHubUrl(value: unknown): value is string {
+  if (typeof value !== "string") return false;
   try {
-    const headers: Record<string, string> = {
-      Accept: "application/vnd.github+json",
-      "User-Agent": "Sythoria-Web-App",
-      "X-GitHub-Api-Version": "2022-11-28",
-    };
-    if (process.env.GH_TOKEN) {
-      headers.Authorization = `Bearer ${process.env.GH_TOKEN}`;
-    }
-    const res = await fetch(
-      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/releases`,
-      {
-        next: { revalidate: 3600 },
-        headers,
-      }
-    );
-    if (!res.ok) {
-      console.warn(
-        `GitHub API releases fetch failed with status: ${res.status}. Using fallback releases.`
-      );
-      return FALLBACK_RELEASES;
-    }
-    const data = await res.json();
-    if (!Array.isArray(data)) {
-      console.warn(
-        "GitHub API releases response is not an array. Using fallback releases."
-      );
-      return FALLBACK_RELEASES;
-    }
-    // Filter out drafts
-    const releases = data.filter((r: unknown) => {
-      const release = r as GitHubRelease;
-      return release && !release.draft;
-    }) as GitHubRelease[];
-    if (releases.length === 0) {
-      return FALLBACK_RELEASES;
-    }
-    return releases;
-  } catch (error) {
-    console.error(
-      "Failed to fetch releases from GitHub API. Using fallback releases.",
-      error
-    );
-    return FALLBACK_RELEASES;
+    const url = new URL(value);
+    return url.protocol === "https:" && url.hostname === "github.com";
+  } catch {
+    return false;
   }
 }
 
-export async function getLatestVersion(): Promise<string> {
-  const releases = await getReleases();
-  if (releases && releases.length > 0) {
-    return releases[0].tag_name;
+function parseAsset(value: unknown): ReleaseAsset | null {
+  if (!isRecord(value)) return null;
+  const {
+    name,
+    browser_download_url: downloadUrl,
+    size,
+    download_count,
+  } = value;
+
+  if (
+    typeof name !== "string" ||
+    name.length === 0 ||
+    name.length > 255 ||
+    !isSafeGitHubUrl(downloadUrl) ||
+    typeof size !== "number" ||
+    !Number.isFinite(size) ||
+    size < 0 ||
+    typeof download_count !== "number" ||
+    !Number.isFinite(download_count) ||
+    download_count < 0
+  ) {
+    return null;
   }
-  return FALLBACK_RELEASES[0].tag_name;
+
+  return {
+    name,
+    browser_download_url: downloadUrl,
+    size,
+    download_count,
+  };
+}
+
+function parseRelease(value: unknown): GitHubRelease | null {
+  if (!isRecord(value)) return null;
+  const {
+    id,
+    tag_name: tagName,
+    name,
+    published_at: publishedAt,
+    body,
+    html_url: htmlUrl,
+    prerelease,
+    draft,
+    assets,
+  } = value;
+
+  if (
+    typeof id !== "number" ||
+    !Number.isSafeInteger(id) ||
+    typeof tagName !== "string" ||
+    !/^v?[0-9][0-9A-Za-z._-]{0,63}$/.test(tagName) ||
+    typeof name !== "string" ||
+    name.length > 255 ||
+    typeof publishedAt !== "string" ||
+    Number.isNaN(Date.parse(publishedAt)) ||
+    typeof body !== "string" ||
+    !isSafeGitHubUrl(htmlUrl) ||
+    typeof prerelease !== "boolean" ||
+    typeof draft !== "boolean" ||
+    !Array.isArray(assets)
+  ) {
+    return null;
+  }
+
+  const parsedAssets = assets
+    .slice(0, 30)
+    .map(parseAsset)
+    .filter((asset): asset is ReleaseAsset => asset !== null);
+
+  return {
+    id,
+    tag_name: tagName,
+    name: name || tagName,
+    published_at: publishedAt,
+    body: body.slice(0, 100_000),
+    html_url: htmlUrl,
+    prerelease,
+    draft,
+    assets: parsedAssets,
+  };
+}
+
+function snapshotFeed(reason: string): ReleaseFeed {
+  return {
+    releases: VERIFIED_RELEASE_SNAPSHOT,
+    source: "verified-snapshot",
+    fetchedAt: `${DESKTOP_FACTS_VERIFIED_AT}T00:00:00Z`,
+    warning: reason,
+  };
+}
+
+export async function getReleaseFeed(): Promise<ReleaseFeed> {
+  const headers: Record<string, string> = {
+    Accept: "application/vnd.github+json",
+    "User-Agent": "Sythoria-Web",
+    "X-GitHub-Api-Version": "2022-11-28",
+  };
+
+  try {
+    const response = await fetch(
+      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/releases?per_page=10`,
+      { next: { revalidate: 3600 }, headers }
+    );
+
+    if (!response.ok) {
+      console.warn(`GitHub releases request failed with ${response.status}.`);
+      return snapshotFeed(
+        "GitHub release data is temporarily unavailable. Showing the last verified stable release."
+      );
+    }
+
+    const payload: unknown = await response.json();
+    if (!Array.isArray(payload)) {
+      return snapshotFeed(
+        "GitHub returned an unexpected response. Showing the last verified stable release."
+      );
+    }
+
+    const releases = payload
+      .slice(0, 10)
+      .map(parseRelease)
+      .filter(
+        (release): release is GitHubRelease =>
+          release !== null && !release.draft
+      );
+
+    if (releases.length === 0) {
+      return snapshotFeed(
+        "No valid GitHub releases were returned. Showing the last verified stable release."
+      );
+    }
+
+    return {
+      releases,
+      source: "github",
+      fetchedAt: new Date().toISOString(),
+      warning: null,
+    };
+  } catch (error) {
+    console.error("Failed to load GitHub releases.", error);
+    return snapshotFeed(
+      "GitHub release data is temporarily unavailable. Showing the last verified stable release."
+    );
+  }
+}
+
+export async function getLatestVersion(): Promise<string | null> {
+  const { releases } = await getReleaseFeed();
+  return releases.find((release) => !release.prerelease)?.tag_name ?? null;
 }
