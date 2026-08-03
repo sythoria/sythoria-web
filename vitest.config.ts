@@ -13,5 +13,24 @@ export default defineConfig({
     include: ["src/**/*.test.{ts,tsx}"],
     css: false,
     pool: "forks",
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json-summary", "html"],
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "src/**/*.test.{ts,tsx}",
+        "src/test/**",
+        "src/app/**/layout.tsx",
+        // This module is a Next.js server boundary. Its behavior is exercised by
+        // production builds and the content/release validators rather than jsdom.
+        "src/lib/changelog.ts",
+      ],
+      thresholds: {
+        lines: 25,
+        functions: 25,
+        statements: 25,
+        branches: 20,
+      },
+    },
   },
 });
