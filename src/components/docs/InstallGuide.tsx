@@ -1,28 +1,46 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Monitor, Apple, Terminal, Download, Check, Copy } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
+import {
+  DESKTOP_PLATFORMS,
+  DESKTOP_VERSION,
+  GITHUB_LATEST_RELEASE_URL,
+} from "@/lib/site-config";
 
 type OS = "windows" | "macos" | "linux";
 
 const TerminalSnippet = ({ code }: { code: string }) => {
   const [copied, setCopied] = useState(false);
+  const resetTimerRef = useRef<number | null>(null);
+
+  useEffect(
+    () => () => {
+      if (resetTimerRef.current !== null) {
+        window.clearTimeout(resetTimerRef.current);
+      }
+    },
+    []
+  );
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(code);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      if (resetTimerRef.current !== null) {
+        window.clearTimeout(resetTimerRef.current);
+      }
+      resetTimerRef.current = window.setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy text: ", err);
     }
   };
 
   return (
-    <div className="mt-2 flex items-center justify-between gap-4 font-mono text-sm bg-black/5 dark:bg-black/30 border border-border/50 rounded-lg py-2 px-3.5 max-w-lg select-none">
+    <div className="mt-2 flex max-w-lg items-center justify-between gap-4 rounded-lg border border-border/50 bg-black/5 px-3.5 py-2 font-mono text-sm dark:bg-black/30">
       <span className="text-text-primary dark:text-text-primary select-all break-all overflow-x-auto whitespace-pre font-medium">
         {code}
       </span>
@@ -30,6 +48,7 @@ const TerminalSnippet = ({ code }: { code: string }) => {
         onClick={handleCopy}
         className="text-text-muted hover:text-text-primary p-1.5 rounded-md hover:bg-hover dark:hover:bg-white/5 transition-colors shrink-0"
         title="Copy to clipboard"
+        aria-label={copied ? "Copied command" : "Copy command"}
         type="button"
       >
         {copied ? (
@@ -38,6 +57,9 @@ const TerminalSnippet = ({ code }: { code: string }) => {
           <Copy size={14} />
         )}
       </button>
+      <span className="sr-only" aria-live="polite">
+        {copied ? "Command copied to clipboard" : ""}
+      </span>
     </div>
   );
 };
@@ -66,21 +88,42 @@ export default function InstallGuide() {
 
   const getTabClass = (tab: OS) => {
     const isActive = activeTab === tab;
-    return `flex-1 flex items-center justify-center gap-2 py-2 px-4 text-xs font-semibold rounded-lg transition-all duration-200 select-none ${
+    return `flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2 px-2 sm:px-4 text-xs font-semibold rounded-lg transition-all duration-200 select-none ${
       isActive
         ? "bg-surface dark:bg-zinc-800 text-text-primary shadow-sm border border-border/40"
         : "text-text-muted hover:text-text-primary hover:bg-hover/40"
     }`;
   };
 
+  const osOrder: OS[] = ["windows", "macos", "linux"];
+  const handleTabKeyDown = (event: React.KeyboardEvent, current: OS) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    const currentIndex = osOrder.indexOf(current);
+    const offset = event.key === "ArrowRight" ? 1 : -1;
+    setActiveTab(
+      osOrder[(currentIndex + offset + osOrder.length) % osOrder.length]
+    );
+  };
+
   return (
     <div className="w-full mt-6 space-y-6">
       {/* OS Tab Selectors */}
-      <div className="flex border border-border/30 bg-hover/20 rounded-xl p-1 max-w-md mx-auto relative z-10">
+      <div
+        role="tablist"
+        aria-label="Installation operating system"
+        className="relative z-10 mx-auto flex max-w-md rounded-xl border border-border/30 bg-hover/20 p-1"
+      >
         <button
           onClick={() => setActiveTab("windows")}
           className={getTabClass("windows")}
           type="button"
+          role="tab"
+          id="install-tab-windows"
+          aria-selected={activeTab === "windows"}
+          aria-controls="install-panel"
+          tabIndex={activeTab === "windows" ? 0 : -1}
+          onKeyDown={(event) => handleTabKeyDown(event, "windows")}
         >
           <Monitor size={15} />
           Windows
@@ -89,6 +132,12 @@ export default function InstallGuide() {
           onClick={() => setActiveTab("macos")}
           className={getTabClass("macos")}
           type="button"
+          role="tab"
+          id="install-tab-macos"
+          aria-selected={activeTab === "macos"}
+          aria-controls="install-panel"
+          tabIndex={activeTab === "macos" ? 0 : -1}
+          onKeyDown={(event) => handleTabKeyDown(event, "macos")}
         >
           <Apple size={15} />
           macOS
@@ -97,6 +146,12 @@ export default function InstallGuide() {
           onClick={() => setActiveTab("linux")}
           className={getTabClass("linux")}
           type="button"
+          role="tab"
+          id="install-tab-linux"
+          aria-selected={activeTab === "linux"}
+          aria-controls="install-panel"
+          tabIndex={activeTab === "linux" ? 0 : -1}
+          onKeyDown={(event) => handleTabKeyDown(event, "linux")}
         >
           <Terminal size={15} />
           Linux
@@ -108,6 +163,10 @@ export default function InstallGuide() {
         variant="glass"
         padding="none"
         className="overflow-hidden border border-border/40 bg-surface/30 backdrop-blur-md animate-fade-in p-6 md:p-8"
+        role="tabpanel"
+        id="install-panel"
+        aria-labelledby={`install-tab-${activeTab}`}
+        tabIndex={0}
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border/30">
           <div className="flex items-center gap-3">
@@ -132,16 +191,17 @@ export default function InstallGuide() {
               </h3>
               <p className="text-xs text-text-muted mt-0.5 mb-0">
                 {activeTab === "windows" &&
-                  "Standalone application for Windows 10/11"}
+                  `${DESKTOP_PLATFORMS.windows.label} · ${DESKTOP_PLATFORMS.windows.architectures.join(", ")}`}
                 {activeTab === "macos" &&
-                  "Supports Apple Silicon and Intel Macs"}
-                {activeTab === "linux" && "Packaged as an executable AppImage"}
+                  `${DESKTOP_PLATFORMS.macos.label} · ${DESKTOP_PLATFORMS.macos.architectures.join(", ")}`}
+                {activeTab === "linux" &&
+                  `AppImage · ${DESKTOP_PLATFORMS.linux.architectures.join(", ")}`}
               </p>
             </div>
           </div>
 
           <Button
-            href="https://github.com/sythoria/sythoria-desktop/releases/latest"
+            href={GITHUB_LATEST_RELEASE_URL}
             variant="primary"
             size="md"
             icon={<Download size={15} />}
@@ -149,9 +209,9 @@ export default function InstallGuide() {
             rel="noopener noreferrer"
             className="md:self-center self-start"
           >
-            {activeTab === "windows" && "Download for Windows (.exe)"}
-            {activeTab === "macos" && "Download for macOS (.dmg)"}
-            {activeTab === "linux" && "Download for Linux (.AppImage)"}
+            {activeTab === "windows" && "Windows x64 (.exe)"}
+            {activeTab === "macos" && "macOS arm64 (.dmg)"}
+            {activeTab === "linux" && "Linux amd64 (.AppImage)"}
           </Button>
         </div>
 
