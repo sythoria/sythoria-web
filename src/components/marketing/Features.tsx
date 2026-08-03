@@ -4,7 +4,7 @@ import {
   Activity,
   Server,
   Minimize2,
-  Heart,
+  HardDrive,
   Sparkles,
   Lock,
   KeyRound,
@@ -22,7 +22,7 @@ function PrivacyVisualization() {
       {/* Local boundary */}
       <div className="relative w-full max-w-[260px] h-24 rounded-xl border border-dashed border-[#8E9DCC]/40 flex items-center justify-between px-8">
         <span className="absolute -top-2.5 left-4 text-[9px] font-mono tracking-wider uppercase text-[#8E9DCC] bg-landing-card px-2">
-          local only
+          local credential storage
         </span>
 
         {/* Key icon */}
@@ -79,32 +79,32 @@ const smallFeatures: SmallFeature[] = [
     icon: Activity,
     title: "Streaming Responses",
     description:
-      "Real-time streaming with SSE — watch responses arrive token by token, just like the API intended.",
-    code: "stream: true  // SSE token-by-token",
+      "Displays response chunks as the configured provider sends them.",
+    code: "stream: true  // provider dependent",
     accentColor: "#f43f5e",
   },
   {
     icon: Server,
-    title: "Zero Config Servers",
+    title: "Local Model Path",
     description:
-      "Works with local models via Ollama out of the box. No sign-up, no cloud dependency.",
-    code: "ollama.connect('localhost:11434')",
+      "Connect to a running Ollama service on loopback without a hosted model provider.",
+    code: "ollama: 'localhost:11434'",
     accentColor: "#f59e0b",
   },
   {
     icon: Minimize2,
     title: "Lightweight",
     description:
-      "Minimal footprint, instant load. No Electron, no heavy frameworks — just a lean desktop app.",
-    code: "bundle_size: '< 10MB'  // no electron",
+      "Built as a Tauri desktop application with a Rust backend instead of Electron.",
+    code: "runtime: 'Tauri + Rust'",
     accentColor: "#10b981",
   },
   {
-    icon: Heart,
-    title: "Free & Open Source",
+    icon: HardDrive,
+    title: "Encrypted Local Storage",
     description:
-      "No subscriptions, no paywalls, no feature gates. Fully open source under a permissive license.",
-    code: "license: 'MIT'  // free forever",
+      "Conversation snapshots and non-secret configuration use domain-separated AES-256-GCM files.",
+    code: "storage: 'AES-256-GCM'",
     accentColor: "#8b5cf6",
   },
 ];
@@ -138,8 +138,8 @@ export default function Features() {
           <p
             className={`mt-3 text-text-secondary max-w-lg mx-auto text-base leading-[1.6] font-light scroll-animate scroll-fade-in-up stagger-3 ${visible ? "in-view" : ""}`}
           >
-            Sythoria unifies your AI workflows under a single, privacy-first
-            interface.
+            Configure local or hosted providers, then choose a model for each
+            workflow.
           </p>
         </div>
 
@@ -166,9 +166,10 @@ export default function Features() {
               Your Keys, Your Control
             </h3>
             <p className="text-sm text-text-secondary font-light leading-relaxed mb-4">
-              API keys stay on your local device. No server-side storage, no
-              third-party access, no telemetry. Your data never leaves your
-              device.
+              API keys are stored through the operating system keychain. Prompts
+              sent to a hosted provider leave your device and are handled under
+              that provider&apos;s terms; Sythoria does not add a hosted prompt
+              relay.
             </p>
             <div className="flex-1 flex items-center justify-center">
               <PrivacyVisualization />
