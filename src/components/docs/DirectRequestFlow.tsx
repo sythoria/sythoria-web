@@ -31,7 +31,8 @@ const STEPS: Step[] = [
     iconColor: "text-green-600 dark:text-green-400 border-green-500/20",
     description:
       "OS Credential Store vault (macOS Keychain, Windows Credential Manager, Linux Keyring).",
-    flowDetails: "Loads key into RAM; never logs to disk",
+    flowDetails:
+      "Retrieves the key for the request; known error paths are redacted",
   },
   {
     id: 3,
