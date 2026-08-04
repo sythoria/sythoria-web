@@ -15,8 +15,8 @@
     },
     "linux": {
       "label": "Linux",
-      "architectures": ["x86_64/amd64"],
-      "assetSuffix": "amd64.AppImage"
+      "architectures": ["Universal (.deb, .rpm, .AppImage)"],
+      "assetSuffix": "install.sh"
     }
   },
   "shortcuts": {
