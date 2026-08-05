@@ -18,45 +18,45 @@ import InteractiveGlowSphere from "./InteractiveGlowSphere";
    ════════════════════════════════════════════ */
 function PrivacyVisualization() {
   return (
-    <div className="relative w-full flex-1 min-h-[160px] flex items-center justify-center">
+    <div className="relative w-full flex-1 min-h-[160px] flex items-center justify-center select-none">
       {/* Local boundary */}
-      <div className="relative w-full max-w-[260px] h-24 rounded-xl border border-dashed border-[#8E9DCC]/40 flex items-center justify-between px-8">
-        <span className="absolute -top-2.5 left-4 text-[9px] font-mono tracking-wider uppercase text-[#8E9DCC] bg-landing-card px-2">
+      <div className="relative w-full max-w-[280px] h-24 rounded-xl border border-dashed border-[#8E9DCC]/40 flex items-center justify-between px-8 bg-surface/30 backdrop-blur-sm shadow-sm">
+        <span className="absolute -top-2.5 left-4 text-[9px] font-mono tracking-wider uppercase text-[#8E9DCC] bg-landing-card px-2 rounded">
           local credential storage
         </span>
 
         {/* Key icon */}
-        <div className="w-10 h-10 rounded-full bg-[#D9DBF1]/30 border border-[#8E9DCC]/30 flex items-center justify-center z-10">
+        <div className="w-10 h-10 rounded-full bg-[#D9DBF1]/30 border border-[#8E9DCC]/30 flex items-center justify-center z-10 shadow-inner group-hover:scale-105 transition-transform duration-300">
           <KeyRound size={16} className="text-[#8E9DCC]" />
         </div>
 
         {/* Animated dots flowing between key and lock */}
-        <div className="absolute inset-x-8 top-1/2 -translate-y-1/2 h-px">
-          {[0, 1, 2, 3, 4].map((i) => (
+        <div className="absolute left-16 right-16 top-1/2 -translate-y-1/2 h-0.5 overflow-hidden">
+          {[0, 1, 2, 3].map((i) => (
             <span
               key={i}
-              className="absolute top-0 w-1.5 h-1.5 rounded-full bg-[#8E9DCC] opacity-60"
+              className="absolute top-0 -translate-y-1/2 w-2 h-2 rounded-full bg-[#8E9DCC] shadow-[0_0_8px_#8E9DCC]"
               style={{
-                animation: "data-flow 2.4s ease-in-out infinite",
-                animationDelay: `${i * 0.48}s`,
+                animation: "data-flow-responsive 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite",
+                animationDelay: `${i * 0.55}s`,
               }}
             />
           ))}
         </div>
 
         {/* Lock icon */}
-        <div className="w-10 h-10 rounded-full bg-[#D9DBF1]/30 border border-[#8E9DCC]/30 flex items-center justify-center z-10">
+        <div className="w-10 h-10 rounded-full bg-[#D9DBF1]/30 border border-[#8E9DCC]/30 flex items-center justify-center z-10 shadow-inner group-hover:scale-105 transition-transform duration-300">
           <Lock size={16} className="text-[#8E9DCC]" />
         </div>
       </div>
 
       {/* Inline keyframe for data flow */}
       <style>{`
-        @keyframes data-flow {
-          0%   { transform: translateX(20px); opacity: 0; }
-          10%  { opacity: 0.8; }
-          90%  { opacity: 0.8; }
-          100% { transform: translateX(165px); opacity: 0; }
+        @keyframes data-flow-responsive {
+          0%   { left: 0%; opacity: 0; transform: scale(0.5); }
+          15%  { opacity: 0.9; transform: scale(1); }
+          85%  { opacity: 0.9; transform: scale(1); }
+          100% { left: 100%; opacity: 0; transform: scale(0.5); }
         }
       `}</style>
     </div>
