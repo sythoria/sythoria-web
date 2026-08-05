@@ -3,7 +3,6 @@
 import { useRef, useEffect, useState } from "react";
 import { Download } from "lucide-react";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { GITHUB_LATEST_RELEASE_URL } from "@/lib/site-config";
 import { useTheme } from "@/hooks/useTheme";
 
@@ -195,11 +194,14 @@ export default function Hero({
             transition={{ delay: 0.85, duration: 0.8, ease }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto mb-16"
           >
-            <Link
+            <motion.a
               href={GITHUB_LATEST_RELEASE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="magnetic-btn shimmer-btn group relative flex items-center justify-center gap-2.5 px-8 py-4 bg-text-primary text-surface rounded-full font-medium transition-transform hover:scale-105"
+              whileHover={{ scale: 1.05, y: -4 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 350, damping: 22 }}
+              className="shimmer-btn group relative flex items-center justify-center gap-2.5 px-8 py-4 bg-text-primary text-surface rounded-full font-medium shadow-md transition-shadow duration-300 hover:shadow-[0_12px_35px_-5px_var(--color-accent)]"
             >
               <Download size={18} />
               <span>
@@ -207,7 +209,7 @@ export default function Hero({
                 {latestVersion ? `v${latestVersion.replace(/^v/, "")}` : ""}
               </span>
               <div className="absolute inset-0 rounded-full border-2 border-transparent group-hover:border-chrome-glow transition-colors pointer-events-none" />
-            </Link>
+            </motion.a>
           </motion.div>
         </motion.div>
 
