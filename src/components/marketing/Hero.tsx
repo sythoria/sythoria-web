@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { Download } from "lucide-react";
+import { Download, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { GITHUB_LATEST_RELEASE_URL } from "@/lib/site-config";
 import { useTheme } from "@/hooks/useTheme";
@@ -197,24 +197,45 @@ export default function Hero({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.85, duration: 0.8, ease }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto mb-16"
+            className="flex flex-col items-center justify-center gap-3 w-full sm:w-auto mb-16"
           >
-            <motion.a
-              href={GITHUB_LATEST_RELEASE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.05, y: -4 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: "spring", stiffness: 350, damping: 22 }}
-              className="shimmer-btn group relative flex items-center justify-center gap-2.5 px-8 py-4 bg-text-primary text-surface rounded-full font-medium shadow-md transition-shadow duration-300 hover:shadow-[0_12px_35px_-5px_var(--color-accent)]"
-            >
-              <Download size={18} />
-              <span>
-                Download Desktop{" "}
-                {latestVersion ? `v${latestVersion.replace(/^v/, "")}` : ""}
-              </span>
-              <div className="absolute inset-0 rounded-full border-2 border-transparent group-hover:border-chrome-glow transition-colors pointer-events-none" />
-            </motion.a>
+            <div className="relative group inline-flex items-center justify-center">
+              {/* Outer ambient glow aura */}
+              <div
+                className="absolute -inset-1.5 rounded-full bg-gradient-to-r from-accent via-[#9AA8D6] to-accent opacity-40 blur-xl group-hover:opacity-85 group-hover:blur-2xl transition-all duration-500 pointer-events-none"
+                aria-hidden="true"
+              />
+
+              <motion.a
+                href={GITHUB_LATEST_RELEASE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.04, y: -4 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: "spring", stiffness: 350, damping: 22 }}
+                className="shimmer-btn group/btn relative flex items-center gap-3 px-8 py-4 bg-text-primary text-surface rounded-full font-semibold text-base sm:text-lg shadow-2xl overflow-hidden cursor-pointer select-none"
+              >
+                <Download className="w-5 h-5 shrink-0 transition-transform duration-300 group-hover/btn:-translate-y-0.5 group-hover/btn:scale-110" />
+                <span className="flex items-center gap-2">
+                  <span>Download Desktop</span>
+                  {latestVersion && (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-mono font-medium bg-surface/20 text-surface/90 border border-surface/20">
+                      v{latestVersion.replace(/^v/, "")}
+                    </span>
+                  )}
+                </span>
+                <ArrowRight className="w-5 h-5 shrink-0 transition-transform duration-300 group-hover/btn:translate-x-1.5" />
+              </motion.a>
+            </div>
+
+            {/* Platform badges */}
+            <div className="flex items-center gap-2 text-xs text-text-muted font-mono tracking-wide opacity-75 mt-1">
+              <span>macOS</span>
+              <span>·</span>
+              <span>Windows</span>
+              <span>·</span>
+              <span>Linux</span>
+            </div>
           </motion.div>
         </motion.div>
 
