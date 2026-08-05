@@ -2,8 +2,10 @@
 
 import { useCallback, useId, useRef, useState } from "react";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import Link from "next/link";
+import { Menu, X, Home, Sparkles, Download } from "lucide-react";
 import { useDialogFocus } from "@/hooks/useDialogFocus";
+import { GITHUB_LATEST_RELEASE_URL } from "@/lib/site-config";
 import DocsSidebar from "./Sidebar";
 
 export default function DocsMobileDrawer() {
@@ -82,6 +84,36 @@ export default function DocsMobileDrawer() {
             </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+              <div className="mb-4 pb-4 border-b border-border/40 space-y-1">
+                <Link
+                  href="/"
+                  onClick={close}
+                  className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold text-text-primary hover:bg-hover transition-colors"
+                >
+                  <Home size={16} className="text-accent" />
+                  <span>Home</span>
+                </Link>
+                <Link
+                  href="/changelog"
+                  prefetch={false}
+                  onClick={close}
+                  className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-hover transition-colors"
+                >
+                  <Sparkles size={16} className="text-text-muted" />
+                  <span>Changelog</span>
+                </Link>
+                <a
+                  href={GITHUB_LATEST_RELEASE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={close}
+                  className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-hover transition-colors"
+                >
+                  <Download size={16} className="text-text-muted" />
+                  <span>Download App</span>
+                </a>
+              </div>
+
               <DocsSidebar onItemClick={close} minimal />
             </div>
           </div>
