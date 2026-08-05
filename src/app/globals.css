@@ -1724,7 +1724,7 @@
 
 .animate-shimmer {
   background-size: 200% 100%;
-  animation: shimmer 3s linear infinite;
+  animation: shimmer 2s linear infinite;
 }
 
 @keyframes glow-pulse {
@@ -1847,7 +1847,7 @@
     background-position: 200% 0;
   }
   100% {
-    background-position: -200% 0;
+    background-position: 20% 0;
   }
 }
 
@@ -1862,13 +1862,13 @@
     rgba(255, 255, 255, 0.25) 52%,
     transparent 65%
   );
-  background-size: 300% 100%;
+  background-size: 200% 100%;
   background-position: 200% 0;
   pointer-events: none;
 }
 
 .btn-primary:hover .btn-shine {
-  animation: btn-shine-sweep 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  animation: btn-shine-sweep 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .btn-secondary::before {
@@ -2175,7 +2175,7 @@
     transform: translateX(-150%) rotate(25deg);
   }
   100% {
-    transform: translateX(150%) rotate(25deg);
+    transform: translateX(-35%) rotate(25deg);
   }
 }
 
@@ -2187,10 +2187,10 @@
 .shimmer-btn::after {
   content: "";
   position: absolute;
-  top: -100%;
-  left: -100%;
-  width: 300%;
-  height: 300%;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
   background: linear-gradient(
     90deg,
     transparent 0%,
@@ -2204,7 +2204,7 @@
 }
 
 .shimmer-btn:hover::after {
-  animation: shimmer-sweep 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  animation: shimmer-sweep 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .glass-edge-hover {

@@ -74,10 +74,12 @@ describe("InstallGuide", () => {
     });
 
     expect(screen.getByText("Linux Desktop")).toBeInTheDocument();
-    expect(screen.getByText("Linux amd64 (.AppImage)")).toBeInTheDocument();
-    expect(screen.getByText("Download the AppImage")).toBeInTheDocument();
+    expect(screen.getByText("View GitHub Releases")).toBeInTheDocument();
     expect(
-      screen.getByText("chmod +x Sythoria-*.AppImage")
+      screen.getByText("Run the universal installer command")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("curl -fsSL https://raw.githubusercontent.com/sythoria/sythoria-desktop/main/install.sh | bash")
     ).toBeInTheDocument();
   });
 
@@ -106,26 +108,23 @@ describe("InstallGuide", () => {
     expect(screen.queryByText("macOS Desktop")).not.toBeInTheDocument();
   });
 
-  it("copies commands to clipboard when copy button is clicked on Linux tab", async () => {
+  it("copies command to clipboard when copy button is clicked on Linux tab", async () => {
     mockUserAgent("Mozilla/5.0 (X11; Linux x86_64)");
     render(<InstallGuide />);
     act(() => {
       vi.runAllTimers();
     });
 
-    // Get copy buttons (chmod +x, launch command)
+    // Get copy button (universal installer command)
     const copyButtons = screen.getAllByTitle("Copy to clipboard");
-    expect(copyButtons.length).toBe(2);
+    expect(copyButtons.length).toBe(1);
 
     await act(async () => {
       fireEvent.click(copyButtons[0]);
     });
-    expect(writeTextMock).toHaveBeenCalledWith("chmod +x Sythoria-*.AppImage");
-
-    await act(async () => {
-      fireEvent.click(copyButtons[1]);
-    });
-    expect(writeTextMock).toHaveBeenCalledWith("./Sythoria-*.AppImage");
+    expect(writeTextMock).toHaveBeenCalledWith(
+      "curl -fsSL https://raw.githubusercontent.com/sythoria/sythoria-desktop/main/install.sh | bash"
+    );
 
     // Fast-forward fake timers to resolve clipboard states inside act block
     await act(async () => {

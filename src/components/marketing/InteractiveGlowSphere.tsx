@@ -27,8 +27,7 @@ const particles: Particle[] = Array.from(
     phi: Math.PI * (1 + Math.sqrt(5)) * index,
     radius: 130 + ((index * 17) % 10),
     size: 1.2 + ((index * 13) % 15) / 10,
-    color:
-      index % 2 === 0 ? "rgba(142, 157, 204, 0.7)" : "rgba(217, 219, 241, 0.5)",
+    color: index % 2 === 0 ? "rgb(142, 157, 204)" : "rgb(217, 219, 241)",
   })
 );
 
@@ -45,7 +44,7 @@ export default function InteractiveGlowSphere() {
 
     let frameId = 0;
     let visible = true;
-    let lastFrame = 0;
+    let lastTime = 0;
     let time = 0;
     let targetX = 0;
     let targetY = 0;
@@ -53,6 +52,7 @@ export default function InteractiveGlowSphere() {
     let rotationY = 0;
     let width = 450;
     let height = 450;
+
     const projected: ProjectedParticle[] = particles.map(() => ({
       x: 0,
       y: 0,
@@ -63,7 +63,7 @@ export default function InteractiveGlowSphere() {
 
     const resize = () => {
       const rect = container.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = rect.width;
       height = rect.height;
       canvas.width = Math.max(1, Math.round(width * dpr));
@@ -73,7 +73,7 @@ export default function InteractiveGlowSphere() {
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    const draw = () => {
+    const draw = (dt: number) => {
       context.clearRect(0, 0, width, height);
       const dark = document.documentElement.classList.contains("dark");
       const glow = context.createRadialGradient(
@@ -95,8 +95,11 @@ export default function InteractiveGlowSphere() {
       context.arc(width / 2, height / 2, 200, 0, Math.PI * 2);
       context.fill();
 
-      rotationX += (targetY - rotationX) * 0.08;
-      rotationY += (targetX - rotationY) * 0.08;
+      // Smooth frame-rate independent rotation lerping (hover response)
+      const lerpFactor = 1 - Math.exp(-14 * dt);
+      rotationX += (targetY - rotationX) * lerpFactor;
+      rotationY += (targetX - rotationY) * lerpFactor;
+
       const currentX = rotationX + time * 0.15;
       const currentY = rotationY + time * 0.25;
       const cosX = Math.cos(currentX);
@@ -129,29 +132,33 @@ export default function InteractiveGlowSphere() {
       projected.sort((a, b) => b.z - a.z);
       for (const particle of projected) {
         const opacity = Math.max(0.1, Math.min(0.85, (300 - particle.z) / 400));
+        context.globalAlpha = opacity;
         context.beginPath();
         context.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        context.fillStyle = particle.color.replace(/[\d.]+\)$/, `${opacity})`);
+        context.fillStyle = particle.color;
         context.fill();
       }
+      context.globalAlpha = 1.0;
     };
 
     const animate = (timestamp: number) => {
       if (!visible || document.hidden) return;
-      if (timestamp - lastFrame >= 1000 / 30) {
-        lastFrame = timestamp;
-        time += shouldReduceMotion ? 0.002 : 0.008;
-        draw();
-      }
+      const dt = lastTime
+        ? Math.min((timestamp - lastTime) / 1000, 0.05)
+        : 0.016;
+      lastTime = timestamp;
+      time += shouldReduceMotion ? dt * 0.25 : dt;
+      draw(dt);
       frameId = window.requestAnimationFrame(animate);
     };
 
     const start = () => {
       window.cancelAnimationFrame(frameId);
       if (visible && !document.hidden) {
+        lastTime = performance.now();
         frameId = window.requestAnimationFrame(animate);
       } else {
-        draw();
+        draw(0.016);
       }
     };
 
@@ -174,13 +181,15 @@ export default function InteractiveGlowSphere() {
     );
 
     resize();
-    draw();
+    draw(0.016);
     start();
     observer.observe(container);
     window.addEventListener("resize", resize, { passive: true });
     document.addEventListener("visibilitychange", handleVisibility);
-    container.addEventListener("pointermove", handlePointerMove);
-    container.addEventListener("pointerleave", resetPointer);
+    container.addEventListener("pointermove", handlePointerMove, {
+      passive: true,
+    });
+    container.addEventListener("pointerleave", resetPointer, { passive: true });
 
     return () => {
       window.cancelAnimationFrame(frameId);
@@ -198,7 +207,10 @@ export default function InteractiveGlowSphere() {
       className="relative flex h-[400px] w-full select-none items-center justify-center sm:h-[450px]"
       aria-hidden="true"
     >
-      <canvas ref={canvasRef} className="pointer-events-none absolute" />
+      <canvas
+        ref={canvasRef}
+        className="pointer-events-none absolute transform-gpu [transform:translateZ(0)]"
+      />
       <div className="pointer-events-none absolute flex h-44 w-44 items-center justify-center rounded-full border border-white/5 bg-gradient-to-tr from-white/5 via-transparent to-white/5 shadow-inner backdrop-blur-[2px]">
         <Image
           src="/logonobg.png"

@@ -194,7 +194,7 @@ export default function InstallGuide() {
                 {activeTab === "macos" &&
                   `${DESKTOP_PLATFORMS.macos.label} · ${DESKTOP_PLATFORMS.macos.architectures.join(", ")}`}
                 {activeTab === "linux" &&
-                  `AppImage · ${DESKTOP_PLATFORMS.linux.architectures.join(", ")}`}
+                  `Universal Installer · Debian, Ubuntu, Fedora, Arch & more`}
               </p>
             </div>
           </div>
@@ -210,7 +210,7 @@ export default function InstallGuide() {
           >
             {activeTab === "windows" && "Windows x64 (.exe)"}
             {activeTab === "macos" && "macOS arm64 (.dmg)"}
-            {activeTab === "linux" && "Linux amd64 (.AppImage)"}
+            {activeTab === "linux" && "View GitHub Releases"}
           </Button>
         </div>
 
@@ -327,11 +327,10 @@ export default function InstallGuide() {
                 </div>
                 <div>
                   <h5 className="text-sm font-semibold text-text-primary mt-0.5 mb-1">
-                    Download the AppImage
+                    Open your terminal
                   </h5>
                   <p className="text-sm text-text-secondary m-0">
-                    Click the download button above to retrieve the package
-                    (`.AppImage`).
+                    Launch your preferred Linux terminal emulator.
                   </p>
                 </div>
               </div>
@@ -342,12 +341,12 @@ export default function InstallGuide() {
                 </div>
                 <div>
                   <h5 className="text-sm font-semibold text-text-primary mt-0.5 mb-1">
-                    Open your terminal
+                    Run the universal installer command
                   </h5>
                   <p className="text-sm text-text-secondary m-0">
-                    Navigate to the directory where you downloaded the file
-                    (usually `~/Downloads`).
+                    Paste and run the following command to download and install Sythoria automatically:
                   </p>
+                  <TerminalSnippet code="curl -fsSL https://raw.githubusercontent.com/sythoria/sythoria-desktop/main/install.sh | bash" />
                 </div>
               </div>
 
@@ -357,28 +356,11 @@ export default function InstallGuide() {
                 </div>
                 <div>
                   <h5 className="text-sm font-semibold text-text-primary mt-0.5 mb-1">
-                    Make executable
+                    Automatic Setup & Launch
                   </h5>
                   <p className="text-sm text-text-secondary m-0">
-                    Run the following command to make the AppImage executable:
+                    The installer detects your package manager (`apt`, `dnf`, or AppImage fallback), downloads the application icon, and creates a desktop menu shortcut automatically.
                   </p>
-                  <TerminalSnippet code="chmod +x Sythoria-*.AppImage" />
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-accent-soft text-accent text-xs font-bold shrink-0">
-                  4
-                </div>
-                <div>
-                  <h5 className="text-sm font-semibold text-text-primary mt-0.5 mb-1">
-                    Launch Sythoria
-                  </h5>
-                  <p className="text-sm text-text-secondary m-0">
-                    Double-click the file in your file manager or launch it from
-                    the command line:
-                  </p>
-                  <TerminalSnippet code="./Sythoria-*.AppImage" />
                 </div>
               </div>
             </div>
