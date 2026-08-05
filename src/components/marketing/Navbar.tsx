@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useId, useRef, useState } from "react";
-import { Moon, Sun, Menu, X } from "lucide-react";
+import { Moon, Sun, Menu, X, Download } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -123,12 +123,10 @@ export default function Navbar() {
                 href={GITHUB_LATEST_RELEASE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden md:block relative group overflow-hidden rounded-full p-[1px]"
+                className="hidden md:inline-flex items-center gap-1.5 px-4 py-1.5 bg-text-primary text-surface rounded-full text-xs font-semibold shadow-sm transition-all duration-300 ease-out hover:scale-[1.04] hover:shadow-md hover:shadow-accent/20 active:scale-[0.97] group select-none relative overflow-hidden"
               >
-                <span className="absolute inset-0 bg-gradient-to-r from-chrome-glow via-white to-chrome-glow opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full" />
-                <div className="relative bg-text-primary text-surface px-4 py-1.5 rounded-full text-sm font-medium transition-transform group-hover:scale-[0.98]">
-                  Download
-                </div>
+                <Download className="w-3.5 h-3.5" />
+                <span>Download</span>
               </a>
 
               {/* Mobile hamburger */}
