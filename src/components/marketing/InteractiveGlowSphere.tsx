@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import { useReducedMotion } from "framer-motion";
 
 interface Particle {
   theta: number;
@@ -36,9 +35,9 @@ const particles: Particle[] = Array.from(
 export default function InteractiveGlowSphere() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
+    const shouldReduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const canvas = canvasRef.current;
     const container = containerRef.current;
     const context = canvas?.getContext("2d");
@@ -138,10 +137,10 @@ export default function InteractiveGlowSphere() {
     };
 
     const animate = (timestamp: number) => {
-      if (!visible || document.hidden || shouldReduceMotion) return;
+      if (!visible || document.hidden) return;
       if (timestamp - lastFrame >= 1000 / 30) {
         lastFrame = timestamp;
-        time += 0.008;
+        time += shouldReduceMotion ? 0.002 : 0.008;
         draw();
       }
       frameId = window.requestAnimationFrame(animate);
@@ -149,7 +148,7 @@ export default function InteractiveGlowSphere() {
 
     const start = () => {
       window.cancelAnimationFrame(frameId);
-      if (visible && !document.hidden && !shouldReduceMotion) {
+      if (visible && !document.hidden) {
         frameId = window.requestAnimationFrame(animate);
       } else {
         draw();
@@ -191,7 +190,7 @@ export default function InteractiveGlowSphere() {
       container.removeEventListener("pointermove", handlePointerMove);
       container.removeEventListener("pointerleave", resetPointer);
     };
-  }, [shouldReduceMotion]);
+  }, []);
 
   return (
     <div
