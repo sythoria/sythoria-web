@@ -6,7 +6,7 @@ export default function RefractiveBackground() {
     >
       <div className="dot-grid-bg absolute inset-0" />
       <div
-        className="refractive-orb absolute left-1/2 top-1/2 h-[70vh] w-[70vw] rounded-full blur-[120px]"
+        className="refractive-orb absolute left-1/2 top-1/2 h-[70vh] w-[70vw] rounded-full blur-[120px] transform-gpu will-change-transform"
         style={{
           background:
             "radial-gradient(circle, var(--color-glow-primary), transparent 70%)",
@@ -14,7 +14,7 @@ export default function RefractiveBackground() {
         }}
       />
       <div
-        className="refractive-orb refractive-orb-secondary absolute bottom-[10%] right-[10%] h-[40vh] w-[40vw] rounded-full blur-[100px]"
+        className="refractive-orb refractive-orb-secondary absolute bottom-[10%] right-[10%] h-[40vh] w-[40vw] rounded-full blur-[100px] transform-gpu will-change-transform"
         style={{
           background:
             "radial-gradient(circle, var(--color-glow-secondary), transparent 70%)",
