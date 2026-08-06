@@ -3,15 +3,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useScrollInView } from "@/hooks/useScrollInView";
-import {
-  GITHUB_LATEST_RELEASE_URL,
-  GITHUB_REPOSITORY_URL,
-} from "@/lib/site-config";
+import { GITHUB_REPOSITORY_URL } from "@/lib/site-config";
 
 const navLinks = [
   {
     label: "Download",
-    href: GITHUB_LATEST_RELEASE_URL,
+    href: "/downloads",
   },
   { label: "Docs", href: "/docs" },
   {
