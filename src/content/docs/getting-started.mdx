@@ -10,11 +10,11 @@ source: sythoria-desktop release assets and tauri.conf.json
 
 Use this guide with Sythoria Desktop **v0.4.2**. The release currently provides the following builds:
 
-| Operating system  | Supported build       | Release artifact                |
-| ----------------- | --------------------- | ------------------------------- |
-| Windows 10 or 11  | x64                   | `Sythoria_0.4.2_x64-setup.exe`  |
-| macOS 12 or later | Apple silicon (arm64) | `Sythoria_0.4.2_aarch64.dmg`    |
-| Linux             | Universal (Debian, Ubuntu, Fedora, Arch) | `install.sh` (`.deb`, `.rpm`, `.AppImage`) |
+| Operating system  | Supported build                          | Release artifact                                                              |
+| ----------------- | ---------------------------------------- | ----------------------------------------------------------------------------- |
+| Windows 10 or 11  | x64 (Setup & Portable)                   | `Sythoria_0.4.2_x64-setup.exe` (Setup), `sythoria_windows_x64.exe` (Portable) |
+| macOS 12 or later | Apple silicon (arm64)                    | `Sythoria_0.4.2_aarch64.dmg`                                                  |
+| Linux             | Universal (Debian, Ubuntu, Fedora, Arch) | `install.sh` (`.deb`, `.rpm`, `.AppImage`)                                    |
 
 Windows ARM64, Linux ARM64, and Intel macOS packages are not present in this release. Check the [current GitHub release](https://github.com/sythoria/sythoria-desktop/releases/latest) before installing because the artifact matrix can change.
 
@@ -35,11 +35,11 @@ Hosted-provider requests leave your device and are processed under that provider
 
 | Provider      | Desktop v0.4.2 default model  | Setup guide                              |
 | ------------- | ----------------------------- | ---------------------------------------- |
-| OpenAI        | `gpt-4o`                      | [OpenAI](/docs/providers/openai)         |
-| Anthropic     | `claude-opus-4-8`             | [Anthropic](/docs/providers/anthropic)   |
-| Google Gemini | `gemini-2.5-pro`              | [Gemini](/docs/providers/gemini)         |
-| Ollama        | `llama3.1`                    | [Ollama](/docs/providers/ollama)         |
-| OpenRouter    | `anthropic/claude-3.5-sonnet` | [OpenRouter](/docs/providers/openrouter) |
+| OpenAI        | `gpt-5.6-sol`                 | [OpenAI](/docs/providers/openai)         |
+| Anthropic     | `claude-opus-5`               | [Anthropic](/docs/providers/anthropic)   |
+| Google Gemini | `gemini-3.1-pro`              | [Gemini](/docs/providers/gemini)         |
+| Ollama        | `deepseek-r1:7b`              | [Ollama](/docs/providers/ollama)         |
+| OpenRouter    | `anthropic/claude-sonnet-5`   | [OpenRouter](/docs/providers/openrouter) |
 | NVIDIA NIM    | `meta/llama-3.3-70b-instruct` | [NVIDIA NIM](/docs/providers/nvidia-nim) |
 
 ## Verify the setup
