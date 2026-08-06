@@ -1,0 +1,364 @@
+import type { Metadata } from "next";
+import {
+  Monitor,
+  Apple,
+  Terminal,
+  Download,
+  ExternalLink,
+  ChevronRight,
+  Sparkles,
+  FileCode,
+} from "lucide-react";
+import { getReleaseFeed } from "@/lib/changelog";
+import { formatBytes, formatDate } from "@/utils/formatters";
+import {
+  GITHUB_RELEASES_URL,
+  GITHUB_REPOSITORY_URL,
+  SITE_URL,
+} from "@/lib/site-config";
+import Navbar from "@/components/marketing/Navbar";
+import Footer from "@/components/marketing/Footer";
+import Card from "@/components/ui/Card";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import TerminalSnippet from "@/components/ui/TerminalSnippet";
+
+export const metadata: Metadata = {
+  title: "Download Sythoria Desktop | Official Downloads",
+  description:
+    "Download the latest release of Sythoria Desktop for Windows (Setup & Portable), macOS, and Linux. Privacy-first, lightweight AI client.",
+  alternates: {
+    canonical: "/downloads",
+  },
+  openGraph: {
+    title: "Download Sythoria Desktop",
+    description:
+      "Get Sythoria Desktop for Windows, macOS, and Linux. Connect your own API keys with zero telemetry.",
+    url: `${SITE_URL}/downloads`,
+  },
+};
+
+export default async function DownloadsPage() {
+  const feed = await getReleaseFeed();
+  const latestRelease = feed.releases[0];
+  const versionTag = latestRelease?.tag_name ?? "v0.4.2";
+  const releaseDate = latestRelease?.published_at
+    ? formatDate(latestRelease.published_at)
+    : "August 2, 2026";
+  const releaseUrl = latestRelease?.html_url ?? GITHUB_RELEASES_URL;
+
+  // Filter assets by OS platform
+  const assets = latestRelease?.assets ?? [];
+  const windowsSetup = assets.find((a) =>
+    a.name.toLowerCase().includes("setup")
+  );
+  const windowsPortable = assets.find(
+    (a) =>
+      a.name.toLowerCase().includes("windows") &&
+      !a.name.toLowerCase().includes("setup")
+  );
+  const macDmg = assets.find((a) => a.name.toLowerCase().endsWith(".dmg"));
+
+  const defaultWinSetupUrl =
+    windowsSetup?.browser_download_url ??
+    `${GITHUB_REPOSITORY_URL}/releases/download/${versionTag}/Sythoria_0.4.2_x64-setup.exe`;
+  const defaultWinPortableUrl =
+    windowsPortable?.browser_download_url ??
+    `${GITHUB_REPOSITORY_URL}/releases/download/${versionTag}/sythoria_windows_x64.exe`;
+  const defaultMacUrl =
+    macDmg?.browser_download_url ??
+    `${GITHUB_REPOSITORY_URL}/releases/download/${versionTag}/Sythoria_0.4.2_aarch64.dmg`;
+
+  return (
+    <div className="min-h-screen bg-landing-bg text-text-primary selection:bg-accent/30 flex flex-col justify-between">
+      <Navbar />
+
+      {/* Background radial ambient glow */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div
+          className="absolute -top-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full opacity-30 blur-[120px]"
+          style={{
+            background:
+              "radial-gradient(circle, var(--color-glow-primary), transparent 70%)",
+          }}
+        />
+      </div>
+
+      {/* Main Header / Hero */}
+      <header className="relative z-10 max-w-6xl mx-auto px-6 pt-24 pb-8 sm:pt-32 sm:pb-12 text-center">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-semibold mb-6 animate-fade-in">
+          <Sparkles size={14} />
+          <span>Latest Release {versionTag}</span>
+          <span className="text-text-muted font-normal">· {releaseDate}</span>
+        </div>
+
+        <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-text-primary max-w-3xl mx-auto leading-tight">
+          Download Sythoria Desktop
+        </h1>
+      </header>
+
+      {/* Main Download Cards Grid */}
+      <main className="relative z-10 max-w-6xl mx-auto px-6 pb-20 space-y-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* WINDOWS CARD */}
+          <Card
+            variant="glass"
+            padding="lg"
+            className="flex flex-col justify-between space-y-6 border border-border/40 bg-surface/30 backdrop-blur-md relative overflow-hidden group hover:border-accent/40 transition-all duration-300"
+          >
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="p-3 rounded-2xl bg-accent/10 text-accent">
+                  <Monitor size={28} />
+                </div>
+                <Badge variant="accent" className="text-xs font-semibold">
+                  Windows 10/11
+                </Badge>
+              </div>
+
+              <div>
+                <h2 className="text-xl font-bold text-text-primary m-0">
+                  Windows (x64)
+                </h2>
+                <p className="text-xs text-text-secondary mt-1 m-0">
+                  Available in standard <strong>Setup Installer</strong> or
+                  portable zero-install <strong>Executable</strong>.
+                </p>
+              </div>
+
+              {/* Windows Action Buttons */}
+              <div className="space-y-2.5 pt-2">
+                <Button
+                  href={defaultWinSetupUrl}
+                  variant="primary"
+                  fullWidth
+                  size="md"
+                  icon={<Download size={16} />}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Setup Installer (.exe)
+                </Button>
+
+                <Button
+                  href={defaultWinPortableUrl}
+                  variant="secondary"
+                  fullWidth
+                  size="md"
+                  icon={<Download size={16} />}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Portable Version (.exe)
+                </Button>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-border/30 text-xs text-text-muted space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span>Setup Installer:</span>
+                <span className="font-mono text-text-secondary">
+                  {windowsSetup ? formatBytes(windowsSetup.size) : "11.5 MB"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Portable Version:</span>
+                <span className="font-mono text-text-secondary">
+                  {windowsPortable
+                    ? formatBytes(windowsPortable.size)
+                    : "22.9 MB"}
+                </span>
+              </div>
+            </div>
+          </Card>
+
+          {/* MACOS CARD */}
+          <Card
+            variant="glass"
+            padding="lg"
+            className="flex flex-col justify-between space-y-6 border border-border/40 bg-surface/30 backdrop-blur-md relative overflow-hidden group hover:border-accent/40 transition-all duration-300"
+          >
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="p-3 rounded-2xl bg-accent/10 text-accent">
+                  <Apple size={28} />
+                </div>
+                <Badge variant="accent" className="text-xs font-semibold">
+                  macOS 12+
+                </Badge>
+              </div>
+
+              <div>
+                <h2 className="text-xl font-bold text-text-primary m-0">
+                  macOS (Apple Silicon)
+                </h2>
+                <p className="text-xs text-text-secondary mt-1 m-0">
+                  Native arm64 disk image package (`.dmg`) built for Apple M1,
+                  M2, M3, M4 & M5 chips.
+                </p>
+              </div>
+
+              {/* macOS Action Button */}
+              <div className="pt-2">
+                <Button
+                  href={defaultMacUrl}
+                  variant="primary"
+                  fullWidth
+                  size="md"
+                  icon={<Download size={16} />}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Download macOS (.dmg)
+                </Button>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-border/30 text-xs text-text-muted space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span>Architecture:</span>
+                <span className="font-mono text-text-secondary">
+                  Apple Silicon (arm64)
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Disk Image Size:</span>
+                <span className="font-mono text-text-secondary">
+                  {macDmg ? formatBytes(macDmg.size) : "13.3 MB"}
+                </span>
+              </div>
+            </div>
+          </Card>
+
+          {/* LINUX CARD */}
+          <Card
+            variant="glass"
+            padding="lg"
+            className="flex flex-col justify-between space-y-6 border border-border/40 bg-surface/30 backdrop-blur-md relative overflow-hidden group hover:border-accent/40 transition-all duration-300"
+          >
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="p-3 rounded-2xl bg-accent/10 text-accent">
+                  <Terminal size={28} />
+                </div>
+                <Badge variant="accent" className="text-xs font-semibold">
+                  Universal Linux
+                </Badge>
+              </div>
+
+              <div>
+                <h2 className="text-xl font-bold text-text-primary m-0">
+                  Linux Desktop
+                </h2>
+                <p className="text-xs text-text-secondary mt-1 m-0">
+                  Universal shell script auto-detects `apt`, `dnf`, or AppImage
+                  fallback on Ubuntu, Debian, Fedora, Arch & more.
+                </p>
+              </div>
+
+              {/* Terminal Install Command */}
+              <div className="space-y-2 pt-2">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+                  Quick Install Command
+                </span>
+                <TerminalSnippet code="curl -fsSL https://raw.githubusercontent.com/sythoria/sythoria-desktop/main/install.sh | bash" />
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-border/30 text-xs text-text-muted space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span>Terminal Install:</span>
+                <span className="font-mono text-[11px] text-accent truncate">
+                  install.sh | bash
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Package Formats:</span>
+                <span className="font-mono text-text-secondary">
+                  .deb, .rpm, .AppImage
+                </span>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* ALL RELEASE ASSETS LIST */}
+        <section className="space-y-6 pt-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/40 pb-4">
+            <div>
+              <h2 className="text-2xl font-bold text-text-primary m-0 flex items-center gap-2">
+                <FileCode size={22} className="text-accent" />
+                All Release Artifacts ({versionTag})
+              </h2>
+              <p className="text-xs text-text-secondary mt-1 m-0">
+                Direct download links for binaries, signatures, and source code
+                directly from GitHub.
+              </p>
+            </div>
+
+            <a
+              href={releaseUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs text-accent hover:text-accent-hover font-semibold transition-colors shrink-0"
+            >
+              <span>View GitHub Release</span>
+              <ExternalLink size={14} />
+            </a>
+          </div>
+
+          <Card
+            variant="glass"
+            padding="none"
+            className="overflow-hidden border border-border/40 bg-surface/30 backdrop-blur-md"
+          >
+            <div className="divide-y divide-border/30">
+              {assets.map((asset) => (
+                <div
+                  key={asset.name}
+                  className="flex items-center justify-between p-4 hover:bg-hover/30 transition-colors"
+                >
+                  <div className="min-w-0 pr-4">
+                    <span className="block text-sm font-semibold text-text-primary truncate">
+                      {asset.name}
+                    </span>
+                    <span className="text-xs text-text-muted font-mono">
+                      {formatBytes(asset.size)}
+                    </span>
+                  </div>
+
+                  <a
+                    href={asset.browser_download_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface border border-border/50 text-text-primary hover:text-accent hover:border-accent/40 transition-all shrink-0"
+                  >
+                    <span>Download</span>
+                    <ChevronRight size={14} />
+                  </a>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </section>
+
+        {/* GUIDANCE & DOCUMENTATION LINK */}
+        <section className="rounded-2xl border border-border/40 bg-surface/20 p-8 text-center space-y-4">
+          <h3 className="text-lg font-bold text-text-primary m-0">
+            Need help installing or setting up your API keys?
+          </h3>
+          <p className="text-sm text-text-secondary max-w-xl mx-auto m-0">
+            Check out our comprehensive Quickstart guide for step-by-step setup
+            instructions, provider configurations, and security verification.
+          </p>
+          <div>
+            <Button href="/docs/getting-started" variant="secondary" size="md">
+              Read Quickstart Documentation
+            </Button>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </div>
+  );
+}
