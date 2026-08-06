@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Moon, Sun, Download, Home } from "lucide-react";
 import DocsSearch from "./Search";
-import { GITHUB_LATEST_RELEASE_URL } from "@/lib/site-config";
 import { useTheme } from "@/hooks/useTheme";
 import { useScrolled } from "@/hooks/useScrolled";
 
@@ -78,15 +77,13 @@ export default function DocsTopBar() {
               <span>Home</span>
             </Link>
 
-            <a
-              href={GITHUB_LATEST_RELEASE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/downloads"
               className="hidden md:inline-flex items-center gap-1.5 px-4 py-1.5 bg-text-primary text-surface rounded-full text-xs font-semibold shadow-sm transition-all duration-300 ease-out hover:scale-[1.04] hover:shadow-md hover:shadow-accent/20 active:scale-[0.97] group select-none relative overflow-hidden"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Download</span>
-            </a>
+            </Link>
           </div>
         </div>
       </nav>
