@@ -11,11 +11,7 @@ import {
 } from "lucide-react";
 import { getReleaseFeed } from "@/lib/changelog";
 import { formatBytes, formatDate } from "@/utils/formatters";
-import {
-  GITHUB_RELEASES_URL,
-  GITHUB_REPOSITORY_URL,
-  SITE_URL,
-} from "@/lib/site-config";
+import { GITHUB_RELEASES_URL, GITHUB_REPOSITORY_URL } from "@/lib/site-config";
 import Navbar from "@/components/marketing/Navbar";
 import Footer from "@/components/marketing/Footer";
 import Card from "@/components/ui/Card";
@@ -34,17 +30,18 @@ export const metadata: Metadata = {
     title: "Download Sythoria Desktop",
     description:
       "Get Sythoria Desktop for Windows, macOS, and Linux. Connect your own API keys with zero telemetry.",
-    url: `${SITE_URL}/downloads`,
   },
 };
+
+export const revalidate = 60;
 
 export default async function DownloadsPage() {
   const feed = await getReleaseFeed();
   const latestRelease = feed.releases[0];
-  const versionTag = latestRelease?.tag_name ?? "v0.4.2";
+  const versionTag = latestRelease?.tag_name ?? "v0.4.3";
   const releaseDate = latestRelease?.published_at
     ? formatDate(latestRelease.published_at)
-    : "August 2, 2026";
+    : "August 6, 2026";
   const releaseUrl = latestRelease?.html_url ?? GITHUB_RELEASES_URL;
 
   // Filter assets by OS platform
@@ -61,13 +58,13 @@ export default async function DownloadsPage() {
 
   const defaultWinSetupUrl =
     windowsSetup?.browser_download_url ??
-    `${GITHUB_REPOSITORY_URL}/releases/download/${versionTag}/Sythoria_0.4.2_x64-setup.exe`;
+    `${GITHUB_REPOSITORY_URL}/releases/download/${versionTag}/Sythoria_0.4.3_x64-setup.exe`;
   const defaultWinPortableUrl =
     windowsPortable?.browser_download_url ??
     `${GITHUB_REPOSITORY_URL}/releases/download/${versionTag}/sythoria_windows_x64.exe`;
   const defaultMacUrl =
     macDmg?.browser_download_url ??
-    `${GITHUB_REPOSITORY_URL}/releases/download/${versionTag}/Sythoria_0.4.2_aarch64.dmg`;
+    `${GITHUB_REPOSITORY_URL}/releases/download/${versionTag}/Sythoria_0.4.3_aarch64.dmg`;
 
   return (
     <div className="min-h-screen bg-landing-bg text-text-primary selection:bg-accent/30 flex flex-col justify-between">
