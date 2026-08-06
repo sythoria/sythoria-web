@@ -1,7 +1,7 @@
 {
-  "version": "v0.4.2",
-  "sourceRevision": "423cf87e5bfa33490ebeb308db78e5f2637f9957",
-  "verifiedAt": "2026-08-02",
+  "version": "v0.4.3",
+  "sourceRevision": "3ec042a76f3935dd19f27d6224ced84bb97a0ba8",
+  "verifiedAt": "2026-08-06",
   "platforms": {
     "windows": {
       "label": "Windows 10/11",
