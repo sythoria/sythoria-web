@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import {
   ArrowLeft,
   ChevronRight,
@@ -16,32 +17,23 @@ import CustomBlockquote from "@/components/docs/CustomBlockquote";
 import type { GitHubRelease, ReleaseFeed } from "@/lib/changelog";
 import { GITHUB_RELEASES_URL } from "@/lib/site-config";
 
-export function formatBytes(bytes: number, decimals = 1): string {
-  if (!Number.isFinite(bytes) || bytes <= 0) return "";
-  const units = ["Bytes", "KB", "MB", "GB", "TB"];
-  const unitIndex = Math.min(
-    Math.floor(Math.log(bytes) / Math.log(1024)),
-    units.length - 1
-  );
-  const value = bytes / 1024 ** unitIndex;
-  return `${value.toFixed(Math.max(0, decimals)).replace(/\.0$/, "")} ${units[unitIndex]}`;
-}
+import { formatBytes, formatDate } from "@/utils/formatters";
+export { formatBytes, formatDate };
 
-export function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  if (Number.isNaN(date.getTime())) return dateString;
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    timeZone: "UTC",
-  });
-}
-
-function getAssetPlatform(filename: string): string {
+export function getAssetPlatform(filename: string): string {
   const name = filename.toLowerCase();
   if (name.endsWith(".dmg") || name.includes("aarch64.app")) return "macOS";
-  if (name.endsWith(".exe") || name.endsWith(".msi")) return "Windows";
+  if (name.endsWith(".exe") || name.endsWith(".msi") || name.endsWith(".zip")) {
+    if (name.includes("setup")) return "Windows (Setup)";
+    if (
+      name.includes("portable") ||
+      name.includes("windows") ||
+      name.includes("win")
+    ) {
+      return "Windows (Portable)";
+    }
+    return "Windows";
+  }
   if (
     name.endsWith(".appimage") ||
     name.endsWith(".deb") ||
@@ -107,10 +99,12 @@ function ReleaseNotes({ body }: { body: string }) {
   );
 }
 
+type Filter = "all" | "stable" | "prerelease";
+
 interface ChangelogFeedProps {
   feed: ReleaseFeed;
   query: string;
-  filter: "all" | "stable" | "prerelease";
+  filter: Filter;
 }
 
 export default function ChangelogFeed({
@@ -118,9 +112,7 @@ export default function ChangelogFeed({
   query: initialQuery,
   filter: initialFilter,
 }: ChangelogFeedProps) {
-  const [activeFilter, setActiveFilter] = useState<
-    "all" | "stable" | "prerelease"
-  >(initialFilter);
+  const [activeFilter, setActiveFilter] = useState<Filter>(initialFilter);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [selectedRelease, setSelectedRelease] = useState<GitHubRelease | null>(
     null
@@ -274,40 +266,35 @@ export default function ChangelogFeed({
       {/* Filter Tabs & Search Bar (Screenshot 1) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/40 pb-6">
         {/* Category Pills (All, Releases, Pre-releases) */}
-        <div className="inline-flex items-center gap-1 p-1 bg-surface/60 border border-border/40 rounded-xl backdrop-blur-md">
-          <button
-            type="button"
-            onClick={() => setActiveFilter("all")}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
-              activeFilter === "all"
-                ? "bg-surface-elevated text-text-primary shadow-sm border border-border/50"
-                : "text-text-muted hover:text-text-primary"
-            }`}
-          >
-            All
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveFilter("stable")}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
-              activeFilter === "stable"
-                ? "bg-surface-elevated text-text-primary shadow-sm border border-border/50"
-                : "text-text-muted hover:text-text-primary"
-            }`}
-          >
-            Releases
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveFilter("prerelease")}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
-              activeFilter === "prerelease"
-                ? "bg-surface-elevated text-text-primary shadow-sm border border-border/50"
-                : "text-text-muted hover:text-text-primary"
-            }`}
-          >
-            Pre-releases
-          </button>
+        <div className="inline-flex items-center gap-1 p-1 bg-surface/60 border border-border/40 rounded-xl backdrop-blur-md relative select-none">
+          {[
+            { id: "all", label: "All" },
+            { id: "stable", label: "Releases" },
+            { id: "prerelease", label: "Pre-releases" },
+          ].map((tab) => {
+            const isActive = activeFilter === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveFilter(tab.id as Filter)}
+                className={`relative px-4 py-1.5 rounded-lg text-sm font-medium transition-colors z-10 cursor-pointer ${
+                  isActive
+                    ? "text-text-primary font-semibold"
+                    : "text-text-muted hover:text-text-primary"
+                }`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeChangelogTab"
+                    className="absolute inset-0 bg-surface-elevated rounded-lg shadow-sm border border-border/50 -z-10"
+                    transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                  />
+                )}
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
 
         {/* Search input */}
