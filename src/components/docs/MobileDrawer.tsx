@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Menu, X, Home, Sparkles, Download } from "lucide-react";
 import { useDialogFocus } from "@/hooks/useDialogFocus";
-import { GITHUB_LATEST_RELEASE_URL } from "@/lib/site-config";
 import DocsSidebar from "./Sidebar";
 
 export default function DocsMobileDrawer() {
@@ -102,16 +101,14 @@ export default function DocsMobileDrawer() {
                   <Sparkles size={16} className="text-text-muted" />
                   <span>Changelog</span>
                 </Link>
-                <a
-                  href={GITHUB_LATEST_RELEASE_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/downloads"
                   onClick={close}
                   className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-hover transition-colors"
                 >
                   <Download size={16} className="text-text-muted" />
-                  <span>Download App</span>
-                </a>
+                  <span>Download Desktop</span>
+                </Link>
               </div>
 
               <DocsSidebar onItemClick={close} minimal />
