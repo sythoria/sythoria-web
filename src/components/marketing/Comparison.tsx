@@ -152,7 +152,7 @@ export default function Comparison() {
                   scope="col"
                   className="w-5/12 border-x border-border/40 bg-accent-soft px-6 py-5 text-sm font-bold text-text-primary"
                 >
-                  Sythoria v0.4.2
+                  Sythoria v0.4.3
                 </th>
                 <th
                   scope="col"
