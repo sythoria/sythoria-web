@@ -37,7 +37,8 @@ function PrivacyVisualization() {
               key={i}
               className="absolute top-0 -translate-y-1/2 w-2 h-2 rounded-full bg-[#8E9DCC] shadow-[0_0_8px_#8E9DCC]"
               style={{
-                animation: "data-flow-responsive 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite",
+                animation:
+                  "data-flow-responsive 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite",
                 animationDelay: `${i * 0.55}s`,
               }}
             />
