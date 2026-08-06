@@ -6,10 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import DocsSearch from "@/components/docs/Search";
-import {
-  GITHUB_LATEST_RELEASE_URL,
-  GITHUB_REPOSITORY_URL,
-} from "@/lib/site-config";
+import { GITHUB_REPOSITORY_URL } from "@/lib/site-config";
 import { useTheme } from "@/hooks/useTheme";
 import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { useScrolled } from "@/hooks/useScrolled";
@@ -119,15 +116,13 @@ export default function Navbar() {
               </button>
 
               {/* Desktop download app */}
-              <a
-                href={GITHUB_LATEST_RELEASE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/downloads"
                 className="hidden md:inline-flex items-center gap-1.5 px-4 py-1.5 bg-text-primary text-surface rounded-full text-xs font-semibold shadow-sm transition-all duration-300 ease-out hover:scale-[1.04] hover:shadow-md hover:shadow-accent/20 active:scale-[0.97] group select-none relative overflow-hidden"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Download</span>
-              </a>
+              </Link>
 
               {/* Mobile hamburger */}
               <button
@@ -192,15 +187,13 @@ export default function Navbar() {
             >
               GitHub
             </a>
-            <a
-              href={GITHUB_LATEST_RELEASE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/downloads"
               onClick={closeMobile}
               className="mobile-nav-link"
             >
               Download
-            </a>
+            </Link>
           </nav>
         </div>
       )}
