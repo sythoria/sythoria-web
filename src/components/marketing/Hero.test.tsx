@@ -39,12 +39,10 @@ describe("Hero", () => {
 
   it("renders download button with formatted version string", () => {
     render(<Hero latestVersion="v1.2.0" />);
-    const downloadBtn = screen.getByText(/Download Desktop v1\.2\.0/i);
+    const downloadBtn = screen.getByText("Download Desktop");
     expect(downloadBtn).toBeInTheDocument();
-    expect(downloadBtn.closest("a")).toHaveAttribute(
-      "href",
-      "https://github.com/sythoria/sythoria-desktop/releases/latest"
-    );
+    expect(screen.getByText("v1.2.0")).toBeInTheDocument();
+    expect(downloadBtn.closest("a")).toHaveAttribute("href", "/downloads");
   });
 
   it("renders download button without version when latestVersion is null", () => {
