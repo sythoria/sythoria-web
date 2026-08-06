@@ -36,7 +36,9 @@ export default function InteractiveGlowSphere() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const shouldReduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const shouldReduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
     const canvas = canvasRef.current;
     const container = containerRef.current;
     const context = canvas?.getContext("2d");
