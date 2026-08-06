@@ -5,7 +5,7 @@
   "platforms": {
     "windows": {
       "label": "Windows 10/11",
-      "architectures": ["x64"],
+      "architectures": ["x64 Setup", "x64 Portable"],
       "assetSuffix": "x64-setup.exe"
     },
     "macos": {
@@ -27,22 +27,22 @@
     "openai": {
       "label": "OpenAI",
       "apiBase": "https://api.openai.com/v1/chat/completions",
-      "defaultModel": "gpt-4o"
+      "defaultModel": "gpt-5.6-sol"
     },
     "gemini": {
       "label": "Google Gemini",
       "apiBase": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
-      "defaultModel": "gemini-2.5-pro"
+      "defaultModel": "gemini-3.1-pro"
     },
     "anthropic": {
       "label": "Anthropic",
       "apiBase": "https://api.anthropic.com/v1/messages",
-      "defaultModel": "claude-opus-4-8"
+      "defaultModel": "claude-opus-5"
     },
     "ollama": {
       "label": "Ollama (Local)",
       "apiBase": "http://localhost:11434/v1/chat/completions",
-      "defaultModel": "llama3.1"
+      "defaultModel": "deepseek-r1:7b"
     },
     "nim": {
       "label": "NVIDIA NIM",
@@ -52,7 +52,7 @@
     "openrouter": {
       "label": "OpenRouter",
       "apiBase": "https://openrouter.ai/api/v1/chat/completions",
-      "defaultModel": "anthropic/claude-3.5-sonnet"
+      "defaultModel": "anthropic/claude-sonnet-5"
     }
   }
 }
