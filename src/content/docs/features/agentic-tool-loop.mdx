@@ -1,7 +1,7 @@
 ---
 title: Agentic Tool Loop
 description: How Sythoria plans and runs approved tools inside an isolated project workspace.
-lastVerifiedVersion: v0.4.2
+lastVerifiedVersion: v0.4.3
 lastVerifiedDate: 2026-08-02
 source: sythoria-desktop project_tools.rs and agent tool loop
 ---
@@ -16,7 +16,7 @@ Agentic mode allows a model to propose multiple tool calls while working on a re
 
 A model-generated terminal command is still an arbitrary command. It can modify files, start processes, access credentials available to your user account, or send data over the network. Read the command and its working directory before approving it.
 
-Sythoria v0.4.2 adds workspace-boundary and symlink checks to native project tools, but those checks do not make every command harmless. A shell launched inside a workspace can still invoke programs with broader permissions.
+Sythoria v0.4.3 adds workspace-boundary and symlink checks to native project tools, but those checks do not make every command harmless. A shell launched inside a workspace can still invoke programs with broader permissions.
 
 ## Safer workflow
 
