@@ -46,10 +46,7 @@ describe("DocsTopBar", () => {
     render(<DocsTopBar />);
     const downloadLink = screen.getByText("Download");
     expect(downloadLink).toBeInTheDocument();
-    expect(downloadLink.closest("a")).toHaveAttribute(
-      "href",
-      "https://github.com/sythoria/sythoria-desktop/releases/latest"
-    );
+    expect(downloadLink.closest("a")).toHaveAttribute("href", "/downloads");
   });
 
   it("renders the theme toggle button", () => {
