@@ -32,6 +32,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     },
+    {
+      url: `${SITE_URL}/downloads`,
+      lastModified: verifiedAt,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
     ...docs,
   ];
 }
