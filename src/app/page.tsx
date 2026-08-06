@@ -8,6 +8,8 @@ import SpatialCanvas from "@/components/marketing/SpatialCanvas";
 import RefractiveBackground from "@/components/marketing/RefractiveBackground";
 import { getLatestVersion } from "@/lib/changelog";
 
+export const revalidate = 60;
+
 export default async function LandingPage() {
   const latestVersion = await getLatestVersion();
 
