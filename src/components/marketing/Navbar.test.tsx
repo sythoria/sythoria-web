@@ -48,6 +48,7 @@ describe("Navbar", () => {
     const buttons = screen.getAllByText("Download");
     expect(buttons.length).toBeGreaterThan(0);
     expect(buttons[0]).toBeInTheDocument();
+    expect(buttons[0].closest("a")).toHaveAttribute("href", "/downloads");
   });
 
   it("renders the theme toggle button", () => {
