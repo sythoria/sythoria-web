@@ -1,7 +1,7 @@
 ---
 title: Privacy & Security
 description: Understand how Sythoria stores local data and when configured services receive data.
-lastVerifiedVersion: v0.4.2
+lastVerifiedVersion: v0.4.3
 lastVerifiedDate: 2026-08-02
 source: sythoria-desktop secure_storage.rs config.rs and README.md
 ---
@@ -25,7 +25,7 @@ Review the privacy, retention, training, billing, and regional terms of every se
 
 ## Local storage
 
-The audited v0.4.2 source uses these local mechanisms:
+The audited v0.4.3 source uses these local mechanisms:
 
 - **API keys and secret values:** stored through the operating system keychain backend.
 - **Provider configuration, preferences, projects, and related domain state:** stored in domain-separated AES-256-GCM encrypted files. The master key is held through the operating system keychain.
@@ -42,7 +42,7 @@ Local-network access should stay disabled unless you intentionally connect to a 
 
 ## Logs and error messages
 
-The v0.4.2 native log plugin is configured at warning level and targets standard output. The interface also maintains a bounded in-memory log view. The release includes secret-redaction work, but redaction is defense in depth—not permission to publish raw diagnostics.
+The v0.4.3 native log plugin is configured at warning level and targets standard output. The interface also maintains a bounded in-memory log view. The release includes secret-redaction work, but redaction is defense in depth—not permission to publish raw diagnostics.
 
 Before sharing a log or screenshot, remove:
 
