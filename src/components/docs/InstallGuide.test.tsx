@@ -46,10 +46,17 @@ describe("InstallGuide", () => {
 
     // Checks header
     expect(screen.getByText("Windows Desktop")).toBeInTheDocument();
-    // Checks button text
-    expect(screen.getByText("Windows x64 (.exe)")).toBeInTheDocument();
+    // Checks button text for both setup and portable
+    expect(
+      screen.getAllByText("Setup Installer (.exe)").length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("Portable Version (.exe)").length
+    ).toBeGreaterThan(0);
     // Checks steps specific text
-    expect(screen.getByText("Download the executable")).toBeInTheDocument();
+    expect(
+      screen.getByText("Choose your installation package")
+    ).toBeInTheDocument();
   });
 
   it("defaults to macOS tab when user agent is macOS", () => {
@@ -79,7 +86,9 @@ describe("InstallGuide", () => {
       screen.getByText("Run the universal installer command")
     ).toBeInTheDocument();
     expect(
-      screen.getByText("curl -fsSL https://raw.githubusercontent.com/sythoria/sythoria-desktop/main/install.sh | bash")
+      screen.getByText(
+        "curl -fsSL https://raw.githubusercontent.com/sythoria/sythoria-desktop/main/install.sh | bash"
+      )
     ).toBeInTheDocument();
   });
 
