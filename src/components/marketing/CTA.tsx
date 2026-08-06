@@ -4,10 +4,7 @@ import { useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui";
 import { useScrollInView } from "@/hooks/useScrollInView";
-import {
-  GITHUB_LATEST_RELEASE_URL,
-  GITHUB_REPOSITORY_URL,
-} from "@/lib/site-config";
+import { GITHUB_REPOSITORY_URL } from "@/lib/site-config";
 
 function GithubIcon({ size = 18 }: { size?: number }) {
   return (
@@ -82,9 +79,7 @@ export default function CTA() {
           <Button
             variant="primary"
             size="xl"
-            href={GITHUB_LATEST_RELEASE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/downloads"
             iconRight={<ArrowRight size={18} strokeWidth={1.5} />}
           >
             Download Desktop App
