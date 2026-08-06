@@ -3,7 +3,6 @@
 import { useRef, useEffect, useState } from "react";
 import { Download, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { GITHUB_LATEST_RELEASE_URL } from "@/lib/site-config";
 import { useTheme } from "@/hooks/useTheme";
 
 /* ────────────────────────────────────────── */
@@ -207,9 +206,7 @@ export default function Hero({
               />
 
               <motion.a
-                href={GITHUB_LATEST_RELEASE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/downloads"
                 whileHover={{ scale: 1.04, y: -4 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 350, damping: 22 }}
