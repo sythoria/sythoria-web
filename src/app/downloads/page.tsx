@@ -1,23 +1,13 @@
 import type { Metadata } from "next";
-import {
-  Monitor,
-  Apple,
-  Terminal,
-  Download,
-  ExternalLink,
-  ChevronRight,
-  Sparkles,
-  FileCode,
-} from "lucide-react";
+import { ExternalLink, ChevronRight, Sparkles, FileCode } from "lucide-react";
 import { getReleaseFeed } from "@/lib/changelog";
 import { formatBytes, formatDate } from "@/utils/formatters";
 import { GITHUB_RELEASES_URL, GITHUB_REPOSITORY_URL } from "@/lib/site-config";
 import Navbar from "@/components/marketing/Navbar";
 import Footer from "@/components/marketing/Footer";
 import Card from "@/components/ui/Card";
-import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
-import TerminalSnippet from "@/components/ui/TerminalSnippet";
+import DownloadCards from "@/components/marketing/DownloadCards";
 
 export const metadata: Metadata = {
   title: "Download Sythoria Desktop | Official Downloads",
@@ -96,188 +86,14 @@ export default async function DownloadsPage() {
 
       {/* Main Download Cards Grid */}
       <main className="relative z-10 max-w-6xl mx-auto px-6 pb-20 space-y-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* WINDOWS CARD */}
-          <Card
-            variant="glass"
-            padding="lg"
-            className="flex flex-col justify-between space-y-6 border border-border/40 bg-surface/30 backdrop-blur-md relative overflow-hidden group hover:border-accent/40 transition-all duration-300"
-          >
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="p-3 rounded-2xl bg-accent/10 text-accent">
-                  <Monitor size={28} />
-                </div>
-                <Badge variant="accent" className="text-xs font-semibold">
-                  Windows 10/11
-                </Badge>
-              </div>
-
-              <div>
-                <h2 className="text-xl font-bold text-text-primary m-0">
-                  Windows (x64)
-                </h2>
-                <p className="text-xs text-text-secondary mt-1 m-0">
-                  Available in standard <strong>Setup Installer</strong> or
-                  portable zero-install <strong>Executable</strong>.
-                </p>
-              </div>
-
-              {/* Windows Action Buttons */}
-              <div className="space-y-2.5 pt-2">
-                <Button
-                  href={defaultWinSetupUrl}
-                  variant="primary"
-                  fullWidth
-                  size="md"
-                  icon={<Download size={16} />}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Setup Installer (.exe)
-                </Button>
-
-                <Button
-                  href={defaultWinPortableUrl}
-                  variant="secondary"
-                  fullWidth
-                  size="md"
-                  icon={<Download size={16} />}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Portable Version (.exe)
-                </Button>
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-border/30 text-xs text-text-muted space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span>Setup Installer:</span>
-                <span className="font-mono text-text-secondary">
-                  {windowsSetup ? formatBytes(windowsSetup.size) : "11.5 MB"}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Portable Version:</span>
-                <span className="font-mono text-text-secondary">
-                  {windowsPortable
-                    ? formatBytes(windowsPortable.size)
-                    : "22.9 MB"}
-                </span>
-              </div>
-            </div>
-          </Card>
-
-          {/* MACOS CARD */}
-          <Card
-            variant="glass"
-            padding="lg"
-            className="flex flex-col justify-between space-y-6 border border-border/40 bg-surface/30 backdrop-blur-md relative overflow-hidden group hover:border-accent/40 transition-all duration-300"
-          >
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="p-3 rounded-2xl bg-accent/10 text-accent">
-                  <Apple size={28} />
-                </div>
-                <Badge variant="accent" className="text-xs font-semibold">
-                  macOS 12+
-                </Badge>
-              </div>
-
-              <div>
-                <h2 className="text-xl font-bold text-text-primary m-0">
-                  macOS (Apple Silicon)
-                </h2>
-                <p className="text-xs text-text-secondary mt-1 m-0">
-                  Native arm64 disk image package (`.dmg`) built for Apple M1,
-                  M2, M3, M4 & M5 chips.
-                </p>
-              </div>
-
-              {/* macOS Action Button */}
-              <div className="pt-2">
-                <Button
-                  href={defaultMacUrl}
-                  variant="primary"
-                  fullWidth
-                  size="md"
-                  icon={<Download size={16} />}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Download macOS (.dmg)
-                </Button>
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-border/30 text-xs text-text-muted space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span>Architecture:</span>
-                <span className="font-mono text-text-secondary">
-                  Apple Silicon (arm64)
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Disk Image Size:</span>
-                <span className="font-mono text-text-secondary">
-                  {macDmg ? formatBytes(macDmg.size) : "13.3 MB"}
-                </span>
-              </div>
-            </div>
-          </Card>
-
-          {/* LINUX CARD */}
-          <Card
-            variant="glass"
-            padding="lg"
-            className="flex flex-col justify-between space-y-6 border border-border/40 bg-surface/30 backdrop-blur-md relative overflow-hidden group hover:border-accent/40 transition-all duration-300"
-          >
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="p-3 rounded-2xl bg-accent/10 text-accent">
-                  <Terminal size={28} />
-                </div>
-                <Badge variant="accent" className="text-xs font-semibold">
-                  Universal Linux
-                </Badge>
-              </div>
-
-              <div>
-                <h2 className="text-xl font-bold text-text-primary m-0">
-                  Linux Desktop
-                </h2>
-                <p className="text-xs text-text-secondary mt-1 m-0">
-                  Universal shell script auto-detects `apt`, `dnf`, or AppImage
-                  fallback on Ubuntu, Debian, Fedora, Arch & more.
-                </p>
-              </div>
-
-              {/* Terminal Install Command */}
-              <div className="space-y-2 pt-2">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
-                  Quick Install Command
-                </span>
-                <TerminalSnippet code="curl -fsSL https://raw.githubusercontent.com/sythoria/sythoria-desktop/main/install.sh | bash" />
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-border/30 text-xs text-text-muted space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span>Terminal Install:</span>
-                <span className="font-mono text-[11px] text-accent truncate">
-                  install.sh | bash
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Package Formats:</span>
-                <span className="font-mono text-text-secondary">
-                  .deb, .rpm, .AppImage
-                </span>
-              </div>
-            </div>
-          </Card>
-        </div>
+        <DownloadCards
+          defaultWinSetupUrl={defaultWinSetupUrl}
+          defaultWinPortableUrl={defaultWinPortableUrl}
+          defaultMacUrl={defaultMacUrl}
+          windowsSetupSize={windowsSetup?.size}
+          windowsPortableSize={windowsPortable?.size}
+          macDmgSize={macDmg?.size}
+        />
 
         {/* ALL RELEASE ASSETS LIST */}
         <section className="space-y-6 pt-6">
