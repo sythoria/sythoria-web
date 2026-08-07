@@ -17,3 +17,10 @@ export const DESKTOP_FACTS_VERIFIED_AT = desktopFacts.verifiedAt;
 export const DESKTOP_PLATFORMS = desktopFacts.platforms;
 export const DESKTOP_SHORTCUTS = desktopFacts.shortcuts;
 export const PROVIDER_PRESETS = desktopFacts.providers;
+
+export const DESKTOP_DOWNLOAD_URLS = {
+  windowsSetup: `${GITHUB_REPOSITORY_URL}/releases/download/${DESKTOP_VERSION}/Sythoria_${DESKTOP_VERSION.replace(/^v/, "")}_x64-setup.exe`,
+  windowsPortable: `${GITHUB_REPOSITORY_URL}/releases/download/${DESKTOP_VERSION}/sythoria_windows_x64.exe`,
+  macDmg: `${GITHUB_REPOSITORY_URL}/releases/download/${DESKTOP_VERSION}/Sythoria_${DESKTOP_VERSION.replace(/^v/, "")}_aarch64.dmg`,
+  linuxScript: `https://raw.githubusercontent.com/sythoria/sythoria-desktop/main/install.sh`,
+};
