@@ -99,7 +99,7 @@ test("production responses expose discovery and security policy", async ({
   expect(headers["x-frame-options"]).toBe("DENY");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    "https://sythoria.app"
+    "https://sythoria.com"
   );
 
   for (const route of [
