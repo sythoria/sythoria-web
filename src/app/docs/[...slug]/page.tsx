@@ -9,9 +9,6 @@ import { getDocMeta, getAdjacentDocs, getAllDocSlugs } from "@/lib/docs-nav";
 import InstallGuide from "@/components/docs/InstallGuide";
 import CustomBlockquote from "@/components/docs/CustomBlockquote";
 import StreamingFlowDiagram from "@/components/docs/StreamingFlowDiagram";
-import AgenticLoopDiagram from "@/components/docs/AgenticLoopDiagram";
-import VoiceTranscriptionFlow from "@/components/docs/VoiceTranscriptionFlow";
-import DirectRequestFlow from "@/components/docs/DirectRequestFlow";
 import { DocHeading } from "@/components/docs/DocHeading";
 import { CodeBlock } from "@/components/docs/CodeBlock";
 
@@ -108,9 +105,6 @@ export default async function DocPage({
             ),
             pre: CodeBlock,
             StreamingFlowDiagram,
-            AgenticLoopDiagram,
-            VoiceTranscriptionFlow,
-            DirectRequestFlow,
           }}
         />
       </div>
