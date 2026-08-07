@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import InstallGuide from "./InstallGuide";
+import { DESKTOP_DOWNLOAD_URLS } from "@/lib/site-config";
 
 describe("InstallGuide", () => {
   const originalUserAgent = navigator.userAgent;
@@ -46,13 +47,23 @@ describe("InstallGuide", () => {
 
     // Checks header
     expect(screen.getByText("Windows Desktop")).toBeInTheDocument();
-    // Checks button text for both setup and portable
-    expect(
-      screen.getAllByText("Setup Installer (.exe)").length
-    ).toBeGreaterThan(0);
-    expect(
-      screen.getAllByText("Portable Version (.exe)").length
-    ).toBeGreaterThan(0);
+    // Checks button text for both setup and portable and their direct download URLs
+    const setupBtn = screen
+      .getAllByText("Setup Installer (.exe)")[0]
+      .closest("a");
+    expect(setupBtn).toHaveAttribute(
+      "href",
+      DESKTOP_DOWNLOAD_URLS.windowsSetup
+    );
+
+    const portableBtn = screen
+      .getAllByText("Portable Version (.exe)")[0]
+      .closest("a");
+    expect(portableBtn).toHaveAttribute(
+      "href",
+      DESKTOP_DOWNLOAD_URLS.windowsPortable
+    );
+
     // Checks steps specific text
     expect(
       screen.getByText("Choose your installation package")
@@ -69,7 +80,8 @@ describe("InstallGuide", () => {
     });
 
     expect(screen.getByText("macOS Desktop")).toBeInTheDocument();
-    expect(screen.getByText("macOS arm64 (.dmg)")).toBeInTheDocument();
+    const macBtn = screen.getByText("macOS arm64 (.dmg)").closest("a");
+    expect(macBtn).toHaveAttribute("href", DESKTOP_DOWNLOAD_URLS.macDmg);
     expect(screen.getByText("Download the disk image")).toBeInTheDocument();
   });
 
@@ -81,7 +93,8 @@ describe("InstallGuide", () => {
     });
 
     expect(screen.getByText("Linux Desktop")).toBeInTheDocument();
-    expect(screen.getByText("View GitHub Releases")).toBeInTheDocument();
+    const linuxBtn = screen.getByText("Download install.sh").closest("a");
+    expect(linuxBtn).toHaveAttribute("href", DESKTOP_DOWNLOAD_URLS.linuxScript);
     expect(
       screen.getByText("Run the universal installer command")
     ).toBeInTheDocument();
