@@ -6,10 +6,7 @@ import { Monitor, Apple, Terminal, Download } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
-import {
-  DESKTOP_PLATFORMS,
-  GITHUB_LATEST_RELEASE_URL,
-} from "@/lib/site-config";
+import { DESKTOP_PLATFORMS, DESKTOP_DOWNLOAD_URLS } from "@/lib/site-config";
 
 type OS = "windows" | "macos" | "linux";
 
@@ -141,40 +138,56 @@ export default function InstallGuide() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 md:self-center self-start">
-            {activeTab === "windows" ? (
+            {activeTab === "windows" && (
               <>
                 <Button
-                  href={GITHUB_LATEST_RELEASE_URL}
+                  href={DESKTOP_DOWNLOAD_URLS.windowsSetup}
                   variant="primary"
                   size="md"
                   icon={<Download size={15} />}
                   target="_blank"
                   rel="noopener noreferrer"
+                  download
                 >
                   Setup Installer (.exe)
                 </Button>
                 <Button
-                  href={GITHUB_LATEST_RELEASE_URL}
+                  href={DESKTOP_DOWNLOAD_URLS.windowsPortable}
                   variant="secondary"
                   size="md"
                   icon={<Download size={15} />}
                   target="_blank"
                   rel="noopener noreferrer"
+                  download
                 >
                   Portable Version (.exe)
                 </Button>
               </>
-            ) : (
+            )}
+            {activeTab === "macos" && (
               <Button
-                href={GITHUB_LATEST_RELEASE_URL}
+                href={DESKTOP_DOWNLOAD_URLS.macDmg}
                 variant="primary"
                 size="md"
                 icon={<Download size={15} />}
                 target="_blank"
                 rel="noopener noreferrer"
+                download
               >
-                {activeTab === "macos" && "macOS arm64 (.dmg)"}
-                {activeTab === "linux" && "View GitHub Releases"}
+                macOS arm64 (.dmg)
+              </Button>
+            )}
+            {activeTab === "linux" && (
+              <Button
+                href={DESKTOP_DOWNLOAD_URLS.linuxScript}
+                variant="primary"
+                size="md"
+                icon={<Download size={15} />}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+              >
+                Download install.sh
               </Button>
             )}
           </div>
