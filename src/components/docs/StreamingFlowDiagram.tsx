@@ -99,10 +99,10 @@ export default function StreamingFlowDiagram() {
           Blocking UI
         </h3>
 
-        <div className="w-full rounded-xl border border-border/40 bg-zinc-950 text-text-primary overflow-hidden shadow-lg">
+        <div className="w-full rounded-xl border border-border/40 bg-surface dark:bg-zinc-950 text-text-primary overflow-hidden shadow-md dark:shadow-lg">
           {/* Top Prompt Row */}
-          <div className="relative flex items-center justify-between p-4 bg-zinc-900/60">
-            <span className="text-sm text-zinc-100 font-normal pr-12 select-none">
+          <div className="relative flex items-center justify-between p-4 bg-hover/40 dark:bg-zinc-900/60 border-b border-border/30">
+            <span className="text-sm text-text-primary dark:text-zinc-100 font-medium pr-12 select-none">
               Come up with the first 200 characters of the first book in the
               Harry Potter series.
             </span>
@@ -111,7 +111,7 @@ export default function StreamingFlowDiagram() {
                 <button
                   type="button"
                   onClick={handleResetBlocking}
-                  className="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center transition-colors"
+                  className="w-8 h-8 rounded-lg bg-surface border border-border/50 hover:bg-hover text-text-secondary hover:text-text-primary dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:border-transparent dark:text-zinc-300 flex items-center justify-center transition-colors shadow-xs"
                   aria-label="Stop blocking request"
                 >
                   <Square size={14} className="fill-current" />
@@ -120,7 +120,7 @@ export default function StreamingFlowDiagram() {
                 <button
                   type="button"
                   onClick={handleStartBlocking}
-                  className="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center transition-colors"
+                  className="w-8 h-8 rounded-lg bg-surface border border-border/50 hover:bg-hover text-text-secondary hover:text-text-primary dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:border-transparent dark:text-zinc-300 flex items-center justify-center transition-colors shadow-xs"
                   aria-label="Start blocking request"
                 >
                   <Play size={14} className="fill-current ml-0.5" />
@@ -130,12 +130,12 @@ export default function StreamingFlowDiagram() {
           </div>
 
           {/* Bottom Response Area */}
-          <div className="p-4 border-t border-border/20 min-h-[90px] text-sm text-zinc-300 font-mono flex items-start bg-black/40">
+          <div className="p-4 min-h-[90px] text-sm text-text-secondary dark:text-zinc-300 font-mono flex items-start bg-hover/20 dark:bg-black/40">
             {blockingState === "idle" && (
-              <span className="text-zinc-500">...</span>
+              <span className="text-text-muted dark:text-zinc-500">...</span>
             )}
             {blockingState === "loading" && (
-              <div className="flex items-center gap-2 text-zinc-400">
+              <div className="flex items-center gap-2 text-text-muted dark:text-zinc-400">
                 <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
                 <span>Waiting for full response payload from provider...</span>
               </div>
@@ -155,10 +155,10 @@ export default function StreamingFlowDiagram() {
           Streaming UI
         </h3>
 
-        <div className="w-full rounded-xl border border-border/40 bg-zinc-950 text-text-primary overflow-hidden shadow-lg">
+        <div className="w-full rounded-xl border border-border/40 bg-surface dark:bg-zinc-950 text-text-primary overflow-hidden shadow-md dark:shadow-lg">
           {/* Top Prompt Row */}
-          <div className="relative flex items-center justify-between p-4 bg-zinc-900/60">
-            <span className="text-sm text-zinc-100 font-normal pr-12 select-none">
+          <div className="relative flex items-center justify-between p-4 bg-hover/40 dark:bg-zinc-900/60 border-b border-border/30">
+            <span className="text-sm text-text-primary dark:text-zinc-100 font-medium pr-12 select-none">
               Come up with the first 200 characters of the first book in the
               Harry Potter series.
             </span>
@@ -167,7 +167,7 @@ export default function StreamingFlowDiagram() {
                 <button
                   type="button"
                   onClick={() => setIsStreamingRunning(false)}
-                  className="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center transition-colors"
+                  className="w-8 h-8 rounded-lg bg-surface border border-border/50 hover:bg-hover text-text-secondary hover:text-text-primary dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:border-transparent dark:text-zinc-300 flex items-center justify-center transition-colors shadow-xs"
                   aria-label="Pause streaming request"
                 >
                   <Pause size={14} className="fill-current" />
@@ -176,7 +176,7 @@ export default function StreamingFlowDiagram() {
                 <button
                   type="button"
                   onClick={handleStartStreaming}
-                  className="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center transition-colors"
+                  className="w-8 h-8 rounded-lg bg-surface border border-border/50 hover:bg-hover text-text-secondary hover:text-text-primary dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:border-transparent dark:text-zinc-300 flex items-center justify-center transition-colors shadow-xs"
                   aria-label="Start streaming request"
                 >
                   <Play size={14} className="fill-current ml-0.5" />
@@ -186,9 +186,9 @@ export default function StreamingFlowDiagram() {
           </div>
 
           {/* Bottom Response Area */}
-          <div className="p-4 border-t border-border/20 min-h-[90px] text-sm text-zinc-300 font-mono flex items-start bg-black/40">
+          <div className="p-4 min-h-[90px] text-sm text-text-secondary dark:text-zinc-300 font-mono flex items-start bg-hover/20 dark:bg-black/40">
             {streamingIndex === 0 && !isStreamingRunning ? (
-              <span className="text-zinc-500">...</span>
+              <span className="text-text-muted dark:text-zinc-500">...</span>
             ) : (
               <span className="leading-relaxed">
                 {streamingText}
