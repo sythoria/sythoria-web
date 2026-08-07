@@ -8,9 +8,19 @@ source: sythoria-desktop project_tools.rs and agent tool loop
 
 # Agentic Tool Loop
 
-Agentic mode allows a model to propose multiple tool calls while working on a registered project. Tool output is returned to the model until the task completes, reaches the configured step limit, or you stop it.
+## Tool Loop Workflow
 
-<AgenticLoopDiagram />
+Sythoria Desktop executes an iterative, human-in-the-loop agentic workflow:
+
+1. **Context & Tool Assembly**: Sythoria compiles system prompts, workspace instructions (`AGENTS.md`), custom skills (`read_skill`), active MCP tools, and native project tools (`project_read`, `project_grep`, `project_edit`, `project_bash`) into provider-specific schemas with token budget optimization.
+2. **Model Reasoning & Tool Proposal**: The active LLM analyzes your prompt, streams its reasoning text, and outputs structured function calls with arguments.
+3. **Concurrency Scheduling & Security Gate**:
+   - Tool calls are categorized as **Read** or **Mutation** operations and scheduled via `scheduleToolExecution` to prevent file race conditions.
+   - **Read-Only** operations (`project_read`, `project_grep`, `project_glob`, `search_query`) execute automatically under read permissions.
+   - **File Mutations** (`project_edit`, `project_write`, `project_git_commit`) display an interactive diff viewer for human review and approval.
+   - **Shell Commands** (`project_bash`) and MCP tool calls trigger explicit consent prompts showing the exact command line string before execution.
+4. **Native Desktop Execution & Output Truncation**: Approved tools run locally inside Tauri's Rust backend environment. Output logs, file diffs, or subagent results are safety-truncated to prevent memory and context window overflow.
+5. **Iterative Continuation & Subagent Delegation**: Tool outputs are formatted into message objects and fed back into the context for the model's next reasoning cycle. The loop continues up to 25 iterations or until a final response is generated. Complex tasks can delegate parallel background subagents via `invoke_subagent`.
 
 ## Trust boundary
 
