@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     template: "%s | Sythoria",
   },
   description:
-    "Sythoria is a privacy-first, lightweight AI desktop client for local and hosted language models. Connect OpenAI, Anthropic, Ollama, Gemini, and custom endpoints with zero telemetry.",
+    "Sythoria is a privacy-first AI desktop client for local and hosted LLMs. Connect OpenAI, Anthropic, Ollama, and Gemini with zero telemetry.",
   applicationName: "Sythoria",
   keywords: [
     "Sythoria",
@@ -49,14 +49,14 @@ export const metadata: Metadata = {
     url: "/",
     title: "Sythoria – Privacy-First AI Desktop Client",
     description:
-      "Privacy-first, lightweight AI desktop client for local and hosted language models. Connect OpenAI, Anthropic, Ollama, Gemini, and custom endpoints with zero telemetry.",
+      "Privacy-first AI desktop client for local and hosted LLMs. Connect OpenAI, Anthropic, Ollama, and Gemini with zero telemetry.",
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Sythoria – Privacy-First AI Desktop Client",
     description:
-      "Privacy-first, lightweight AI desktop client for local and hosted language models. Connect OpenAI, Anthropic, Ollama, Gemini, and custom endpoints with zero telemetry.",
+      "Privacy-first AI desktop client for local and hosted LLMs. Connect OpenAI, Anthropic, Ollama, and Gemini with zero telemetry.",
     images: ["/opengraph-image"],
   },
   robots: {
