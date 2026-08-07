@@ -8,9 +8,14 @@ source: sythoria-desktop providerPresets.ts and useModelStore.ts
 
 # Multi-Provider Chat
 
-Sythoria can store several model configurations and lets you choose the active model before sending a message. Each request goes to the endpoint saved for that model; Sythoria does not proxy the request through a hosted Sythoria service.
+## Direct Request Architecture
 
-<DirectRequestFlow />
+Sythoria Desktop executes all AI provider interactions directly from your machine without any intermediary proxy servers:
+
+1. **Run Context Assembly**: When a message is sent, Sythoria builds an immutable run context combining your active model choice, system prompt, temperature, and attached tools or workspace instructions.
+2. **OS Keychain Secret Retrieval**: Provider API keys are fetched directly from your operating system's native credential vault (macOS Keychain, Windows Credential Manager, Linux Secret Service) into local memory for the request.
+3. **Direct Provider Connection**: Sythoria establishes a direct, encrypted HTTPS / Server-Sent Events (SSE) stream straight to the selected provider's endpoint (OpenAI, Anthropic, Gemini, NVIDIA NIM, OpenRouter, or local Ollama).
+4. **Zero Middleman Proxying**: Request payloads, API tokens, and streaming responses flow exclusively between your local desktop client and the target provider. Sythoria operates completely stateless with no intermediate servers or telemetry logging.
 
 ## Desktop v0.4.3 presets
 
