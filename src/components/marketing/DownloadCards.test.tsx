@@ -27,10 +27,8 @@ describe("DownloadCards", () => {
 
   const defaultProps = {
     defaultWinSetupUrl: "https://example.com/win-setup.exe",
-    defaultWinPortableUrl: "https://example.com/win-portable.exe",
     defaultMacUrl: "https://example.com/mac.dmg",
     windowsSetupSize: 12000000,
-    windowsPortableSize: 24000000,
     macDmgSize: 14000000,
   };
 
