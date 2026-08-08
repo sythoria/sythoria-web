@@ -12,19 +12,15 @@ type OS = "windows" | "macos" | "linux";
 
 interface DownloadCardsProps {
   defaultWinSetupUrl: string;
-  defaultWinPortableUrl: string;
   defaultMacUrl: string;
   windowsSetupSize?: number;
-  windowsPortableSize?: number;
   macDmgSize?: number;
 }
 
 export default function DownloadCards({
   defaultWinSetupUrl,
-  defaultWinPortableUrl,
   defaultMacUrl,
   windowsSetupSize,
-  windowsPortableSize,
   macDmgSize,
 }: DownloadCardsProps) {
   const [detectedOS, setDetectedOS] = useState<OS | null>(null);
@@ -56,7 +52,7 @@ export default function DownloadCards({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
       {/* WINDOWS CARD */}
       <Card
         variant="glass"
@@ -89,13 +85,13 @@ export default function DownloadCards({
               Windows (x64)
             </h2>
             <p className="text-xs text-text-secondary mt-1 m-0">
-              Available in standard <strong>Setup Installer</strong> or portable
-              zero-install <strong>Executable</strong>.
+              Available as a standard <strong>Setup Installer</strong> package
+              (`.exe`).
             </p>
           </div>
 
-          {/* Windows Action Buttons */}
-          <div className="space-y-2.5 pt-2">
+          {/* Windows Action Button */}
+          <div className="pt-2">
             <Button
               href={defaultWinSetupUrl}
               variant="primary"
@@ -106,37 +102,20 @@ export default function DownloadCards({
               rel="noopener noreferrer"
               download
             >
-              Setup Installer (.exe)
-            </Button>
-
-            <Button
-              href={defaultWinPortableUrl}
-              variant="secondary"
-              fullWidth
-              size="md"
-              icon={<Download size={16} />}
-              target="_blank"
-              rel="noopener noreferrer"
-              download
-            >
-              Portable Version (.exe)
+              Download Windows Setup (.exe)
             </Button>
           </div>
         </div>
 
         <div className="pt-4 border-t border-border/30 text-xs text-text-muted space-y-1.5">
           <div className="flex items-center justify-between">
-            <span>Setup Installer:</span>
-            <span className="font-mono text-text-secondary">
-              {windowsSetupSize ? formatBytes(windowsSetupSize) : "11.5 MB"}
-            </span>
+            <span>Architecture:</span>
+            <span className="font-mono text-text-secondary">x64</span>
           </div>
           <div className="flex items-center justify-between">
-            <span>Portable Version:</span>
+            <span>Installer Size:</span>
             <span className="font-mono text-text-secondary">
-              {windowsPortableSize
-                ? formatBytes(windowsPortableSize)
-                : "22.9 MB"}
+              {windowsSetupSize ? formatBytes(windowsSetupSize) : "11.5 MB"}
             </span>
           </div>
         </div>
@@ -170,8 +149,8 @@ export default function DownloadCards({
               macOS (Apple Silicon)
             </h2>
             <p className="text-xs text-text-secondary mt-1 m-0">
-              Native arm64 disk image package (`.dmg`) built for Apple M1, M2,
-              M3, M4 & M5 chips.
+              Native arm64 disk image package (`.dmg`) for Apple M1 through M5
+              chips.
             </p>
           </div>
 
@@ -236,25 +215,22 @@ export default function DownloadCards({
               Linux Desktop
             </h2>
             <p className="text-xs text-text-secondary mt-1 m-0">
-              Universal shell script auto-detects `apt`, `dnf`, or AppImage
-              fallback on Ubuntu, Debian, Fedora, Arch & more.
+              Universal script supporting Debian, Ubuntu, Fedora, Arch &
+              AppImage.
             </p>
           </div>
 
-          {/* Terminal Install Command */}
-          <div className="space-y-2 pt-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
-              Quick Install Command
-            </span>
+          {/* Terminal Install Snippet */}
+          <div className="pt-2">
             <TerminalSnippet code="curl -fsSL https://raw.githubusercontent.com/sythoria/sythoria-desktop/main/install.sh | bash" />
           </div>
         </div>
 
         <div className="pt-4 border-t border-border/30 text-xs text-text-muted space-y-1.5">
           <div className="flex items-center justify-between">
-            <span>Terminal Install:</span>
-            <span className="font-mono text-[11px] text-accent truncate">
-              install.sh | bash
+            <span>Architecture:</span>
+            <span className="font-mono text-text-secondary">
+              x86_64 / arm64
             </span>
           </div>
           <div className="flex items-center justify-between">
