@@ -139,30 +139,17 @@ export default function InstallGuide() {
 
           <div className="flex flex-wrap items-center gap-2.5 md:self-center self-start">
             {activeTab === "windows" && (
-              <>
-                <Button
-                  href={DESKTOP_DOWNLOAD_URLS.windowsSetup}
-                  variant="primary"
-                  size="md"
-                  icon={<Download size={15} />}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  download
-                >
-                  Setup Installer (.exe)
-                </Button>
-                <Button
-                  href={DESKTOP_DOWNLOAD_URLS.windowsPortable}
-                  variant="secondary"
-                  size="md"
-                  icon={<Download size={15} />}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  download
-                >
-                  Portable Version (.exe)
-                </Button>
-              </>
+              <Button
+                href={DESKTOP_DOWNLOAD_URLS.windowsSetup}
+                variant="primary"
+                size="md"
+                icon={<Download size={15} />}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+              >
+                Setup Installer (.exe)
+              </Button>
             )}
             {activeTab === "macos" && (
               <Button
@@ -207,62 +194,12 @@ export default function InstallGuide() {
                 </div>
                 <div>
                   <h5 className="text-sm font-semibold text-text-primary mt-0.5 mb-1">
-                    Choose your installation package
+                    Download the Setup Installer
                   </h5>
                   <p className="text-sm text-text-secondary m-0">
-                    Download either the <strong>Setup Installer (.exe)</strong>{" "}
-                    for standard installation with Start menu integration, or
-                    the <strong>Portable Version (.exe)</strong> to run Sythoria
-                    without administrator rights or installation.
+                    Click the button above to download{" "}
+                    <code>Sythoria_x64-setup.exe</code>.
                   </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-                <div className="p-4 rounded-xl border border-border/40 bg-hover/10 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Badge
-                      variant="accent"
-                      className="text-[10px] px-2 py-0.5 font-semibold"
-                    >
-                      Option A: Setup Installer
-                    </Badge>
-                  </div>
-                  <h6 className="text-xs font-bold text-text-primary m-0">
-                    Setup (.exe)
-                  </h6>
-                  <ol className="text-xs text-text-secondary pl-4 space-y-1 list-decimal m-0">
-                    <li>
-                      Run <code>Sythoria_x64-setup.exe</code>.
-                    </li>
-                    <li>Follow the setup wizard to install Sythoria.</li>
-                    <li>Launch via desktop shortcut or Start Menu.</li>
-                  </ol>
-                </div>
-
-                <div className="p-4 rounded-xl border border-border/40 bg-hover/10 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Badge
-                      variant="outline"
-                      className="text-[10px] px-2 py-0.5 font-semibold"
-                    >
-                      Option B: Portable Version
-                    </Badge>
-                  </div>
-                  <h6 className="text-xs font-bold text-text-primary m-0">
-                    Portable (.exe)
-                  </h6>
-                  <ol className="text-xs text-text-secondary pl-4 space-y-1 list-decimal m-0">
-                    <li>
-                      Download <code>sythoria_windows_x64.exe</code> (or extract
-                      the portable archive).
-                    </li>
-                    <li>
-                      Double-click <code>sythoria_windows_x64.exe</code> to run
-                      directly.
-                    </li>
-                    <li>No installation or admin privileges required.</li>
-                  </ol>
                 </div>
               </div>
 
@@ -272,11 +209,27 @@ export default function InstallGuide() {
                 </div>
                 <div>
                   <h5 className="text-sm font-semibold text-text-primary mt-0.5 mb-1">
+                    Run the Installer
+                  </h5>
+                  <p className="text-sm text-text-secondary m-0">
+                    Double-click <code>Sythoria_x64-setup.exe</code> and follow
+                    the setup wizard steps to complete installation.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-accent-soft text-accent text-xs font-bold shrink-0">
+                  3
+                </div>
+                <div>
+                  <h5 className="text-sm font-semibold text-text-primary mt-0.5 mb-1">
                     Launch & Configure
                   </h5>
                   <p className="text-sm text-text-secondary m-0">
-                    Once launched, open Settings to configure your API keys and
-                    select your model providers.
+                    Launch Sythoria via your Start menu or desktop shortcut,
+                    then open Settings to configure your API keys and model
+                    providers.
                   </p>
                 </div>
               </div>
