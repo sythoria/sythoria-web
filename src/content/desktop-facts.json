@@ -5,7 +5,7 @@
   "platforms": {
     "windows": {
       "label": "Windows 10/11",
-      "architectures": ["x64 Setup", "x64 Portable"],
+      "architectures": ["x64 Setup"],
       "assetSuffix": "x64-setup.exe"
     },
     "macos": {
