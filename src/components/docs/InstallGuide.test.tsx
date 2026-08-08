@@ -47,7 +47,7 @@ describe("InstallGuide", () => {
 
     // Checks header
     expect(screen.getByText("Windows Desktop")).toBeInTheDocument();
-    // Checks button text for both setup and portable and their direct download URLs
+    // Checks button text for setup installer and direct download URL
     const setupBtn = screen
       .getAllByText("Setup Installer (.exe)")[0]
       .closest("a");
@@ -56,17 +56,9 @@ describe("InstallGuide", () => {
       DESKTOP_DOWNLOAD_URLS.windowsSetup
     );
 
-    const portableBtn = screen
-      .getAllByText("Portable Version (.exe)")[0]
-      .closest("a");
-    expect(portableBtn).toHaveAttribute(
-      "href",
-      DESKTOP_DOWNLOAD_URLS.windowsPortable
-    );
-
     // Checks steps specific text
     expect(
-      screen.getByText("Choose your installation package")
+      screen.getByText("Download the Setup Installer")
     ).toBeInTheDocument();
   });
 
