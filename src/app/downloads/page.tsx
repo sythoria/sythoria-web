@@ -12,7 +12,7 @@ import DownloadCards from "@/components/marketing/DownloadCards";
 export const metadata: Metadata = {
   title: "Download Sythoria Desktop | Official Downloads",
   description:
-    "Download the latest release of Sythoria Desktop for Windows (Setup & Portable), macOS, and Linux. Privacy-first, lightweight AI client.",
+    "Download the latest release of Sythoria Desktop for Windows (Setup), macOS, and Linux. Privacy-first, lightweight AI client.",
   alternates: {
     canonical: "/downloads",
   },
@@ -39,19 +39,11 @@ export default async function DownloadsPage() {
   const windowsSetup = assets.find((a) =>
     a.name.toLowerCase().includes("setup")
   );
-  const windowsPortable = assets.find(
-    (a) =>
-      a.name.toLowerCase().includes("windows") &&
-      !a.name.toLowerCase().includes("setup")
-  );
   const macDmg = assets.find((a) => a.name.toLowerCase().endsWith(".dmg"));
 
   const defaultWinSetupUrl =
     windowsSetup?.browser_download_url ??
     `${GITHUB_REPOSITORY_URL}/releases/download/${versionTag}/Sythoria_0.4.3_x64-setup.exe`;
-  const defaultWinPortableUrl =
-    windowsPortable?.browser_download_url ??
-    `${GITHUB_REPOSITORY_URL}/releases/download/${versionTag}/sythoria_windows_x64.exe`;
   const defaultMacUrl =
     macDmg?.browser_download_url ??
     `${GITHUB_REPOSITORY_URL}/releases/download/${versionTag}/Sythoria_0.4.3_aarch64.dmg`;
@@ -88,10 +80,8 @@ export default async function DownloadsPage() {
       <main className="relative z-10 max-w-6xl mx-auto px-6 pb-20 space-y-12">
         <DownloadCards
           defaultWinSetupUrl={defaultWinSetupUrl}
-          defaultWinPortableUrl={defaultWinPortableUrl}
           defaultMacUrl={defaultMacUrl}
           windowsSetupSize={windowsSetup?.size}
-          windowsPortableSize={windowsPortable?.size}
           macDmgSize={macDmg?.size}
         />
 
