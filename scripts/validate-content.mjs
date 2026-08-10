@@ -37,6 +37,18 @@ const errors = [];
 const docs = new Map();
 const titleOwners = new Map();
 
+if (!/^v\d+\.\d+\.\d+$/.test(facts.version || "")) {
+  errors.push("desktop-facts.json: version must use vMAJOR.MINOR.PATCH");
+}
+if (!/^[a-f0-9]{40}$/.test(facts.sourceRevision || "")) {
+  errors.push(
+    "desktop-facts.json: sourceRevision must be a full Git commit hash"
+  );
+}
+if (!/^\d{4}-\d{2}-\d{2}$/.test(facts.verifiedAt || "")) {
+  errors.push("desktop-facts.json: verifiedAt must be YYYY-MM-DD");
+}
+
 for (const file of walk(docsRoot).filter((file) => file.endsWith(".mdx"))) {
   const relative = path.relative(docsRoot, file).replaceAll(path.sep, "/");
   const slug = relative.replace(/\.mdx$/, "");
@@ -143,6 +155,22 @@ for (const [provider, slug] of Object.entries(providerPages)) {
   for (const value of [preset.apiBase, preset.defaultModel]) {
     if (!page.body.includes(value)) {
       errors.push(`${page.relative}: missing desktop preset value ${value}`);
+    }
+  }
+}
+
+const searchPage = docs.get("features/web-search");
+if (searchPage) {
+  for (const provider of [
+    ...facts.search.searchProviders,
+    ...facts.search.fetchProviders,
+  ]) {
+    const label =
+      provider === "searxng"
+        ? "SearXNG"
+        : provider.charAt(0).toUpperCase() + provider.slice(1);
+    if (!searchPage.body.includes(label)) {
+      errors.push(`${searchPage.relative}: missing supported service ${label}`);
     }
   }
 }
