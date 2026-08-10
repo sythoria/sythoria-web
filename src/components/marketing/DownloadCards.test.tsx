@@ -26,11 +26,11 @@ describe("DownloadCards", () => {
   }
 
   const defaultProps = {
-    defaultWinSetupUrl: "https://example.com/win-setup.exe",
-    defaultWinPortableUrl: "https://example.com/win-portable.exe",
-    defaultMacUrl: "https://example.com/mac.dmg",
+    releaseUrl: "https://example.com/release",
+    windowsSetupUrl: "https://example.com/win-setup.exe",
+    macDmgUrl: "https://example.com/mac.dmg",
+    linuxScriptUrl: "https://example.com/install.sh",
     windowsSetupSize: 12000000,
-    windowsPortableSize: 24000000,
     macDmgSize: 14000000,
   };
 
@@ -74,5 +74,25 @@ describe("DownloadCards", () => {
 
     const linuxHeading = screen.getByText("Linux Desktop");
     expect(linuxHeading).toBeInTheDocument();
+  });
+
+  it("does not invent download links when release assets are missing", () => {
+    render(
+      <DownloadCards
+        {...defaultProps}
+        windowsSetupUrl={undefined}
+        macDmgUrl={undefined}
+      />
+    );
+
+    expect(
+      screen.getByText("No Windows file is attached yet.")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("No macOS disk image is attached yet.")
+    ).toBeInTheDocument();
+    expect(
+      screen.getAllByRole("link", { name: "Check GitHub release" })
+    ).toHaveLength(2);
   });
 });
