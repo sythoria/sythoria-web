@@ -1,39 +1,48 @@
 ---
 title: Quickstart
-description: Download a supported Sythoria Desktop build and connect your first model provider.
-lastVerifiedVersion: v0.4.3
-lastVerifiedDate: 2026-08-02
-source: sythoria-desktop release assets and tauri.conf.json
+description: Install Sythoria Desktop v0.4.4 and connect the first model.
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
+source: sythoria-desktop v0.4.4 tag release workflow and providerPresets.ts
 ---
 
 # Quickstart
 
-Use this guide with Sythoria Desktop **v0.4.3**. The release currently provides the following builds:
+This guide covers Sythoria Desktop v0.4.4, tagged from source revision `d256fb7`.
 
-| Operating system  | Supported build                          | Release artifact                                                              |
-| ----------------- | ---------------------------------------- | ----------------------------------------------------------------------------- |
-| Windows 10 or 11  | x64 (Setup & Portable)                   | `Sythoria_0.4.3_x64-setup.exe` (Setup), `sythoria_windows_x64.exe` (Portable) |
-| macOS 12 or later | Apple silicon (arm64)                    | `Sythoria_0.4.3_aarch64.dmg`                                                  |
-| Linux             | Universal (Debian, Ubuntu, Fedora, Arch) | `install.sh` (`.deb`, `.rpm`, `.AppImage`)                                    |
+The downloads page reads the files attached to the latest published GitHub release. A version tag can appear before its installers finish building or before a draft release is published, so the page does not guess file URLs.
 
-Windows ARM64, Linux ARM64, and Intel macOS packages are not present in this release. Check the [current GitHub release](https://github.com/sythoria/sythoria-desktop/releases/latest) before installing because the artifact matrix can change.
+The v0.4.4 build configuration targets:
 
-## Install the desktop application
+| Operating system  | Build                                    |
+| ----------------- | ---------------------------------------- |
+| Windows 10 or 11  | x64 setup executable                     |
+| macOS 12 or later | Apple silicon disk image                 |
+| Linux x86_64      | Debian package, RPM package, or AppImage |
+
+Windows ARM64, Linux ARM64, and Intel Mac builds are not configured for this release.
+
+## Install Sythoria
 
 <InstallGuide />
 
+Use the [downloads page](/downloads) to see the files that are actually available. GitHub is the final source for release files and signatures.
+
 ## Connect a model
 
-1. Open Sythoria and select **Settings**.
-2. Add a model and select a provider preset.
-3. Confirm the API base and default model. Provider defaults are listed below and can be changed.
-4. Paste the provider API key. Sythoria stores provider keys through the operating system keychain.
-5. Save the model and wait for the connection check.
-6. Start a new conversation, select the model, and send a short test message.
+1. Open Sythoria and go to **Settings > AI Models & API Keys**.
+2. Select **Add Model**.
+3. Choose a provider preset or enter a custom OpenAI-compatible endpoint.
+4. Check the API base and model ID.
+5. Enter the provider credential if the endpoint requires one.
+6. Save the model and run its connection check.
+7. Start a conversation, select that model, and send a short test message.
 
-Hosted-provider requests leave your device and are processed under that provider's terms. For a local model path, install Ollama and follow the [Ollama guide](/docs/providers/ollama).
+Credentials are encrypted in `secrets.enc`. The root encryption key is stored in the operating system credential vault.
 
-| Provider      | Desktop v0.4.3 default model  | Setup guide                              |
+## Preset values
+
+| Provider      | Default model                 | Setup guide                              |
 | ------------- | ----------------------------- | ---------------------------------------- |
 | OpenAI        | `gpt-5.6-sol`                 | [OpenAI](/docs/providers/openai)         |
 | Anthropic     | `claude-opus-5`               | [Anthropic](/docs/providers/anthropic)   |
@@ -42,16 +51,16 @@ Hosted-provider requests leave your device and are processed under that provider
 | OpenRouter    | `anthropic/claude-sonnet-5`   | [OpenRouter](/docs/providers/openrouter) |
 | NVIDIA NIM    | `meta/llama-3.3-70b-instruct` | [NVIDIA NIM](/docs/providers/nvidia-nim) |
 
-## Verify the setup
+These are editable defaults from the desktop source. A provider can rename, restrict, or remove a model independently of Sythoria.
 
-A successful setup has all three of these results:
+## Check the setup
 
-- the configured model reports a healthy connection;
-- a new conversation can stream a short response; and
-- reopening Sythoria retains the model configuration without asking you to paste the key again.
+A working configuration should pass its connection check, stream a short reply, and remain available after restarting the app.
 
-If one step fails, copy the error **after checking that it contains no key, prompt, local path, or personal data**, then use [Troubleshooting & Logs](/docs/features/logging-troubleshooting).
+If it fails, note the status code and remove credentials, prompts, and local paths before sharing the error. See [Troubleshooting & Logs](/docs/features/logging-troubleshooting).
 
-## Undo or reset
+## Where to go next
 
-Remove a model from Settings to delete its configuration and associated credential. Use the application's deletion controls for conversations and projects; do not delete application-data files while Sythoria is running.
+- [Project Workspaces](/docs/features/project-workspaces) explains local file tools and worktree review.
+- [Search & Page Fetching](/docs/features/web-search) covers Google, SearXNG, Firecrawl, and Jina Reader.
+- [Privacy & Security](/docs/privacy) lists each network and storage boundary.
