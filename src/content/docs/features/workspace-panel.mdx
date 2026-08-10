@@ -1,0 +1,47 @@
+---
+title: Workspace Panel
+description: Use Review, Terminal, Browser, Files, Activity, and Side Chat beside the main conversation.
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
+source: sythoria-desktop AuxiliaryPanel.tsx terminal.rs and useUIStore.ts
+---
+
+# Workspace Panel
+
+The auxiliary panel keeps project and research tools beside the main conversation. It can be resized, expanded, collapsed, and opened with more than one tab.
+
+## Review
+
+Review lists changed files from the active project worktree and shows their diff. It covers tracked changes, untracked text files, and a summary for binary or otherwise unavailable diffs.
+
+Applying or discarding a pending worktree is a separate recovery action tied to the conversation that created it.
+
+## Files
+
+Files provides a read-only browser for the registered project. It can list the project tree, filter names, and display a selected text file. The panel receives a scoped read capability; it does not grant write access.
+
+Project exclusions and path checks still apply.
+
+## Terminal
+
+Terminal starts the user's default shell in the active project or worktree. It is an interactive terminal controlled by you, not a model tool call. Input goes directly to the PTY session.
+
+Commands typed here have your normal operating-system permissions. The project tool approval dialog does not intercept terminal input that you type yourself.
+
+## Browser
+
+Browser accepts an HTTP or HTTPS URL and fetches the page through the configured fetch provider. It renders extracted Markdown rather than embedding the live website. Back, forward, reload, and Open in system browser controls are available.
+
+This panel needs an enabled Firecrawl or Jina Reader fetch configuration. It follows Sythoria's endpoint and local-network policy.
+
+An HTML or SVG artifact preview also opens in the Browser tab. Artifact networking is controlled by its own Network checkbox.
+
+## Side chat
+
+Side chat creates an independent temporary conversation in the panel. It has its own messages, model selector, attachments, and generation state. It does not append messages to the main conversation.
+
+Side chats are not written to encrypted conversation history. They disappear when the application closes.
+
+## Activity
+
+Activity shows running and completed background tasks associated with the current conversation. It is opened by activity produced during a run rather than from the panel launcher.
