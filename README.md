@@ -62,7 +62,7 @@ Never invent release data when GitHub is unavailable. `src/lib/changelog.ts` val
 
 ## Deployment configuration
 
-- Set `NEXT_PUBLIC_SITE_URL` when the canonical origin differs from `https://sythoria.app`.
+- Set `NEXT_PUBLIC_SITE_URL` when the canonical origin differs from `https://sythoria.com`.
 - Optionally set server-only `GH_TOKEN` for GitHub API requests.
 - Verify CSP and other headers against the deployed origin.
 - Keep large videos and other media on an intentional cache/encoding budget.
