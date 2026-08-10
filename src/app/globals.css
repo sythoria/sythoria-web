@@ -205,10 +205,6 @@
   transition: background-color 0.5s ease;
 }
 
-.noise-overlay {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='sharedNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23sharedNoise)'/%3E%3C/svg%3E");
-}
-
 .refractive-orb {
   animation: refractive-drift 28s linear 1 both;
 }
@@ -431,7 +427,8 @@
   border-radius: 1rem;
   border: 1px solid var(--theme-border);
   box-shadow:
-    0 25px 80px var(--theme-glow-primary),
+    0 28px 90px rgba(79, 95, 159, 0.24),
+    0 8px 32px rgba(79, 95, 159, 0.1),
     0 0 0 1px rgba(0, 0, 0, 0.03),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
   overflow: hidden;
@@ -2191,45 +2188,8 @@ html:not(.dark) [data-theme*=" "] span {
 }
 
 /* ────────────────────────────────────────── */
-/*  Interactive & Shimmer Visual Upgrades     */
+/*  Interactive Visual Upgrades               */
 /* ────────────────────────────────────────── */
-
-@keyframes shimmer-sweep {
-  0% {
-    transform: translateX(-150%) rotate(25deg);
-  }
-  100% {
-    transform: translateX(-35%) rotate(25deg);
-  }
-}
-
-.shimmer-btn {
-  position: relative;
-  overflow: hidden;
-}
-
-.shimmer-btn::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.05) 30%,
-    rgba(255, 255, 255, 0.35) 50%,
-    rgba(255, 255, 255, 0.05) 70%,
-    transparent 100%
-  );
-  transform: translateX(-150%) rotate(25deg);
-  pointer-events: none;
-}
-
-.shimmer-btn:hover::after {
-  animation: shimmer-sweep 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
 
 .glass-edge-hover {
   transition:
