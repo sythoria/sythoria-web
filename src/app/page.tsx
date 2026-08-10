@@ -6,20 +6,18 @@ import CTA from "@/components/marketing/CTA";
 import Footer from "@/components/marketing/Footer";
 import SpatialCanvas from "@/components/marketing/SpatialCanvas";
 import RefractiveBackground from "@/components/marketing/RefractiveBackground";
-import { getLatestVersion } from "@/lib/changelog";
+import { DESKTOP_VERSION } from "@/lib/site-config";
 
 export const revalidate = 60;
 
-export default async function LandingPage() {
-  const latestVersion = await getLatestVersion();
-
+export default function LandingPage() {
   return (
     <div className="min-h-screen bg-transparent overflow-x-hidden">
       <RefractiveBackground />
       <Navbar />
       <SpatialCanvas>
         <main id="main-content">
-          <Hero latestVersion={latestVersion} />
+          <Hero latestVersion={DESKTOP_VERSION} />
           <Features />
           <Comparison />
           <CTA />
