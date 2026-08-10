@@ -1,65 +1,62 @@
 ---
 title: Privacy & Security
-description: Understand how Sythoria stores local data and when configured services receive data.
-lastVerifiedVersion: v0.4.3
-lastVerifiedDate: 2026-08-02
-source: sythoria-desktop secure_storage.rs config.rs and README.md
+description: See what stays on the device, what can leave it, and how local data is stored.
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
+source: sythoria-desktop secure_storage.rs endpoint_security.rs useUIStore.ts and logger.ts
 ---
 
 # Privacy & Security
 
-Sythoria Desktop is a Tauri application with a React interface and a Rust backend. It does not add a Sythoria-hosted prompt relay or analytics account. That does **not** mean every workflow is offline: a hosted model, search provider, remote MCP server, cloud transcription endpoint, update check, or network-enabled artifact can receive data when you use it.
+Sythoria has no Sythoria account, analytics service, or hosted prompt relay. It still connects to services you configure. Hosted models, search and fetch providers, remote MCP servers, cloud transcription, updates, and network-enabled artifacts can all send data off the device.
 
-## Data-flow summary
+## Network data
 
-| Action                          | Data that can leave the device                                          | Destination                                          | How to avoid it                                                                       |
-| ------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Send to a hosted model          | Prompt, selected conversation context, attachments, provider credential | The configured provider endpoint                     | Use a trusted local Ollama endpoint instead                                           |
-| Use web search or fetch         | Query, requested URL, provider credential where configured              | The selected search/fetch service and requested host | Keep the tool disabled                                                                |
-| Call remote MCP                 | Tool arguments and server authentication data                           | The configured MCP server                            | Use a local stdio server or disable MCP                                               |
-| Cloud transcription             | Recorded audio and service credential                                   | The configured transcription endpoint                | Use a downloaded local Whisper model                                                  |
-| Check/download updates          | Version and ordinary HTTP request metadata                              | GitHub/update infrastructure                         | Disable automatic checks if the current version exposes that setting; update manually |
-| Load a network-enabled artifact | Requests initiated by approved artifact content                         | Hosts requested by the artifact                      | Keep artifact networking disabled                                                     |
+| Action                     | Data sent                                             | Destination                                       | How to prevent it                                          |
+| -------------------------- | ----------------------------------------------------- | ------------------------------------------------- | ---------------------------------------------------------- |
+| Use a hosted model         | Prompt, selected history, attachments, and credential | Configured model endpoint                         | Use a trusted local model endpoint                         |
+| Search the web             | Query and search credential                           | Google, SearXNG, or Firecrawl                     | Turn web search off                                        |
+| Fetch a page               | URL and fetch credential                              | Firecrawl or Jina Reader, then the requested site | Do not use page fetching                                   |
+| Call remote MCP            | Tool arguments and transport credential               | Configured MCP server                             | Disable or disconnect the server                           |
+| Run stdio MCP              | Tool arguments                                        | Local child process                               | Disable the server; audit and sandbox the process yourself |
+| Use cloud transcription    | Recorded audio and credential                         | Configured speech endpoint                        | Use local Whisper                                          |
+| Refine a transcript        | Transcript and model credential                       | Selected refinement model                         | Turn off LLM polish                                        |
+| Check for updates          | Version and normal HTTP metadata                      | GitHub update infrastructure                      | Turn off automatic update checks                           |
+| Enable artifact networking | Requests made by the preview                          | Hosts referenced by the artifact                  | Leave Network off                                          |
 
-Review the privacy, retention, training, billing, and regional terms of every service you configure. Sythoria cannot change a provider's server-side policy.
+A local process can still use the network or read files available to your operating-system account. Running it on the same computer does not make it harmless.
 
-## Local storage
+## Encrypted application data
 
-The audited v0.4.3 source uses these local mechanisms:
+Sythoria stores settings in separate AES-256-GCM encrypted files such as `models.enc`, `projects.enc`, `network.enc`, and `secrets.enc`. Conversations use authenticated, content-addressed encrypted snapshots.
 
-- **API keys and secret values:** stored through the operating system keychain backend.
-- **Provider configuration, preferences, projects, and related domain state:** stored in domain-separated AES-256-GCM encrypted files. The master key is held through the operating system keychain.
-- **Conversations:** stored as authenticated, content-addressed encrypted snapshots.
-- **Exports and files you explicitly save:** stored at the path you choose and protected by that filesystem's permissions.
+One random root key is stored in the operating system credential vault. Sythoria derives separate keys for each storage area from that root key. Credentials are decrypted by the Rust backend when a request needs them.
 
-Encryption at rest does not protect an unlocked user session from malware, a compromised operating-system account, screenshots, clipboard capture, exported plaintext, or a provider that legitimately receives the prompt.
+Custom skills are an exception. They are plaintext Markdown files under `~/.agents/skills`. Files you export or save to a custom folder are also protected only by the permissions and encryption of that filesystem.
 
-## Network boundary
+Encryption at rest does not protect an unlocked session from malware, clipboard capture, screenshots, memory inspection, or a provider that legitimately receives the request.
 
-The WebView communicates with the Rust backend through Tauri IPC. Provider and integration networking is performed by the native backend under Sythoria's endpoint and local-network policy. A restrictive WebView policy does not make a backend request local; the destination configured for the model or tool remains authoritative.
+## Network controls
 
-Local-network access should stay disabled unless you intentionally connect to a trusted LAN endpoint. A loopback address such as `127.0.0.1` or `localhost` is narrower than binding a service to every network interface.
+Private, loopback, link-local, unspecified, and cloud-metadata destinations are blocked by the native endpoint policy unless an exact local endpoint grant is present. Blocked-host rules are additive and take precedence over grants.
 
-## Logs and error messages
+Settings provides:
 
-The v0.4.3 native log plugin is configured at warning level and targets standard output. The interface also maintains a bounded in-memory log view. The release includes secret-redaction work, but redaction is defense in depth—not permission to publish raw diagnostics.
+- **Offline Mode**, which blocks outgoing requests;
+- **Local endpoint grants**, for exact trusted scheme, host, and port combinations;
+- **Blocked IPs / Hostnames**, for additional destinations you never want Sythoria to contact; and
+- **Disable background activity**, which stops periodic connection checks and status polling.
 
-Before sharing a log or screenshot, remove:
+Offline Mode prevents hosted model, search, fetch, remote MCP, cloud transcription, and update requests. It does not stop a separate local process from using its own network access.
 
-- API keys, tokens, cookies, and authorization headers;
-- prompts, model output, audio transcripts, and attachments;
-- usernames, local paths, repository remotes, and private hostnames;
-- MCP tool arguments and search queries.
+## Logs
+
+The native logger runs at warning level and writes to standard output. The interface keeps up to 500 recent log entries in memory. v0.4.4 does not promise a persistent rotating log file.
+
+Redaction is a last line of defense, not a reason to publish a raw log. Remove keys, authorization headers, prompts, transcripts, local paths, private hosts, repository remotes, MCP arguments, and search terms before sharing diagnostics.
 
 ## Deletion and backups
 
-Use Sythoria's controls to remove conversations, projects, models, MCP servers, and downloaded voice models. Removing the application alone may not remove operating-system keychain entries or application-data backups. Review the keychain and backup system separately when decommissioning a device.
+Use Sythoria's controls to remove conversations, models, projects, MCP servers, skills, and downloaded Whisper models. Factory Reset removes the app's encrypted data and credential records. It cannot remove copies in backups, exported Markdown, custom Appshot folders, or files copied elsewhere.
 
-## Security checklist
-
-1. Install only a release you can trace to the official repository.
-2. Keep the operating system and Sythoria updated.
-3. Scope provider keys to the least privilege and budget available.
-4. Treat MCP servers, terminal commands, repositories, and artifact content as code from their respective authors.
-5. Keep local-network access and artifact networking off unless the workflow requires them.
-6. Revoke a key at the provider immediately if it may have appeared in a prompt, log, screenshot, repository, or support message.
+When retiring a device, review its credential vault, backups, downloads, screenshots, and `~/.agents/skills` directory as separate locations.
