@@ -47,26 +47,12 @@ describe("InstallGuide", () => {
 
     // Checks header
     expect(screen.getByText("Windows Desktop")).toBeInTheDocument();
-    // Checks button text for both setup and portable and their direct download URLs
-    const setupBtn = screen
-      .getAllByText("Setup Installer (.exe)")[0]
-      .closest("a");
-    expect(setupBtn).toHaveAttribute(
-      "href",
-      DESKTOP_DOWNLOAD_URLS.windowsSetup
-    );
-
-    const portableBtn = screen
-      .getAllByText("Portable Version (.exe)")[0]
-      .closest("a");
-    expect(portableBtn).toHaveAttribute(
-      "href",
-      DESKTOP_DOWNLOAD_URLS.windowsPortable
-    );
+    const setupBtn = screen.getByText("View Windows download").closest("a");
+    expect(setupBtn).toHaveAttribute("href", "/downloads");
 
     // Checks steps specific text
     expect(
-      screen.getByText("Choose your installation package")
+      screen.getByText("Download the setup installer")
     ).toBeInTheDocument();
   });
 
@@ -80,8 +66,8 @@ describe("InstallGuide", () => {
     });
 
     expect(screen.getByText("macOS Desktop")).toBeInTheDocument();
-    const macBtn = screen.getByText("macOS arm64 (.dmg)").closest("a");
-    expect(macBtn).toHaveAttribute("href", DESKTOP_DOWNLOAD_URLS.macDmg);
+    const macBtn = screen.getByText("View macOS download").closest("a");
+    expect(macBtn).toHaveAttribute("href", "/downloads");
     expect(screen.getByText("Download the disk image")).toBeInTheDocument();
   });
 
@@ -95,12 +81,10 @@ describe("InstallGuide", () => {
     expect(screen.getByText("Linux Desktop")).toBeInTheDocument();
     const linuxBtn = screen.getByText("Download install.sh").closest("a");
     expect(linuxBtn).toHaveAttribute("href", DESKTOP_DOWNLOAD_URLS.linuxScript);
-    expect(
-      screen.getByText("Run the universal installer command")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Inspect and run the script")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "curl -fsSL https://raw.githubusercontent.com/sythoria/sythoria-desktop/main/install.sh | bash"
+        "curl -fsSLo install-sythoria.sh " + DESKTOP_DOWNLOAD_URLS.linuxScript
       )
     ).toBeInTheDocument();
   });
@@ -145,7 +129,7 @@ describe("InstallGuide", () => {
       fireEvent.click(copyButtons[0]);
     });
     expect(writeTextMock).toHaveBeenCalledWith(
-      "curl -fsSL https://raw.githubusercontent.com/sythoria/sythoria-desktop/main/install.sh | bash"
+      "curl -fsSLo install-sythoria.sh " + DESKTOP_DOWNLOAD_URLS.linuxScript
     );
 
     // Fast-forward fake timers to resolve clipboard states inside act block
