@@ -1,70 +1,64 @@
 "use client";
 
-import { Check, Info, Shield } from "lucide-react";
+import { Columns3 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRef, type PointerEvent } from "react";
 import { useScrollInView } from "@/hooks/useScrollInView";
 
 interface ComparisonRow {
   feature: string;
-  sythoriaText: string;
-  boundary: string;
+  sythoria: string;
+  otherChatbots: string;
 }
 
 const comparisons: ComparisonRow[] = [
   {
-    feature: "API key storage",
-    sythoriaText: "Stored through the operating system keychain.",
-    boundary:
-      "The selected provider receives its key when Sythoria makes an authenticated request.",
+    feature: "App format",
+    sythoria:
+      "Native Tauri desktop app for Windows x64, Apple silicon macOS, and Linux x86_64.",
+    otherChatbots:
+      "Many are hosted services or self-hosted web apps. Installation and hosting requirements vary by product.",
   },
   {
-    feature: "Prompt routing",
-    sythoriaText:
-      "The Rust backend connects directly to the endpoint configured for the selected model.",
-    boundary:
-      "Hosted providers process prompts under their own retention, billing, and privacy terms.",
+    feature: "User accounts",
+    sythoria: "No Sythoria account or local login screen.",
+    otherChatbots:
+      "Hosted and multi-user products commonly require an account. Some self-hosted tools can run locally or limit registration.",
   },
   {
-    feature: "Sythoria account",
-    sythoriaText: "No Sythoria account is required for the desktop client.",
-    boundary:
-      "Hosted model, search, and other external services can require their own accounts.",
+    feature: "Model providers",
+    sythoria:
+      "Presets for OpenAI, Anthropic, Gemini, Ollama, NVIDIA NIM, and OpenRouter, plus editable OpenAI-compatible endpoints.",
+    otherChatbots:
+      "Provider support varies. Some focus on one ecosystem, while others support several providers and compatible endpoints.",
   },
   {
-    feature: "Local models",
-    sythoriaText:
-      "A loopback Ollama endpoint can provide a local model path after its model files are installed.",
-    boundary:
-      "Updates, hosted tools, cloud transcription, MCP, and remote artifacts can still use the network.",
+    feature: "Local project work",
+    sythoria:
+      "Scoped project folders with Read, Write, or Full access. Writes use an isolated Git worktree with Review, Apply, and Discard.",
+    otherChatbots:
+      "File uploads and tool integrations are common. Repository access and review workflows depend on the product and its configuration.",
   },
   {
-    feature: "Conversation storage",
-    sythoriaText:
-      "Conversation snapshots and non-secret configuration use AES-256-GCM encrypted local files.",
-    boundary:
-      "Device access, backups, exports, and the operating system keychain remain part of the threat model.",
+    feature: "Web access",
+    sythoria:
+      "Google, SearXNG, or Firecrawl search; Firecrawl or Jina Reader page fetching.",
+    otherChatbots:
+      "Search and page reading may be built in, supplied by an external tool, or unavailable until configured.",
   },
   {
-    feature: "Provider choice",
-    sythoriaText:
-      "Presets cover OpenAI, Anthropic, Gemini, Ollama, NVIDIA NIM, and OpenRouter, plus compatible endpoints.",
-    boundary:
-      "Model availability, context limits, pricing, and retention change independently at each provider.",
+    feature: "MCP transports",
+    sythoria:
+      "stdio, SSE, and Streamable HTTP, with single-use approval for each call from an untrusted server.",
+    otherChatbots:
+      "MCP support varies by product, transport, and version. Some products rely on bridges or separately configured tool servers.",
   },
   {
-    feature: "Telemetry",
-    sythoriaText:
-      "The audited desktop version does not include a Sythoria analytics or hosted prompt service.",
-    boundary:
-      "Network integrations and providers may collect operational data; review their settings and policies.",
-  },
-  {
-    feature: "Streaming",
-    sythoriaText:
-      "Sythoria displays provider response chunks as the backend receives them.",
-    boundary:
-      "Time to first token and throughput depend on the model, provider, network, and local device.",
+    feature: "Application data",
+    sythoria:
+      "Conversation snapshots and settings use encrypted local files; the root key is stored in the operating system credential vault.",
+    otherChatbots:
+      "Hosted products keep application data on their systems. With self-hosted tools, storage, backups, and access controls are usually managed by the operator.",
   },
 ];
 
@@ -95,20 +89,20 @@ export default function Comparison() {
           className={`scroll-animate scroll-fade-in-up stagger-1 ${headingVisible ? "in-view" : ""}`}
         >
           <span className="flex items-center justify-center gap-2 text-xs font-medium uppercase tracking-widest text-accent">
-            <Shield size={13} strokeWidth={1.5} aria-hidden="true" />
-            Data boundaries
+            <Columns3 size={13} strokeWidth={1.5} aria-hidden="true" />
+            Comparison
           </span>
         </div>
         <h2
           className={`scroll-animate scroll-fade-in-up stagger-2 mt-4 text-3xl font-bold tracking-[-0.035em] text-text-primary sm:text-4xl ${headingVisible ? "in-view" : ""}`}
         >
-          Local control, documented limits.
+          How Sythoria compares
         </h2>
         <p
           className={`scroll-animate scroll-fade-in-up stagger-3 mx-auto mt-3 max-w-lg text-base text-text-secondary ${headingVisible ? "in-view" : ""}`}
         >
-          What Sythoria handles locally, and what remains the responsibility of
-          the operating system or configured service.
+          A practical look at Sythoria alongside common hosted and self-hosted
+          AI chat interfaces.
         </p>
       </div>
 
@@ -119,7 +113,7 @@ export default function Comparison() {
         whileInView={{ opacity: 1, y: 0, scale: 1 }}
         viewport={{ once: true, margin: "-60px" }}
         transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-        className="bento-card group relative mx-auto max-w-5xl overflow-hidden rounded-[1.25rem]"
+        className="bento-card group relative mx-auto max-w-6xl overflow-hidden rounded-[1.25rem]"
       >
         <div
           aria-hidden="true"
@@ -133,32 +127,33 @@ export default function Comparison() {
         <div
           className="content-scroll-region relative z-10 !m-0 rounded-[1.25rem]"
           role="region"
-          aria-label="Sythoria data boundaries"
+          aria-label="Sythoria and other AI chatbots comparison"
           tabIndex={0}
         >
           <table className="w-full min-w-[760px] border-collapse text-left">
             <caption className="sr-only">
-              Sythoria version 0.4.2 storage and network boundaries
+              Feature comparison between Sythoria version 0.4.4 and other AI
+              chatbots
             </caption>
             <thead>
               <tr className="border-b border-border/30">
                 <th
                   scope="col"
-                  className="w-1/4 px-6 py-5 text-[11px] font-mono uppercase tracking-wider text-text-muted"
+                  className="w-[20%] px-6 py-5 text-[11px] font-mono uppercase tracking-wider text-text-muted"
                 >
-                  Area
+                  Feature
                 </th>
                 <th
                   scope="col"
-                  className="w-5/12 border-x border-border/40 bg-accent-soft px-6 py-5 text-sm font-bold text-text-primary"
+                  className="w-[40%] border-x border-border/40 bg-accent-soft px-6 py-5 text-sm font-bold text-text-primary"
                 >
-                  Sythoria v0.4.3
+                  Sythoria v0.4.4
                 </th>
                 <th
                   scope="col"
-                  className="w-5/12 px-6 py-5 text-sm font-medium text-text-secondary"
+                  className="w-[40%] px-6 py-5 text-sm font-medium text-text-secondary"
                 >
-                  Boundary to understand
+                  Other AI chatbots
                 </th>
               </tr>
             </thead>
@@ -175,24 +170,10 @@ export default function Comparison() {
                     {row.feature}
                   </th>
                   <td className="border-x border-border/40 bg-accent-soft px-6 py-4 text-sm leading-relaxed text-text-primary">
-                    <span className="flex items-start gap-2">
-                      <Check
-                        size={14}
-                        aria-hidden="true"
-                        className="mt-0.5 shrink-0 text-emerald-600 dark:text-emerald-400"
-                      />
-                      {row.sythoriaText}
-                    </span>
+                    {row.sythoria}
                   </td>
                   <td className="px-6 py-4 text-sm leading-relaxed text-text-secondary">
-                    <span className="flex items-start gap-2">
-                      <Info
-                        size={14}
-                        aria-hidden="true"
-                        className="mt-0.5 shrink-0 text-accent"
-                      />
-                      {row.boundary}
-                    </span>
+                    {row.otherChatbots}
                   </td>
                 </tr>
               ))}
