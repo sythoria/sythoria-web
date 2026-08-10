@@ -1,0 +1,46 @@
+---
+title: Search & Page Fetching
+description: Configure Google, SearXNG, or Firecrawl search and Firecrawl or Jina Reader fetching.
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
+source: sythoria-desktop searchPresets.ts fetchPresets.ts search/mod.rs and useSearchStore.ts
+---
+
+# Search & Page Fetching
+
+Search and page fetching are separate settings. Search returns result titles, URLs, and snippets. Fetching reads one URL and extracts page content.
+
+Sythoria v0.4.4 supports three search providers and two fetch providers.
+
+## Search providers
+
+| Provider             | Required settings                          | Default maximum results |
+| -------------------- | ------------------------------------------ | ----------------------- |
+| Google Custom Search | API key and Custom Search Engine ID (`cx`) | 5                       |
+| SearXNG              | Base URL                                   | 10                      |
+| Firecrawl            | API key and base URL                       | 5                       |
+
+The SearXNG preset starts at `http://localhost:8080`. Add that exact endpoint under local endpoint grants if your instance runs there. A public SearXNG instance sends the query to someone else's service, so check who operates it before using private terms.
+
+## Fetch providers
+
+| Provider    | Default base                   | Credential             |
+| ----------- | ------------------------------ | ---------------------- |
+| Firecrawl   | `https://api.firecrawl.dev/v1` | API key                |
+| Jina Reader | `https://r.jina.ai`            | Optional API key field |
+
+Choose the default search and fetch configurations under **Settings > Chat Configuration** after enabling them under **Browser & Web Search**.
+
+## Use search in a conversation
+
+Turn on the search control beside the composer or press `Ctrl+Shift+S`. When the tool loop calls `search_query`, Sythoria sends the query to the selected search provider and adds returned URLs to the conversation sources.
+
+The model may then call `fetch_url` for a result. The workspace Browser panel also uses the active fetch provider.
+
+## Network and privacy
+
+The search provider receives the query and its credential. A fetch provider receives the requested URL and may retrieve the target page on your behalf. The target site can receive requests from the fetch provider rather than directly from your device, depending on that service's design.
+
+Sythoria validates configured base URLs and blocks private and local destinations unless you add an exact grant. Offline Mode blocks search and fetching.
+
+Search results and fetched pages are untrusted input. A page can contain instructions aimed at the model. Do not treat page text as authority to reveal credentials, broaden project access, or approve an unrelated command.
