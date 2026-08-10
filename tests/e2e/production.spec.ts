@@ -71,7 +71,7 @@ test("search traps focus, closes with Escape, and restores focus", async ({
   await expect(opener).toBeFocused();
 });
 
-test("reduced motion does not start the demo video without consent", async ({
+test("the demo video autoplays when reduced motion is requested", async ({
   browser,
 }) => {
   const context = await browser.newContext({ reducedMotion: "reduce" });
@@ -79,10 +79,8 @@ test("reduced motion does not start the demo video without consent", async ({
   await page.goto("/");
   const video = page.locator("video");
 
-  await expect(video).not.toHaveAttribute("src", /.+/);
-  await expect(
-    page.getByRole("button", { name: "Play interface demo" })
-  ).toBeVisible();
+  await expect(video).toHaveAttribute("src", /Demo\.mp4$/);
+  await expect(video).toHaveAttribute("autoplay", "");
   await context.close();
 });
 
