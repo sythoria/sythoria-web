@@ -1,11 +1,11 @@
 {
-  "version": "v0.4.3",
-  "sourceRevision": "3ec042a76f3935dd19f27d6224ced84bb97a0ba8",
-  "verifiedAt": "2026-08-06",
+  "version": "v0.4.4",
+  "sourceRevision": "d256fb77b7197ab174a0d19df083589f70aaed0b",
+  "verifiedAt": "2026-08-09",
   "platforms": {
     "windows": {
       "label": "Windows 10/11",
-      "architectures": ["x64 Setup", "x64 Portable"],
+      "architectures": ["x64 Setup"],
       "assetSuffix": "x64-setup.exe"
     },
     "macos": {
@@ -20,8 +20,23 @@
     }
   },
   "shortcuts": {
-    "spotlight": "Alt+Space",
+    "settingsSearch": "Ctrl+Space",
+    "conversationPicker": "Ctrl+K",
+    "commandPalette": "Ctrl+Shift+P",
     "appshot": "Alt+Shift+S"
+  },
+  "search": {
+    "searchProviders": ["google", "searxng", "firecrawl"],
+    "fetchProviders": ["firecrawl", "jina"]
+  },
+  "limits": {
+    "messageCharacters": 10000,
+    "attachmentsPerMessage": 6,
+    "attachmentBytes": 10485760,
+    "toolSteps": 25,
+    "subagentsPerCall": 4,
+    "subagentDepth": 3,
+    "activeSubagents": 8
   },
   "providers": {
     "openai": {
