@@ -37,13 +37,13 @@ export async function generateMetadata({
   const doc = getDocBySlug(slug);
   if (!doc) return { title: "Not Found" };
   return {
-    title: `${doc.title} — Documentation`,
+    title: `${doc.title} | Documentation`,
     description: doc.description,
     alternates: { canonical: `/docs/${slug}` },
     openGraph: {
       type: "article",
       url: `/docs/${slug}`,
-      title: `${doc.title} — Sythoria Documentation`,
+      title: `${doc.title} | Sythoria Documentation`,
       description: doc.description,
       modifiedTime: doc.lastVerifiedDate || undefined,
     },
