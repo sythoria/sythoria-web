@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
 import { getAllDocs } from "@/lib/docs";
-import { SITE_URL } from "@/lib/site-config";
+import { DESKTOP_FACTS_VERIFIED_AT, SITE_URL } from "@/lib/site-config";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const verifiedAt = new Date("2026-08-02T00:00:00Z");
+  const verifiedAt = new Date(`${DESKTOP_FACTS_VERIFIED_AT}T00:00:00Z`);
   const docs = getAllDocs().map((doc) => ({
     url: `${SITE_URL}/docs/${doc.slug}`,
     lastModified: doc.lastVerifiedDate
