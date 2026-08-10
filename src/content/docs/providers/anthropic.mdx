@@ -1,8 +1,8 @@
 ---
 title: Anthropic
 description: Connect Sythoria to Anthropic using your own API key and an available Claude model ID.
-lastVerifiedVersion: v0.4.3
-lastVerifiedDate: 2026-08-02
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
 source: sythoria-desktop providerPresets.ts and Anthropic model documentation
 ---
 
@@ -24,13 +24,13 @@ Use the Anthropic preset to send messages through Anthropic's Messages API. Prom
 4. Confirm the preset values and paste the API key.
 5. Save and run the connection check.
 
-| Setting       | Desktop v0.4.3 value                    |
+| Setting       | Desktop v0.4.4 value                    |
 | ------------- | --------------------------------------- |
 | API base      | `https://api.anthropic.com/v1/messages` |
 | Default model | `claude-opus-5`                         |
 | API format    | Anthropic Messages API                  |
 
-The default comes from the desktop source and can become unavailable. Check the [official Anthropic model overview](https://platform.claude.com/docs/en/about-claude/models/overview) and use an exact model ID available to your key. For example, the verified Sonnet 5 ID is `claude-sonnet-5`, not a guessed `latest` alias.
+The default comes from the desktop source and can become unavailable. Check the [official Anthropic model overview](https://platform.claude.com/docs/en/about-claude/models/overview) and use an exact model ID available to your key.
 
 Some models have limited eligibility or additional retention terms. Confirm access and data retention in Anthropic's current documentation before using sensitive content.
 
