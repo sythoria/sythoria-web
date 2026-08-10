@@ -1,40 +1,43 @@
 ---
-title: Vision & Screenshots (Appshots)
-description: Capture a screen region and attach it to a Sythoria conversation.
-lastVerifiedVersion: v0.4.3
-lastVerifiedDate: 2026-08-02
-source: sythoria-desktop appshots.rs and useKeybindStore.ts
+title: Appshots
+description: Capture the frontmost application window and add it to a chat draft.
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
+source: sythoria-desktop appshots.rs useAppshotStore.ts and useKeybindStore.ts
 ---
 
-# Vision & Screenshots (Appshots)
+# Appshots
 
-Appshots captures a selected screen region and makes it available as conversation context. Review the capture before sending: it can contain notifications, keys, source code, names, email addresses, or other applications.
+An Appshot captures the frontmost application window other than Sythoria. It does not provide a region-selection tool.
 
-## Default shortcut
+## Capture a window
 
-Sythoria v0.4.3 uses **Alt+Shift+S** on desktop platforms. The combination is configurable in the audited application store and can conflict with an operating-system or application shortcut.
+1. Select a model that accepts image input.
+2. Bring the window you want to capture to the front.
+3. Press `Alt+Shift+S`.
+4. Confirm that Sythoria may capture the frontmost application.
+5. Check the image in the chat draft before sending it.
 
-1. Start Sythoria and select a vision-capable model.
-2. Press **Alt+Shift+S**.
-3. Select only the region required for the question.
-4. Inspect the resulting image and remove it if private content is visible.
-5. Send it only after confirming the configured provider and its image/privacy terms.
+The default shortcut can be changed under **Settings > Keyboard Shortcuts**. The operating system may ask for screen-capture permission the first time you use it.
 
-## Permissions
+## Storage settings
 
-The operating system can require screen-recording/capture permission. Denying it should leave ordinary text chat available. If permission was denied permanently, use the operating system's privacy settings to review the Sythoria entry rather than broadly weakening screen-capture controls.
+Appshots can be saved as PNG or JPEG. JPEG quality is configurable. Saving to the Appshots gallery is off by default; when it is off, the capture is stored as an ephemeral file long enough to attach it to the draft.
 
-## Data path
+If gallery saving is enabled, Settings also provides a capture folder and cleanup rules based on file count, total size, or age. The default cleanup rule keeps the most recent 50 captures.
 
-Capture begins locally. When the screenshot is included in a request to a hosted model, the image and associated conversation context leave the device and are processed by that provider. A local vision model can keep model inference on the configured local endpoint, subject to any other enabled tools.
+## What leaves the device
 
-## Troubleshooting
+Capture happens locally. The image leaves the device when you send it to a hosted model. The provider receives the image with the prompt and any conversation context included in that request.
 
-| Symptom                | Check                                                          |
-| ---------------------- | -------------------------------------------------------------- |
-| Shortcut does nothing  | Shortcut conflict and whether Sythoria is running              |
-| Selection cannot start | Operating-system screen-capture permission                     |
-| Wrong display/scale    | Multi-monitor scale settings and current release issue tracker |
-| Model rejects image    | Model modality and provider attachment limits                  |
+Before sending, check for notifications, API keys, email addresses, private source code, and content from other applications.
 
-Delete unwanted captures through the application flow and review normal operating-system backups separately.
+## If capture fails
+
+| Problem               | What to check                                                |
+| --------------------- | ------------------------------------------------------------ |
+| Nothing happens       | Sythoria is running and no other app owns the shortcut       |
+| Permission denied     | Screen-recording permission in the operating system settings |
+| Wrong window captured | The intended application was frontmost when you confirmed    |
+| Image is rejected     | The selected model is marked as supporting image input       |
+| Draft is full         | A message can contain no more than six attachments           |
