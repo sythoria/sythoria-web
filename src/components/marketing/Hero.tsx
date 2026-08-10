@@ -210,7 +210,7 @@ export default function Hero({
                 whileHover={{ scale: 1.04, y: -4 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 350, damping: 22 }}
-                className="shimmer-btn group/btn relative flex items-center gap-3 px-8 py-4 bg-text-primary text-surface rounded-full font-semibold text-base sm:text-lg shadow-2xl overflow-hidden cursor-pointer select-none"
+                className="group/btn relative flex items-center gap-3 px-8 py-4 bg-text-primary text-surface rounded-full font-semibold text-base sm:text-lg shadow-2xl overflow-hidden cursor-pointer select-none"
               >
                 <Download className="w-5 h-5 shrink-0 transition-transform duration-300 group-hover/btn:-translate-y-0.5 group-hover/btn:scale-110" />
                 <span className="flex items-center gap-2">
@@ -240,7 +240,7 @@ export default function Hero({
         <div className="w-full min-w-0 max-w-7xl relative z-20 overflow-visible">
           {/* Ambient glow behind showcase */}
           <div
-            className="absolute -inset-10 rounded-2xl opacity-40 blur-3xl pointer-events-none"
+            className="absolute -inset-10 rounded-2xl opacity-[0.65] blur-3xl pointer-events-none dark:opacity-40"
             style={{
               background:
                 "radial-gradient(circle, var(--color-glow-primary), transparent 70%)",
@@ -264,15 +264,15 @@ export default function Hero({
             <div
               ref={videoViewportRef}
               data-testid="demo-video-viewport"
-              className="terminal-body !min-h-0 !p-0 overflow-hidden rounded-b-xl aspect-[4/3] sm:aspect-video bg-surface/90 relative flex items-center justify-center border-t border-border/20"
+              className="terminal-body !min-h-0 !p-0 overflow-hidden aspect-[4/3] sm:aspect-video bg-surface/90 relative flex items-center justify-center border-t border-border/20"
             >
-              {!videoLoaded && (
+              {!videoLoaded ? (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface/80 backdrop-blur-sm z-10 gap-3">
                   <span className="text-xs font-mono text-text-muted">
                     Interface demo
                   </span>
                 </div>
-              )}
+              ) : null}
               <video
                 ref={videoRef}
                 src={videoSrc}
