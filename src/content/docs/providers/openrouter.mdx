@@ -1,8 +1,8 @@
 ---
 title: OpenRouter
 description: Connect Sythoria to OpenRouter and choose a model route available to your account.
-lastVerifiedVersion: v0.4.3
-lastVerifiedDate: 2026-08-02
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
 source: sythoria-desktop providerPresets.ts and OpenRouter documentation
 ---
 
@@ -17,7 +17,7 @@ OpenRouter routes requests to model providers under its own account, routing, lo
 3. In Sythoria, open **Settings**, add a model, and select **OpenRouter**.
 4. Confirm the preset, paste the key, save, and run the connection check.
 
-| Setting       | Desktop v0.4.3 value                            |
+| Setting       | Desktop v0.4.4 value                            |
 | ------------- | ----------------------------------------------- |
 | API base      | `https://openrouter.ai/api/v1/chat/completions` |
 | Default model | `anthropic/claude-sonnet-5`                     |
@@ -27,7 +27,7 @@ The preset ID can become unavailable. Copy an exact current route from the [Open
 
 ## Routing and privacy
 
-Automatic fallback can send the same request to a different underlying provider. Configure provider preferences and data-policy filters in OpenRouter before using sensitive content. A “free” or cheaper route can have different logging, rate limits, uptime, and data terms.
+Automatic fallback can send the same request to a different underlying provider. Configure provider preferences and data-policy filters in OpenRouter before using sensitive content. A "free" or cheaper route can have different logging, rate limits, uptime, and data terms.
 
 ## Troubleshooting
 
