@@ -45,6 +45,24 @@ const VERIFIED_RELEASE_SNAPSHOT: GitHubRelease[] = [
     body: "",
     assets: [
       {
+        name: "latest.json",
+        browser_download_url: `${GITHUB_REPOSITORY_URL}/releases/download/v0.4.3/latest.json`,
+        size: 4_835,
+        download_count: 0,
+      },
+      {
+        name: "Sythoria-0.4.3-1.x86_64.rpm",
+        browser_download_url: `${GITHUB_REPOSITORY_URL}/releases/download/v0.4.3/Sythoria-0.4.3-1.x86_64.rpm`,
+        size: 15_402_799,
+        download_count: 0,
+      },
+      {
+        name: "Sythoria-0.4.3-1.x86_64.rpm.sig",
+        browser_download_url: `${GITHUB_REPOSITORY_URL}/releases/download/v0.4.3/Sythoria-0.4.3-1.x86_64.rpm.sig`,
+        size: 416,
+        download_count: 0,
+      },
+      {
         name: "Sythoria_0.4.3_aarch64.dmg",
         browser_download_url: `${GITHUB_REPOSITORY_URL}/releases/download/v0.4.3/Sythoria_0.4.3_aarch64.dmg`,
         size: 14_047_022,
@@ -57,9 +75,45 @@ const VERIFIED_RELEASE_SNAPSHOT: GitHubRelease[] = [
         download_count: 0,
       },
       {
+        name: "Sythoria_0.4.3_amd64.AppImage.sig",
+        browser_download_url: `${GITHUB_REPOSITORY_URL}/releases/download/v0.4.3/Sythoria_0.4.3_amd64.AppImage.sig`,
+        size: 420,
+        download_count: 0,
+      },
+      {
+        name: "Sythoria_0.4.3_amd64.deb",
+        browser_download_url: `${GITHUB_REPOSITORY_URL}/releases/download/v0.4.3/Sythoria_0.4.3_amd64.deb`,
+        size: 15_398_308,
+        download_count: 0,
+      },
+      {
+        name: "Sythoria_0.4.3_amd64.deb.sig",
+        browser_download_url: `${GITHUB_REPOSITORY_URL}/releases/download/v0.4.3/Sythoria_0.4.3_amd64.deb.sig`,
+        size: 412,
+        download_count: 0,
+      },
+      {
         name: "Sythoria_0.4.3_x64-setup.exe",
         browser_download_url: `${GITHUB_REPOSITORY_URL}/releases/download/v0.4.3/Sythoria_0.4.3_x64-setup.exe`,
         size: 12_087_731,
+        download_count: 0,
+      },
+      {
+        name: "Sythoria_0.4.3_x64-setup.exe.sig",
+        browser_download_url: `${GITHUB_REPOSITORY_URL}/releases/download/v0.4.3/Sythoria_0.4.3_x64-setup.exe.sig`,
+        size: 420,
+        download_count: 0,
+      },
+      {
+        name: "Sythoria_aarch64.app.tar.gz",
+        browser_download_url: `${GITHUB_REPOSITORY_URL}/releases/download/v0.4.3/Sythoria_aarch64.app.tar.gz`,
+        size: 14_094_415,
+        download_count: 0,
+      },
+      {
+        name: "Sythoria_aarch64.app.tar.gz.sig",
+        browser_download_url: `${GITHUB_REPOSITORY_URL}/releases/download/v0.4.3/Sythoria_aarch64.app.tar.gz.sig`,
+        size: 408,
         download_count: 0,
       },
       {
@@ -230,9 +284,4 @@ export async function getReleaseFeed(): Promise<ReleaseFeed> {
       "GitHub release data is temporarily unavailable. Showing the last verified stable release."
     );
   }
-}
-
-export async function getLatestVersion(): Promise<string | null> {
-  const { releases } = await getReleaseFeed();
-  return releases.find((release) => !release.prerelease)?.tag_name ?? null;
 }
