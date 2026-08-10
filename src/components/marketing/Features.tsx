@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  Activity,
-  Server,
-  Minimize2,
-  HardDrive,
+  Columns3,
+  FolderGit2,
+  Mic,
+  Search,
   Sparkles,
   Lock,
   KeyRound,
@@ -77,35 +77,35 @@ interface SmallFeature {
 
 const smallFeatures: SmallFeature[] = [
   {
-    icon: Activity,
-    title: "Streaming Responses",
+    icon: FolderGit2,
+    title: "Project Workspaces",
     description:
-      "Displays response chunks as the configured provider sends them.",
-    code: "stream: true  // provider dependent",
+      "Let the agent read a project, review proposed edits, and apply approved changes from an isolated worktree.",
+    code: "permissions: read | write | full",
     accentColor: "#f43f5e",
   },
   {
-    icon: Server,
-    title: "Local Model Path",
+    icon: Search,
+    title: "Search and Fetch",
     description:
-      "Connect to a running Ollama service on loopback without a hosted model provider.",
-    code: "ollama: 'localhost:11434'",
+      "Search with Google, SearXNG, or Firecrawl, then fetch readable page content with Firecrawl or Jina.",
+    code: "search: google | searxng | firecrawl",
     accentColor: "#f59e0b",
   },
   {
-    icon: Minimize2,
-    title: "Lightweight",
+    icon: Columns3,
+    title: "Model Comparison",
     description:
-      "Built as a Tauri desktop application with a Rust backend instead of Electron.",
-    code: "runtime: 'Tauri + Rust'",
+      "Send one prompt to several configured models and read their responses side by side.",
+    code: "layout: parallel columns",
     accentColor: "#10b981",
   },
   {
-    icon: HardDrive,
-    title: "Encrypted Local Storage",
+    icon: Mic,
+    title: "Voice and Appshots",
     description:
-      "Conversation snapshots and non-secret configuration use domain-separated AES-256-GCM files.",
-    code: "storage: 'AES-256-GCM'",
+      "Transcribe up to five minutes of speech and attach a confirmed capture of the frontmost app window.",
+    code: "input: voice | appshot",
     accentColor: "#8b5cf6",
   },
 ];
@@ -128,13 +128,13 @@ export default function Features() {
           >
             <span className="text-xs font-medium uppercase tracking-widest text-accent flex items-center justify-center gap-2">
               <Sparkles size={13} strokeWidth={1.5} />
-              Skills
+              Desktop features
             </span>
           </div>
           <h2
             className={`mt-4 text-3xl sm:text-4xl font-bold text-text-primary tracking-[-0.035em] scroll-animate scroll-fade-in-up stagger-2 ${visible ? "in-view" : ""}`}
           >
-            One interface, every provider
+            Models, tools, and local projects
           </h2>
           <p
             className={`mt-3 text-text-secondary max-w-lg mx-auto text-base leading-[1.6] font-light scroll-animate scroll-fade-in-up stagger-3 ${visible ? "in-view" : ""}`}
@@ -153,8 +153,8 @@ export default function Features() {
             </h3>
             <p className="text-sm text-text-secondary font-light leading-relaxed mb-4">
               Connect to OpenAI, Anthropic, Google Gemini, Ollama, NVIDIA NIM,
-              OpenRouter, or any OpenAI-compatible API — all through one unified
-              interface.
+              OpenRouter, or another OpenAI-compatible API from the same desktop
+              app.
             </p>
             <div className="flex-1 flex items-center justify-center">
               <InteractiveGlowSphere />
@@ -167,10 +167,10 @@ export default function Features() {
               Your Keys, Your Control
             </h3>
             <p className="text-sm text-text-secondary font-light leading-relaxed mb-4">
-              API keys are stored through the operating system keychain. Prompts
-              sent to a hosted provider leave your device and are handled under
-              that provider&apos;s terms; Sythoria does not add a hosted prompt
-              relay.
+              Sythoria encrypts its local secrets file and stores the root key
+              in your operating system credential vault. Prompts sent to a
+              hosted model still leave your device and are handled under that
+              provider&apos;s terms. Sythoria does not add its own prompt relay.
             </p>
             <div className="flex-1 flex items-center justify-center">
               <PrivacyVisualization />
