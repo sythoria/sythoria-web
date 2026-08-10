@@ -46,7 +46,9 @@ Copy `.env.example` to `.env.local` only when an override is required. `GH_TOKEN
 
 ## Documentation source of truth
 
-`src/content/desktop-facts.json` is the versioned contract between the desktop application and this site. It records the verified desktop source revision, release, supported artifacts, shortcuts, and provider presets. Documentation pages include `lastVerifiedVersion`, `lastVerifiedDate`, and `source` frontmatter.
+`src/content/desktop-facts.json` is the versioned contract between the desktop application and this site. It records the verified desktop source revision, release, supported artifacts, shortcuts, search services, limits, and provider presets. Documentation pages include `lastVerifiedVersion`, `lastVerifiedDate`, and `source` frontmatter.
+
+`npm run content:check` also compares that manifest with a sibling `sythoria-desktop` checkout. Set `SYTHORIA_DESKTOP_PATH` when the desktop repository is elsewhere. The check is skipped when no desktop checkout is available, which keeps standalone website builds working.
 
 When the desktop release changes:
 
