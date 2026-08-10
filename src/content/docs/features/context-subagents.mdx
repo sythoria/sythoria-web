@@ -1,0 +1,42 @@
+---
+title: Context & Subagents
+description: Understand request context limits, condensation notices, and delegated conversation runs.
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
+source: sythoria-desktop contextAssembler.ts toolLoop.ts conversationRunContext.ts and constants.ts
+---
+
+# Context & Subagents
+
+The conversation transcript and the request sent to a model are not always identical. Sythoria assembles a request that fits the selected model's configured context size while leaving room for output and tools.
+
+## Context budgeting
+
+For each request, Sythoria reserves output space first. When tools are enabled, it also reserves space for tool definitions and results. The system prompt and newest conversation turns receive priority over older history.
+
+If a model has no configured context size, v0.4.4 uses a conservative 32,768-token internal assembly ceiling. This does not claim that the provider accepts exactly that amount; it prevents an unknown value from producing an unbounded request.
+
+Large tool results are structurally summarized. Oversized messages and text attachments can be shortened for the request. Older message groups can be omitted or replaced with a compact summary.
+
+The saved transcript is not rewritten. When condensation occurs, the chat shows how many messages were omitted, condensed, or summarized for that request.
+
+## Subagents
+
+A subagent is an independent Sythoria conversation run created by the parent tool loop. It inherits the captured model, project, tool selection, and worktree context from the parent run rather than reading whatever happens to be selected in the interface later.
+
+The parent can start subagents, send them follow-up messages, and wait for their results. Their conversations remain linked to the parent so deletion and recovery can handle the full tree.
+
+v0.4.4 enforces these limits:
+
+| Limit                              | Value                       |
+| ---------------------------------- | --------------------------- |
+| Subagents created by one tool call | 4                           |
+| Active subagents across the run    | 8                           |
+| Delegation depth                   | 3                           |
+| Tool-loop steps in any run         | Up to 25, based on Settings |
+
+Subagents can consume provider quota at the same time. Delegating four tasks can create four additional model conversations and their tool calls. Use them for work that can be separated cleanly, and keep sensitive context out of a subtask that does not need it.
+
+## Worktree ownership
+
+Subagent project work remains tied to its captured run context. Do not switch projects or delete the parent tree while it has pending worktree changes. Apply or discard those changes first so Sythoria can clean up the correct branch and path.
