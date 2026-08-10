@@ -80,9 +80,6 @@ export default function BentoCard({
         }}
       />
 
-      {/* ── Noise texture overlay ──────────────── */}
-      <div className="noise-overlay pointer-events-none absolute inset-0 rounded-[1.25rem] opacity-[0.015] dark:opacity-[0.03]" />
-
       {/* ── Content ────────────────────────────── */}
       <div className={`relative z-10 flex h-full flex-col ${padding}`}>
         {children}
