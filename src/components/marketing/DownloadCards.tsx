@@ -11,20 +11,20 @@ import { formatBytes } from "@/utils/formatters";
 type OS = "windows" | "macos" | "linux";
 
 interface DownloadCardsProps {
-  defaultWinSetupUrl: string;
-  defaultWinPortableUrl: string;
-  defaultMacUrl: string;
+  releaseUrl: string;
+  windowsSetupUrl?: string;
+  macDmgUrl?: string;
+  linuxScriptUrl: string;
   windowsSetupSize?: number;
-  windowsPortableSize?: number;
   macDmgSize?: number;
 }
 
 export default function DownloadCards({
-  defaultWinSetupUrl,
-  defaultWinPortableUrl,
-  defaultMacUrl,
+  releaseUrl,
+  windowsSetupUrl,
+  macDmgUrl,
+  linuxScriptUrl,
   windowsSetupSize,
-  windowsPortableSize,
   macDmgSize,
 }: DownloadCardsProps) {
   const [detectedOS, setDetectedOS] = useState<OS | null>(null);
@@ -89,56 +89,56 @@ export default function DownloadCards({
               Windows (x64)
             </h2>
             <p className="text-xs text-text-secondary mt-1 m-0">
-              Available in standard <strong>Setup Installer</strong> or portable
-              zero-install <strong>Executable</strong>.
+              x64 setup installer for Windows 10 or 11.
             </p>
           </div>
 
           {/* Windows Action Buttons */}
           <div className="space-y-2.5 pt-2">
-            <Button
-              href={defaultWinSetupUrl}
-              variant="primary"
-              fullWidth
-              size="md"
-              icon={<Download size={16} />}
-              target="_blank"
-              rel="noopener noreferrer"
-              download
-            >
-              Setup Installer (.exe)
-            </Button>
+            {windowsSetupUrl && (
+              <Button
+                href={windowsSetupUrl}
+                variant="primary"
+                fullWidth
+                size="md"
+                icon={<Download size={16} />}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+              >
+                Setup Installer (.exe)
+              </Button>
+            )}
 
-            <Button
-              href={defaultWinPortableUrl}
-              variant="secondary"
-              fullWidth
-              size="md"
-              icon={<Download size={16} />}
-              target="_blank"
-              rel="noopener noreferrer"
-              download
-            >
-              Portable Version (.exe)
-            </Button>
+            {!windowsSetupUrl && (
+              <Button
+                href={releaseUrl}
+                variant="secondary"
+                fullWidth
+                size="md"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Check GitHub release
+              </Button>
+            )}
           </div>
         </div>
 
         <div className="pt-4 border-t border-border/30 text-xs text-text-muted space-y-1.5">
-          <div className="flex items-center justify-between">
-            <span>Setup Installer:</span>
-            <span className="font-mono text-text-secondary">
-              {windowsSetupSize ? formatBytes(windowsSetupSize) : "11.5 MB"}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span>Portable Version:</span>
-            <span className="font-mono text-text-secondary">
-              {windowsPortableSize
-                ? formatBytes(windowsPortableSize)
-                : "22.9 MB"}
-            </span>
-          </div>
+          {windowsSetupUrl && (
+            <div className="flex items-center justify-between">
+              <span>Setup Installer:</span>
+              <span className="font-mono text-text-secondary">
+                {windowsSetupSize
+                  ? formatBytes(windowsSetupSize)
+                  : "See GitHub"}
+              </span>
+            </div>
+          )}
+          {!windowsSetupUrl && (
+            <p className="m-0">No Windows file is attached yet.</p>
+          )}
         </div>
       </Card>
 
@@ -170,24 +170,23 @@ export default function DownloadCards({
               macOS (Apple Silicon)
             </h2>
             <p className="text-xs text-text-secondary mt-1 m-0">
-              Native arm64 disk image package (`.dmg`) built for Apple M1, M2,
-              M3, M4 & M5 chips.
+              Apple silicon build for macOS 12 or later.
             </p>
           </div>
 
           {/* macOS Action Button */}
           <div className="pt-2">
             <Button
-              href={defaultMacUrl}
+              href={macDmgUrl ?? releaseUrl}
               variant="primary"
               fullWidth
               size="md"
               icon={<Download size={16} />}
               target="_blank"
               rel="noopener noreferrer"
-              download
+              download={Boolean(macDmgUrl)}
             >
-              Download macOS (.dmg)
+              {macDmgUrl ? "Download macOS (.dmg)" : "Check GitHub release"}
             </Button>
           </div>
         </div>
@@ -199,12 +198,16 @@ export default function DownloadCards({
               Apple Silicon (arm64)
             </span>
           </div>
-          <div className="flex items-center justify-between">
-            <span>Disk Image Size:</span>
-            <span className="font-mono text-text-secondary">
-              {macDmgSize ? formatBytes(macDmgSize) : "13.3 MB"}
-            </span>
-          </div>
+          {macDmgUrl ? (
+            <div className="flex items-center justify-between">
+              <span>Disk Image Size:</span>
+              <span className="font-mono text-text-secondary">
+                {macDmgSize ? formatBytes(macDmgSize) : "See GitHub"}
+              </span>
+            </div>
+          ) : (
+            <p className="m-0">No macOS disk image is attached yet.</p>
+          )}
         </div>
       </Card>
 
@@ -226,7 +229,7 @@ export default function DownloadCards({
                 </Badge>
               )}
               <Badge variant="accent" className="text-xs font-semibold">
-                Universal Linux
+                Linux x86_64
               </Badge>
             </div>
           </div>
@@ -236,8 +239,8 @@ export default function DownloadCards({
               Linux Desktop
             </h2>
             <p className="text-xs text-text-secondary mt-1 m-0">
-              Universal shell script auto-detects `apt`, `dnf`, or AppImage
-              fallback on Ubuntu, Debian, Fedora, Arch & more.
+              The installer checks the latest published release for a Debian,
+              RPM, or AppImage package.
             </p>
           </div>
 
@@ -246,7 +249,9 @@ export default function DownloadCards({
             <span className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
               Quick Install Command
             </span>
-            <TerminalSnippet code="curl -fsSL https://raw.githubusercontent.com/sythoria/sythoria-desktop/main/install.sh | bash" />
+            <TerminalSnippet
+              code={`curl -fsSLo install-sythoria.sh ${linuxScriptUrl}`}
+            />
           </div>
         </div>
 
@@ -254,7 +259,7 @@ export default function DownloadCards({
           <div className="flex items-center justify-between">
             <span>Terminal Install:</span>
             <span className="font-mono text-[11px] text-accent truncate">
-              install.sh | bash
+              inspect, then run
             </span>
           </div>
           <div className="flex items-center justify-between">
