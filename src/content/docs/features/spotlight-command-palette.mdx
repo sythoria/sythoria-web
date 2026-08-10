@@ -1,58 +1,40 @@
 ---
-title: Spotlight & Command Palette
-description: Fast keyboard navigation, Spotlight floating prompt bar, and global command launcher in Sythoria Desktop.
-lastVerifiedVersion: v0.4.3
-lastVerifiedDate: 2026-08-02
-source: sythoria-desktop global shortcut registration and SpotlightArea
+title: Settings Search & Command Palette
+description: Open settings, conversations, and common commands from the keyboard.
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
+source: sythoria-desktop SpotlightArea.tsx CommandPalette.tsx useKeybindStore.ts and lib.rs
 ---
 
-# Spotlight & Command Palette
+# Settings Search & Command Palette
 
-Sythoria Desktop is designed for maximum productivity and keyboard-driven efficiency. It includes a **Spotlight Floating Window** for rapid one-shot AI prompts from anywhere on your operating system, and a **Global Command Palette** for instantaneous navigation and setting toggles.
+Sythoria has three keyboard search tools. They open different parts of the app.
 
----
+## Settings search
 
-## Spotlight Floating Window
+Press `Ctrl+Space` to bring Sythoria to the front and open the settings search. Start typing a section name such as Models, Privacy, Appshots, or MCP. Use the arrow keys to move through the results and press `Enter` to open a section.
 
-The **Spotlight Window** is a lightweight, floating search-bar interface that stays hidden in the background until triggered by a global system hotkey.
+This search does not send a prompt to a model. It only navigates the Settings screen.
 
-- **Global Hotkey**: Press `Option` + `Space` (macOS) or `Alt` + `Space` (Windows/Linux) from any application.
-- **Instant Prompting**: Type a quick question, code query, or translation request without switching out of your current IDE or web browser.
-- **Fast Execution**: Stream answers instantly, copy results to your clipboard with `Enter`, or hit `⌘` + `Shift` + `O` to promote the conversation to the full Sythoria main window.
+`Ctrl+Space` is registered as a system-wide shortcut in v0.4.4. It is currently fixed and does not appear in the keyboard-shortcut editor.
 
-<div className="relative my-6 max-w-2xl mx-auto grid grid-cols-1 grid-rows-1">
-  <img
-    src="/SpotlightScreenshots/SpotlightLight.png"
-    alt="Sythoria Spotlight Floating Window (Light Mode)"
-    className="col-start-1 row-start-1 rounded-xl border border-border/40 shadow-lg w-full transition-opacity duration-500 ease-in-out opacity-100 dark:opacity-0 pointer-events-auto dark:pointer-events-none"
-  />
-  <img
-    src="/SpotlightScreenshots/SpotlightDark.png"
-    alt="Sythoria Spotlight Floating Window (Dark Mode)"
-    className="col-start-1 row-start-1 rounded-xl border border-border/40 shadow-lg w-full transition-opacity duration-500 ease-in-out opacity-0 dark:opacity-100 pointer-events-none dark:pointer-events-auto"
-  />
-</div>
+## Command palette
 
----
+Press `Ctrl+Shift+P` while Sythoria is focused. The palette can run these commands:
 
-## Global Command Palette (`⌘K` / `Ctrl+K`)
+- start a new conversation;
+- open Settings or Project Workspaces;
+- turn web search or the current theme on and off;
+- zoom in, zoom out, or reset zoom;
+- create a project; and
+- check for application updates.
 
-The **Command Palette** brings quick actions to your fingertips inside the main application window. Press `⌘K` (macOS) or `Ctrl+K` (Windows/Linux) to open the palette:
+The command palette shortcut can be changed under **Settings > Keyboard Shortcuts**.
 
-### Command Palette Actions
+## Conversation picker
 
-| Category            | Shortcut Action                | Description                                                        |
-| :------------------ | :----------------------------- | :----------------------------------------------------------------- |
-| **Navigation**      | `Go to Settings`               | Jump directly to settings sections (Models, Skills, Privacy, MCP). |
-| **Model Selection** | `Switch Active Model`          | Rapidly switch between pre-configured LLM provider models.         |
-| **Workspaces**      | `Mount Workspace`              | Open a local repository directory as an active project workspace.  |
-| **Conversations**   | `New Thread` / `Clear History` | Start a new chat or search previous conversation history.          |
-| **Themes**          | `Toggle Theme`                 | Switch between Dark Mode, Light Mode, and Glassmorphism themes.    |
+`Ctrl+K` opens the conversation picker. It does not open the command palette. Use it when you know part of a conversation title and want to switch without browsing the sidebar.
 
----
+## Shortcut conflicts
 
-## Customizing Keyboard Hotkeys
-
-All hotkeys and shortcuts are fully customizable under **Settings > Keyboard Shortcuts**.
-
-You can remap the Spotlight activation shortcut, Command Palette launcher, model toggles, and sidebar navigation keys to fit your preferred workflow.
+An operating system or another application can claim the same shortcut. If `Ctrl+Space` does nothing, confirm that Sythoria is running and check the operating system's global shortcut settings. Other Sythoria shortcuts can be changed in the app.
