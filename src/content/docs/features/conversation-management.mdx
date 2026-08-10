@@ -1,0 +1,39 @@
+---
+title: Conversations & Side Chats
+description: Manage saved conversations, temporary chats, comparison columns, and subagent threads.
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
+source: sythoria-desktop useChatStore.ts conversationLifecycle.ts Sidebar.tsx and AuxiliaryPanel.tsx
+---
+
+# Conversations & Side Chats
+
+Normal conversations are stored as encrypted snapshots. Temporary conversations are kept only in memory.
+
+## Saved conversations
+
+The sidebar groups recent conversations by date and places pinned conversations in a separate group. You can rename, pin, export, or delete a conversation. Export writes a Markdown file to a path you choose.
+
+Automatic title generation can use the active model or another configured model. It can be disabled under **Settings > System Prompts**.
+
+## Temporary chat
+
+The ghost control in the chat header starts a temporary conversation. It is not saved to encrypted conversation history. Switching to another conversation deletes it, including any child subagent conversations.
+
+Sythoria will not leave a temporary conversation while it owns pending workspace changes. Apply or discard the worktree first.
+
+## Side chat
+
+The workspace panel can open a separate temporary Side Chat. It has its own messages, attachments, model selection, and streaming state. It does not add messages to the main conversation and is not restored after the app closes.
+
+Use it for a short question that should not change the main transcript. It is not a private boundary from the selected provider; sending a message still contacts that model endpoint.
+
+## Comparison and subagent conversations
+
+Each comparison column has its own conversation record. Subagents are linked child conversations owned by the parent that created them.
+
+Deleting a parent conversation also removes descendant subagents. Before deletion, Sythoria stops matching streams, cancels conversation-scoped MCP calls, and tries to discard each owned worktree. If a worktree cannot be removed, deletion pauses and keeps the recovery record instead of hiding it.
+
+## Navigation history
+
+`Ctrl+[` and `Ctrl+]` move backward and forward through conversations you opened. `Alt+ArrowUp` and `Alt+ArrowDown` select adjacent sidebar conversations. `Ctrl+K` opens the conversation picker.
