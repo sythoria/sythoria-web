@@ -1,23 +1,18 @@
 ---
 title: Multi-Provider Chat
-description: Configure multiple providers and choose a model for each message.
-lastVerifiedVersion: v0.4.3
-lastVerifiedDate: 2026-08-02
-source: sythoria-desktop providerPresets.ts and useModelStore.ts
+description: Configure local or hosted model endpoints and choose a model for each conversation.
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
+source: sythoria-desktop providerPresets.ts useModelStore.ts and conversationRunContext.ts
 ---
 
 # Multi-Provider Chat
 
-## Direct Request Architecture
+Sythoria sends model requests from its Rust backend to the endpoint saved on the selected model. It does not route prompts through a Sythoria service.
 
-Sythoria Desktop executes all AI provider interactions directly from your machine without any intermediary proxy servers:
+For a hosted model, the provider receives the request and credential. For a local model, the request goes to the local endpoint you configured. Search, MCP, transcription, updates, and artifact networking have their own network paths.
 
-1. **Run Context Assembly**: When a message is sent, Sythoria builds an immutable run context combining your active model choice, system prompt, temperature, and attached tools or workspace instructions.
-2. **OS Keychain Secret Retrieval**: Provider API keys are fetched directly from your operating system's native credential vault (macOS Keychain, Windows Credential Manager, Linux Secret Service) into local memory for the request.
-3. **Direct Provider Connection**: Sythoria establishes a direct, encrypted HTTPS / Server-Sent Events (SSE) stream straight to the selected provider's endpoint (OpenAI, Anthropic, Gemini, NVIDIA NIM, OpenRouter, or local Ollama).
-4. **Zero Middleman Proxying**: Request payloads, API tokens, and streaming responses flow exclusively between your local desktop client and the target provider. Sythoria operates completely stateless with no intermediate servers or telemetry logging.
-
-## Desktop v0.4.3 presets
+## Provider presets
 
 | Provider      | API base                                                                   | Default model                 |
 | ------------- | -------------------------------------------------------------------------- | ----------------------------- |
@@ -28,27 +23,27 @@ Sythoria Desktop executes all AI provider interactions directly from your machin
 | NVIDIA NIM    | `https://integrate.api.nvidia.com/v1/chat/completions`                     | `meta/llama-3.3-70b-instruct` |
 | OpenRouter    | `https://openrouter.ai/api/v1/chat/completions`                            | `anthropic/claude-sonnet-5`   |
 
-These are application presets, not a guarantee that a model remains available to your provider account. Check the provider's live catalog before changing an ID.
+These values come from v0.4.4. They are editable defaults, not a guarantee that the provider currently offers the model to your account.
 
-## Add another provider
+## Add a model
 
-1. Open **Settings** and choose **Add Model**.
-2. Select a preset or **Custom**.
-3. Verify the API base, model ID, and API format.
-4. Add the provider key if the endpoint requires one.
-5. Save and run the connection check.
-6. Send a short test message before adding private context.
+1. Open **Settings > AI Models & API Keys**.
+2. Select **Add Model**.
+3. Choose a preset or Custom.
+4. Check the API base, request provider, and exact model ID.
+5. Enter a credential if the endpoint requires one.
+6. Save and run the connection check.
 
-Provider keys are stored through the operating system keychain. Non-secret provider configuration is stored in domain-separated AES-256-GCM local files.
+Credentials are encrypted in `secrets.enc`. The root encryption key is kept in the operating system credential vault.
 
-## Switch during a conversation
+## Switching models
 
-Changing the model affects the next request. The provider can receive the conversation context Sythoria includes with that request, including earlier messages produced by another provider. Start a new conversation when context should not cross provider boundaries.
+The conversation stores a model selection. Changing it affects later requests, and the new provider can receive the history included with those requests. Start a new conversation when earlier messages should not cross provider boundaries.
 
-Pricing, context windows, rate limits, safety handling, retention, and output behavior remain provider-specific. Sythoria does not guarantee a cost reduction when you switch models.
+Comparison columns and subagents capture their own model and project context. Changing the global selector later does not rewrite a run that is already active.
 
-## Custom endpoints
+## Custom model endpoints
 
-For an OpenAI-compatible endpoint, enter the complete chat-completions URL expected by that server. Prefer HTTPS with a valid certificate for any non-loopback host. Do not send a production key to an endpoint you do not control or trust.
+Custom models use an OpenAI-compatible chat-completions URL. Enter the full endpoint expected by the server. Use HTTPS for remote hosts and grant local-network access only for an exact local service you trust.
 
-Enabling local-network access broadens which private addresses the backend may contact. Enable it only for a specific trusted endpoint and protect remote services with firewall rules, authentication, and TLS.
+Do not send a production credential to an endpoint whose operator or TLS setup you have not verified.
