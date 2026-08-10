@@ -1,0 +1,54 @@
+---
+title: Project Workspaces
+description: Give a conversation scoped access to a local project and review changes in a Git worktree.
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
+source: sythoria-desktop useProjectStore.ts project_tools.rs git.rs and toolLoop.ts
+---
+
+# Project Workspaces
+
+A project registers a local folder with a name, permission level, and optional exclusions. When projects are enabled, a conversation can use the selected project as its tool scope.
+
+Open **Settings > Project Workspaces** to add a folder. Use a Git repository for write tasks because Sythoria isolates changes in a Git worktree.
+
+## Permission levels
+
+| Permission | Tools and approval                                                                                                           |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Read       | List directories, search names or contents, read files, and inspect Git status or diffs                                      |
+| Write      | Read tools plus file writes, edits, and Git commits; each mutation needs frontend approval                                   |
+| Full       | Write tools plus shell commands; ordinary write approval is skipped, but every shell command still needs native confirmation |
+
+Permissions limit which Sythoria project tools are offered to the model. A shell command can still invoke programs with access beyond the project under your operating-system account. Read the command before approving it.
+
+## Excluded paths
+
+Project exclusions use root-relative Git-ignore style patterns. Negation patterns are not supported. Sythoria applies exclusions during list, glob, grep, read, and write operations and checks canonical paths to prevent symlink escapes.
+
+Use exclusions for dependency folders, build output, generated files, credentials, and any directory the model does not need.
+
+## Project instructions
+
+A project can have its own system-prompt override. If the project root contains `AGENTS.md`, Sythoria reads it for project runs and includes the instructions in the model context.
+
+Keep repository instructions short enough to leave room for the task and source files. Do not store secrets in them.
+
+## Worktree review
+
+The first approved write creates an isolated Git worktree. Later file tools and approved shell commands for that run use the worktree path.
+
+When changes are pending:
+
+1. open **Review** in the workspace panel;
+2. inspect every changed file and the line-level diff;
+3. run the project's tests from the worktree if needed;
+4. choose **Apply** to merge the worktree changes into the registered project, or **Discard** to remove the isolated worktree and branch.
+
+Sythoria blocks project switching, conversation switching, and compare-mode teardown while a conversation owns unresolved worktree changes. This keeps the recovery record attached to the run that created it.
+
+Optional auto-commit runs only after Apply and uses the project and model scope captured when the run began.
+
+## Safer project setup
+
+Start with Read permission. Move to Write only when the task needs file changes. Use Full for a specific command-driven task, then reduce the permission again. Keep the main repository clean enough that you can tell your work from the agent's worktree changes.
