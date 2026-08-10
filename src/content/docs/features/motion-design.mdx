@@ -1,23 +1,23 @@
 ---
 title: Motion & Reduced Motion
-description: Understand Sythoria's motion settings and reduced-motion behavior.
-lastVerifiedVersion: v0.4.3
-lastVerifiedDate: 2026-08-02
-source: sythoria-desktop motion preferences and UI styles
+description: Control interface animation and understand how Sythoria responds to reduced-motion settings.
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
+source: sythoria-desktop motion-tokens.ts AppMotionConfig.tsx AppearanceSection.tsx and index.css
 ---
 
 # Motion & Reduced Motion
 
-Sythoria uses short transitions to explain opening, closing, selection, and layout changes. Motion is cosmetic; it should not be required to understand or complete a task.
+Sythoria uses short transitions when panels, menus, messages, and other interface elements change.
+
+Open **Settings > Appearance** and turn off **App Animations** to disable interface transitions throughout the app. This preference is stored with the other application preferences.
 
 ## Reduced motion
 
-When the operating system requests reduced motion, the interface should replace long or repeating movement with stable states and near-instant transitions. This includes decorative particles, pulsing indicators that do not represent live status, parallax, and autoplay demonstrations.
+When the operating system requests reduced motion, Sythoria removes movement and scale changes from its shared transitions and shortens them to 160 milliseconds. Its stylesheet also reduces CSS animation and transition durations to 0.01 milliseconds, runs animations once, and disables smooth scrolling.
 
-The application and website must implement this behavior explicitly. The audited source does not support claims about automatic FPS measurement, `hardwareConcurrency` tiers, or a guaranteed frame rate, so those mechanisms are not part of this contract.
+Turning off **App Animations** is stricter: shared transitions use a duration of zero. Sythoria does not use automatic FPS measurement or hardware tiers to choose an animation mode.
 
 ## Report a problem
 
-Include the operating system, reduced-motion setting, Sythoria version, and the screen where motion continues. A short recording can help, but check it for private prompts, paths, notifications, and account details before sharing.
-
-Motion that lasts more than a few seconds should have a pause/stop path or settle into a static state. Focus, keyboard operation, and content order must remain identical when animation is disabled.
+If animation continues after you turn it off, include the operating system, Sythoria version, and the affected screen in the report. A short recording can help, but check it for private prompts, paths, notifications, and account details before sharing.
