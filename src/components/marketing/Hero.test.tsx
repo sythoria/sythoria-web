@@ -30,7 +30,7 @@ describe("Hero", () => {
       .mockImplementation(() => Promise.resolve());
   });
 
-  it("renders headline and zero telemetry badge", () => {
+  it("renders the original headline and telemetry badge", () => {
     render(<Hero latestVersion="v1.2.0" />);
     expect(screen.getByText(/Zero Telemetry/i)).toBeInTheDocument();
     expect(screen.getByText("The private")).toBeInTheDocument();
@@ -67,5 +67,13 @@ describe("Hero", () => {
       "sm:aspect-video",
       "!min-h-0"
     );
+  });
+
+  it("loads the demo automatically under reduced motion", () => {
+    const { container } = render(<Hero latestVersion="v1.2.0" />);
+    const video = container.querySelector("video");
+
+    expect(video).toHaveAttribute("src", "/darkDemo.mp4");
+    expect(video).toHaveAttribute("autoplay");
   });
 });
