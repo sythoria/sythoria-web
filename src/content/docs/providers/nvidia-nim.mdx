@@ -1,8 +1,8 @@
 ---
 title: NVIDIA NIM
 description: Connect Sythoria to a hosted or self-managed NVIDIA NIM endpoint.
-lastVerifiedVersion: v0.4.3
-lastVerifiedDate: 2026-08-02
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
 source: sythoria-desktop providerPresets.ts and NVIDIA NIM documentation
 ---
 
@@ -18,15 +18,13 @@ Sythoria uses NVIDIA's OpenAI-compatible chat-completions endpoint for the NVIDI
 4. Confirm the preset and paste the key.
 5. Save and run the connection check.
 
-| Setting       | Desktop v0.4.3 value                                   |
+| Setting       | Desktop v0.4.4 value                                   |
 | ------------- | ------------------------------------------------------ |
 | API base      | `https://integrate.api.nvidia.com/v1/chat/completions` |
 | Default model | `meta/llama-3.3-70b-instruct`                          |
 | API format    | OpenAI-compatible chat completions                     |
 
-Use the exact ID shown in NVIDIA's current catalog. Model availability and identifiers change independently of Sythoria. One separately verified Nemotron identifier is `nvidia/nemotron-3-ultra-550b-a55b`; omitting the suffix selects no valid route.
-
-See the [NVIDIA API catalog](https://build.nvidia.com/explore/discover) and [Nemotron 3 Ultra reference](https://docs.api.nvidia.com/nim/re/reference/nvidia-nemotron-3-ultra-550b-a55b) for current details.
+Use the exact ID shown in NVIDIA's current catalog. Model availability and identifiers change independently of Sythoria. See the [NVIDIA API catalog](https://build.nvidia.com/explore/discover) for current details.
 
 ## Self-managed NIM
 
