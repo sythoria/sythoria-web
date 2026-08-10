@@ -1,0 +1,41 @@
+---
+title: Attachments & Vision
+description: Add text, code, or image files to a prompt and understand how they are sent.
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
+source: sythoria-desktop attachments.ts useAttachments.ts InputBar.tsx and constants.ts
+---
+
+# Attachments & Vision
+
+A draft can contain up to six files. Each file can be up to 10 MB. Empty and unsupported files are rejected before the request is sent.
+
+## Images
+
+Sythoria accepts PNG, JPEG, GIF, and WebP images. They are added to the provider request as image content.
+
+The selected model must have **Supports Image Inputs** enabled in its configuration. That setting tells the composer to accept images; it cannot add vision support to a model that does not have it.
+
+You can attach an image from the file picker, drag and drop, paste it from the clipboard, or create an [Appshot](/docs/features/appshots).
+
+## Text and code
+
+Supported extensions are grouped by file type:
+
+| Category                  | Extensions                                                                    |
+| ------------------------- | ----------------------------------------------------------------------------- |
+| Text and Markdown         | `.txt`, `.md`, `.markdown`, `.log`                                            |
+| Data and config           | `.json`, `.csv`, `.xml`, `.yaml`, `.yml`, `.toml`, `.ini`, `.cfg`, `.env`     |
+| Web                       | `.html`, `.css`, `.scss`                                                      |
+| JavaScript and TypeScript | `.js`, `.jsx`, `.ts`, `.tsx`                                                  |
+| General programming       | `.py`, `.rb`, `.go`, `.rs`, `.java`, `.cs`, `.php`, `.swift`, `.kt`, `.scala` |
+| C and C++                 | `.c`, `.h`, `.cpp`, `.hpp`                                                    |
+| Shell and database        | `.sh`, `.bash`, `.zsh`, `.sql`                                                |
+
+Text attachments are read locally and inserted into the prompt as named fenced blocks. They count toward the model's context window. Large files can be condensed when the request is assembled, while the original attachment remains visible in the transcript.
+
+## Before sending
+
+Opening a file in the draft does not upload it by itself. The attachment leaves the device when you send the message to a hosted model. Check the selected model and remove credentials, private keys, `.env` values, customer records, and unrelated source files first.
+
+Provider limits can be lower than Sythoria's local 10 MB limit. A provider can also reject an image format or file count that the composer accepted.
