@@ -1,53 +1,50 @@
 ---
 title: Voice Input & Transcription
-description: Transcribe speech with a local Whisper model or configured cloud endpoint.
-lastVerifiedVersion: v0.4.3
-lastVerifiedDate: 2026-08-02
-source: sythoria-desktop audio_transcription.rs and Whisper settings
+description: Dictate into the composer with a local Whisper model or a cloud transcription endpoint.
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
+source: sythoria-desktop commands/audio.rs useWhisperStore.ts and WhisperSection.tsx
 ---
 
 # Voice Input & Transcription
 
-## How Voice Transcription Works
+Voice input records from the default microphone and places a transcript in the message composer. Review the text before sending it.
 
-Sythoria processes voice input on your device through a multi-stage local pipeline:
+## Local Whisper
 
-1. **Mic Capture**: Captures raw PCM audio from your default input device.
-2. **Silero VAD (Voice Activity Detection)**: Filters background silence and detects active speech bounds to minimize processing overhead.
-3. **Audio Resampling**: Converts the raw audio stream into mono 16kHz, 16-bit WAV format.
-4. **Whisper Engine Inference**: Runs local model inference using `whisper-rs` (`whisper.cpp`) to transcribe speech into text and feeds it directly into your chat prompt.
+For local transcription, Sythoria:
 
-## Local transcription
+1. records audio with the system input device;
+2. mixes the recording to one channel;
+3. resamples it to 16 kHz; and
+4. sends the samples to `whisper-rs` for transcription.
 
-1. Open **Settings** and find the Whisper/voice section.
-2. Download one of the model sizes offered by the current application.
-3. Grant microphone permission when the operating system asks.
-4. Select the downloaded model as the transcription path.
-5. Record a short test and review the text before sending it to a chat model.
+The local path does not use Silero voice-activity detection. It also does not create a 16-bit WAV file before local inference.
 
-Local transcription keeps the recorded audio on the local processing path, but the resulting text can still leave the device when you send it to a hosted model.
+Settings offers Tiny, Base, Small, and Large v3 Turbo Whisper models. English-only and multilingual choices are available for the smaller sizes. Preset downloads are checked against the values built into the app. A custom model is accepted as an unverified local file, so obtain it from a source you trust.
 
-The audited build uses `whisper-rs`. It does not configure or promise CUDA/CoreML acceleration in the documented package. Do not install a CUDA version solely for Sythoria unless a future release explicitly ships and documents that backend.
+Recordings are limited to five minutes.
 
 ## Cloud transcription
 
-A cloud endpoint receives the recorded audio and associated request metadata. Configure it only after reviewing the service's authentication, region, retention, and billing terms. Use a separate scoped key where the provider supports one.
+The cloud path converts the captured audio to a 16 kHz WAV file and uploads it to the configured speech-to-text endpoint. The default fields point to Groq's OpenAI-compatible transcription endpoint and `whisper-large-v3`, but both can be changed.
 
-## Permissions and storage
+The cloud service receives the recording, its credential, and normal request metadata. Check its pricing, retention, and region before using private speech.
 
-- Denying microphone permission prevents recording but should not affect text chat.
-- Downloaded model files consume local disk space and can be removed from the voice settings.
-- Recordings and transcripts can contain private speech, names, and background audio. Review them before attaching or sending.
-- Headsets, sample rates, background noise, language, and model size affect transcription quality.
+## Transcript refinement
+
+Voice settings can send the transcript to one of your configured language models for cleanup. This option is enabled by default in v0.4.4. If the refinement model is hosted, the transcript leaves the device even when Whisper transcription itself was local.
+
+Turn off LLM polish when the transcript must stay on the local transcription path.
 
 ## Troubleshooting
 
-| Symptom                  | Check                                                             |
-| ------------------------ | ----------------------------------------------------------------- |
-| No input                 | Operating-system microphone permission and selected input device  |
-| Model unavailable        | Download completion, free disk space, and selected model          |
-| Slow local transcription | Choose a smaller model and close memory-intensive applications    |
-| Cloud 401/403            | Endpoint, key, region, and account permission                     |
-| Poor transcript          | Input level, background noise, language, and a larger local model |
+| Problem             | What to check                                                        |
+| ------------------- | -------------------------------------------------------------------- |
+| No recording        | Operating-system microphone permission and the default input device  |
+| Local model missing | Download status, disk space, and selected model                      |
+| Slow transcription  | A smaller Whisper model and other CPU-heavy applications             |
+| Cloud 401 or 403    | Endpoint, credential, account access, and region                     |
+| Poor text           | Language setting, microphone level, background noise, and model size |
 
-Revoke any cloud key that appears in an error message or screenshot before sharing diagnostics.
+Recordings and transcripts can contain names, notifications, or background conversations. Remove private text from the composer before sending it to a model.
