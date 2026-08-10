@@ -1,40 +1,40 @@
 ---
-title: Reusable Custom Skills
-description: Create reusable local instructions that can be added to model context.
-lastVerifiedVersion: v0.4.3
-lastVerifiedDate: 2026-08-02
-source: sythoria-desktop skill store and skill components
+title: Custom Skills
+description: Store reusable local instructions that the model can read during a tool run.
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
+source: sythoria-desktop skills.rs useSkillStore.ts and toolLoop.ts
 ---
 
-# Reusable Custom Skills
+# Custom Skills
 
-A skill is a local instruction package that can be attached to a conversation or project. It can define conventions, workflow steps, and tool guidance without pasting the same text into every prompt.
+A skill is a Markdown instruction file stored under `~/.agents/skills/<skill-id>/SKILL.md`. The file contains a name, a description, and the instructions themselves.
 
-## What a skill can and cannot do
+Skills are plaintext files. They are not stored in Sythoria's encrypted application data.
 
-A skill changes model context. It does not make a model or tool faster, grant permissions, or make unsafe commands trustworthy. Longer skill text also consumes context and can affect cost for hosted models.
+## How the model uses a skill
 
-## Create a skill
+Sythoria adds the available skill names and descriptions to the tool-loop prompt. The model can call `read_skill` when a skill looks relevant. The full skill is added to that run only after the tool call.
 
-1. Open the Skills area in Sythoria.
-2. Create a skill with a clear name and one bounded purpose.
-3. State prerequisites, allowed tools/paths, expected output, and stop conditions.
-4. Save it and attach it to a disposable test conversation.
-5. Review tool proposals and output before using it in a real project.
+There is no control for attaching a skill to one conversation or project in v0.4.4. Skills are available from the shared catalog whenever the tool loop is active.
 
-Example instruction body:
+## Create or edit a skill
+
+Open **Settings > Custom Skills**. Give the skill a short name, explain when it should be used, and write instructions that can be followed without guessing.
 
 ```markdown
 # Review a TypeScript change
 
 - Read the changed files and nearby tests.
-- Do not modify files outside the named package.
-- Report correctness and accessibility issues with file/line evidence.
+- Stay inside the named package.
+- Report problems with file and line references.
 - Run the package's existing test command after approved edits.
 ```
 
-## Portability and backup
+Keep one job per skill. State required inputs, allowed tools, expected output, and when the model should stop.
 
-Treat internal storage locations and cache formats as implementation details unless the application exposes a documented export. Use Sythoria's export/import controls where available and keep the original skill text in a versioned, non-secret location.
+## Privacy and backup
 
-Never put API keys, personal tokens, private certificates, or production credentials in a skill. The skill can be sent to the active model as context.
+Do not put API keys, tokens, certificates, or private customer data in a skill. Once the model reads a skill, its contents can be sent to the selected hosted provider as part of the request context.
+
+Sythoria does not provide skill import or export controls in v0.4.4. Back up the `~/.agents/skills` directory yourself if the files matter to you.
