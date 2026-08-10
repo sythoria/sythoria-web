@@ -21,7 +21,6 @@ export default function RefractiveBackground() {
           opacity: 0.25,
         }}
       />
-      <div className="noise-overlay absolute inset-0 opacity-[0.015] dark:opacity-[0.03]" />
     </div>
   );
 }
