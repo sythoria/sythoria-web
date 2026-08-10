@@ -1,8 +1,8 @@
 ---
 title: OpenAI
 description: Connect Sythoria to OpenAI using your own API key and an available model ID.
-lastVerifiedVersion: v0.4.3
-lastVerifiedDate: 2026-08-02
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
 source: sythoria-desktop providerPresets.ts and OpenAI model documentation
 ---
 
@@ -17,7 +17,7 @@ The OpenAI preset sends chat-completions requests directly from Sythoria's Rust 
 3. In Sythoria, open **Settings**, add a model, and select **OpenAI**.
 4. Confirm the preset, paste the key, save, and run the connection check.
 
-| Setting       | Desktop v0.4.3 value                         |
+| Setting       | Desktop v0.4.4 value                         |
 | ------------- | -------------------------------------------- |
 | API base      | `https://api.openai.com/v1/chat/completions` |
 | Default model | `gpt-5.6-sol`                                |
@@ -27,7 +27,7 @@ The default is an application preset, not a statement about OpenAI's newest mode
 
 ## Key handling
 
-Sythoria stores the key through the operating system keychain and uses it for requests to the configured endpoint. Use a separate key for Sythoria where possible, restrict its project/budget, and revoke it if it appears in a prompt, log, screenshot, shell history, or repository.
+Sythoria encrypts the key in `secrets.enc`; the root encryption key is kept in the operating system credential vault. Use a separate provider key for Sythoria where possible, restrict its project and budget, and revoke it if it appears in a prompt, log, screenshot, shell history, or repository.
 
 ## Troubleshooting
 
