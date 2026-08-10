@@ -45,7 +45,6 @@ export default async function DownloadsPage() {
     /setup.*\.exe$/i.test(asset.name)
   );
   const macDmg = assets.find((a) => a.name.toLowerCase().endsWith(".dmg"));
-
   return (
     <div className="min-h-screen bg-landing-bg text-text-primary selection:bg-accent/30 flex flex-col justify-between">
       <Navbar />

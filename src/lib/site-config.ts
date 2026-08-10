@@ -2,7 +2,7 @@ import desktopFacts from "@/content/desktop-facts.json";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  "https://sythoria.app";
+  "https://sythoria.com";
 
 export const GITHUB_OWNER = "sythoria";
 export const GITHUB_REPO = "sythoria-desktop";
