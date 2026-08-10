@@ -1,68 +1,49 @@
 ---
-title: Agentic Tool Loop
-description: How Sythoria plans and runs approved tools inside an isolated project workspace.
-lastVerifiedVersion: v0.4.3
-lastVerifiedDate: 2026-08-02
-source: sythoria-desktop project_tools.rs and agent tool loop
+title: Agent Tool Loop
+description: See how Sythoria runs search, MCP, skill, subagent, and project tools.
+lastVerifiedVersion: v0.4.4
+lastVerifiedDate: 2026-08-09
+source: sythoria-desktop toolLoop.ts contextAssembler.ts project_tools.rs and commands/mcp.rs
 ---
 
-# Agentic Tool Loop
+# Agent Tool Loop
 
-## Tool Loop Workflow
+When tools are enabled, the model can ask Sythoria to run a tool and use the result in its next request. The loop stops when the model answers, you stop it, an approval is rejected, or the configured step limit is reached.
 
-Sythoria Desktop executes an iterative, human-in-the-loop agentic workflow:
+The step limit can be set from 1 to 25 under **Settings > Chat Configuration**.
 
-1. **Context & Tool Assembly**: Sythoria compiles system prompts, workspace instructions (`AGENTS.md`), custom skills (`read_skill`), active MCP tools, and native project tools (`project_read`, `project_grep`, `project_edit`, `project_bash`) into provider-specific schemas with token budget optimization.
-2. **Model Reasoning & Tool Proposal**: The active LLM analyzes your prompt, streams its reasoning text, and outputs structured function calls with arguments.
-3. **Concurrency Scheduling & Security Gate**:
-   - Tool calls are categorized as **Read** or **Mutation** operations and scheduled via `scheduleToolExecution` to prevent file race conditions.
-   - **Read-Only** operations (`project_read`, `project_grep`, `project_glob`, `search_query`) execute automatically under read permissions.
-   - **File Mutations** (`project_edit`, `project_write`, `project_git_commit`) display an interactive diff viewer for human review and approval.
-   - **Shell Commands** (`project_bash`) and MCP tool calls trigger explicit consent prompts showing the exact command line string before execution.
-4. **Native Desktop Execution & Output Truncation**: Approved tools run locally inside Tauri's Rust backend environment. Output logs, file diffs, or subagent results are safety-truncated to prevent memory and context window overflow.
-5. **Iterative Continuation & Subagent Delegation**: Tool outputs are formatted into message objects and fed back into the context for the model's next reasoning cycle. The loop continues up to 25 iterations or until a final response is generated. Complex tasks can delegate parallel background subagents via `invoke_subagent`.
+## Tools that may be available
 
-## Trust boundary
+The exact list depends on your settings and the active conversation:
 
-A model-generated terminal command is still an arbitrary command. It can modify files, start processes, access credentials available to your user account, or send data over the network. Read the command and its working directory before approving it.
+- web search and page fetching;
+- `read_skill` for the shared skill catalog;
+- selected MCP tools;
+- project file, search, Git, and shell tools; and
+- subagent tools.
 
-Sythoria v0.4.3 adds workspace-boundary and symlink checks to native project tools, but those checks do not make every command harmless. A shell launched inside a workspace can still invoke programs with broader permissions.
+Read-only calls may run at the same time when they do not share a mutation boundary. File changes and other mutations are queued so they do not race each other.
 
-## Safer workflow
+## Project approvals
 
-1. Use a repository with a clean status or create a dedicated branch/worktree.
-2. Back up irreplaceable files outside the workspace.
-3. Give the task a narrow objective and name the files it may change.
-4. Review every command, network call, and file write before approval.
-5. Inspect the diff and run project tests before accepting the result.
-6. Stop the loop if it requests unrelated credentials, broad filesystem access, or destructive operations.
+Read-only project tools can run under Read permission. Write permission adds file changes and Git commits. Before a write or commit runs, Sythoria shows the proposed operation for approval.
 
-Check current changes with:
+The first approved write is made in an isolated Git worktree. When the run finishes, use the Review panel to inspect the complete diff and choose Apply or Discard. The main working tree is not changed until you apply the worktree.
 
-```bash
-git status --short
-git diff --stat
-git diff
-```
+Full permission adds `project_bash` and skips the frontend approval used for ordinary write tools. Every shell command still receives a native confirmation dialog from the Rust backend.
 
-To discard a single reviewed file, first confirm the exact path, then use:
+## MCP approvals
 
-```bash
-git restore -- path/to/file
-```
+An untrusted MCP server requires a separate native approval for each call. That approval is single-use and expires after 60 seconds. A trusted server can run without this prompt.
 
-This permanently discards uncommitted changes in that file. Prefer Sythoria's worktree review/apply/discard flow where available, and never use a repository-wide restore command as a generic troubleshooting step.
+## Context and large results
 
-## Processes and development servers
+Sythoria reserves room for model output and tool definitions before assembling the request. Large tool results can be summarized, and older messages can be omitted or condensed when the configured context window is full. The transcript stored in the conversation is not rewritten. The chat shows a notice when a request used condensed context.
 
-Run development servers in a visible terminal you can stop and inspect. Do not copy examples that detach an unknown command with `nohup` or shell backgrounding. Confirm the requested port is free, know the process ID, and stop the exact process when the task ends.
+See [Context & Subagents](/docs/features/context-subagents) for the limits and disclosure behavior.
 
-## Recovery
+## Stop and recover
 
-If a task behaves unexpectedly:
+Stop the run if a command, path, or network request does not match your task. Do not approve cleanup commands just because an earlier step failed.
 
-1. stop the tool loop;
-2. do not approve additional cleanup commands;
-3. inspect `git status`, the worktree, and running processes;
-4. preserve useful logs after removing secrets; and
-5. restore only reviewed paths from a known commit or backup.
+For project work, open Review and inspect every changed file. Apply the worktree only after the diff and relevant tests make sense. If you discard it, the worktree and its branch are removed without merging those changes into the registered project.
