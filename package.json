@@ -15,7 +15,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json,mdx}\" \"tests/**/*.{ts,tsx}\" \"scripts/**/*.{mjs,json}\" \"*.{json,mjs,ts}\" \"README.md\" \".github/**/*.{yml,yaml}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json,mdx}\" \"tests/**/*.{ts,tsx}\" \"scripts/**/*.{mjs,json}\" \"*.{json,mjs,ts}\" \"README.md\" \".github/**/*.{yml,yaml}\"",
     "typecheck": "tsc --noEmit",
-    "content:check": "node scripts/validate-content.mjs",
+    "content:check": "node scripts/validate-content.mjs && node scripts/validate-desktop-facts.mjs",
     "assets:optimize": "node scripts/optimize-assets.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
