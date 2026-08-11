@@ -1,12 +1,9 @@
 # Sythoria website
 
-This is the website and documentation for [Sythoria Desktop](https://github.com/sythoria/sythoria-desktop).
+This repository contains the website and documentation for [Sythoria Desktop](https://github.com/sythoria/sythoria-desktop).
 
-To run it locally:
+Visit [sythoria.com](https://sythoria.com) or [download the latest desktop release](https://github.com/sythoria/sythoria-desktop/releases/latest).
 
-```bash
-npm install
-npm run dev
-```
+Bug reports and pull requests are welcome.
 
 Licensed under the [MIT License](LICENSE).
