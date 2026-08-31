@@ -2,6 +2,7 @@
 
 import { Columns3 } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { useRef, type PointerEvent } from "react";
 import { useScrollInView } from "@/hooks/useScrollInView";
 
@@ -9,6 +10,7 @@ interface ComparisonRow {
   feature: string;
   sythoria: string;
   otherChatbots: string;
+  docHref?: string;
 }
 
 const comparisons: ComparisonRow[] = [
@@ -18,12 +20,14 @@ const comparisons: ComparisonRow[] = [
       "Native Tauri desktop app for Windows x64, Apple silicon macOS, and Linux x86_64.",
     otherChatbots:
       "Many are hosted services or self-hosted web apps. Installation and hosting requirements vary by product.",
+    docHref: "/downloads",
   },
   {
     feature: "User accounts",
     sythoria: "No Sythoria account or local login screen.",
     otherChatbots:
       "Hosted and multi-user products commonly require an account. Some self-hosted tools can run locally or limit registration.",
+    docHref: "/docs/privacy",
   },
   {
     feature: "Model providers",
@@ -31,6 +35,7 @@ const comparisons: ComparisonRow[] = [
       "Presets for OpenAI, Anthropic, Gemini, Ollama, NVIDIA NIM, and OpenRouter, plus editable OpenAI-compatible endpoints.",
     otherChatbots:
       "Provider support varies. Some focus on one ecosystem, while others support several providers and compatible endpoints.",
+    docHref: "/docs/features/multi-provider",
   },
   {
     feature: "Local project work",
@@ -38,6 +43,7 @@ const comparisons: ComparisonRow[] = [
       "Scoped project folders with Read, Write, or Full access. Writes use an isolated Git worktree with Review, Apply, and Discard.",
     otherChatbots:
       "File uploads and tool integrations are common. Repository access and review workflows depend on the product and its configuration.",
+    docHref: "/docs/features/project-workspaces",
   },
   {
     feature: "Web access",
@@ -45,6 +51,7 @@ const comparisons: ComparisonRow[] = [
       "Google, SearXNG, or Firecrawl search; Firecrawl or Jina Reader page fetching.",
     otherChatbots:
       "Search and page reading may be built in, supplied by an external tool, or unavailable until configured.",
+    docHref: "/docs/features/web-search",
   },
   {
     feature: "MCP transports",
@@ -52,6 +59,7 @@ const comparisons: ComparisonRow[] = [
       "stdio, SSE, and Streamable HTTP, with single-use approval for each call from an untrusted server.",
     otherChatbots:
       "MCP support varies by product, transport, and version. Some products rely on bridges or separately configured tool servers.",
+    docHref: "/docs/features/mcp",
   },
   {
     feature: "Application data",
@@ -59,6 +67,7 @@ const comparisons: ComparisonRow[] = [
       "Conversation snapshots and settings use encrypted local files; the root key is stored in the operating system credential vault.",
     otherChatbots:
       "Hosted products keep application data on their systems. With self-hosted tools, storage, backups, and access controls are usually managed by the operator.",
+    docHref: "/docs/privacy",
   },
 ];
 
@@ -167,7 +176,22 @@ export default function Comparison() {
                     scope="row"
                     className="px-6 py-4 text-sm font-semibold text-text-primary"
                   >
-                    {row.feature}
+                    {row.docHref ? (
+                      <Link
+                        href={row.docHref}
+                        className="inline-flex items-center gap-1 hover:text-accent transition-colors group/link"
+                      >
+                        <span>{row.feature}</span>
+                        <span
+                          aria-hidden="true"
+                          className="opacity-0 -translate-x-1 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all text-accent text-xs"
+                        >
+                          →
+                        </span>
+                      </Link>
+                    ) : (
+                      row.feature
+                    )}
                   </th>
                   <td className="border-x border-border/40 bg-accent-soft px-6 py-4 text-sm leading-relaxed text-text-primary">
                     {row.sythoria}
