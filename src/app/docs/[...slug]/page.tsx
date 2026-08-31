@@ -35,15 +35,15 @@ export async function generateMetadata({
   const resolvedParams = await params;
   const slug = resolvedParams.slug.join("/");
   const doc = getDocBySlug(slug);
-  if (!doc) return { title: "Not Found" };
+  if (!doc) return { title: "404" };
   return {
-    title: `${doc.title} | Documentation`,
+    title: `${doc.title} — Documentation`,
     description: doc.description,
     alternates: { canonical: `/docs/${slug}` },
     openGraph: {
       type: "article",
       url: `/docs/${slug}`,
-      title: `${doc.title} | Sythoria Documentation`,
+      title: `Sythoria — ${doc.title}`,
       description: doc.description,
       modifiedTime: doc.lastVerifiedDate || undefined,
     },
@@ -64,8 +64,83 @@ export default async function DocPage({
   const meta = getDocMeta(slug);
   const { prev, next } = getAdjacentDocs(slug);
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "@id": `https://sythoria.com/docs/${slug}#article`,
+        headline: doc.title,
+        description: doc.description,
+        url: `https://sythoria.com/docs/${slug}`,
+        dateModified: doc.lastVerifiedDate || undefined,
+        inLanguage: "en-US",
+        mainEntityOfPage: `https://sythoria.com/docs/${slug}`,
+        author: {
+          "@type": "Organization",
+          name: "Sythoria",
+          url: "https://sythoria.com",
+        },
+        publisher: {
+          "@type": "Organization",
+          name: "Sythoria",
+          url: "https://sythoria.com",
+          logo: {
+            "@type": "ImageObject",
+            url: "https://sythoria.com/logonobg.png",
+          },
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `https://sythoria.com/docs/${slug}#breadcrumb`,
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://sythoria.com",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Documentation",
+            item: "https://sythoria.com/docs",
+          },
+          ...(meta
+            ? [
+                {
+                  "@type": "ListItem",
+                  position: 3,
+                  name: meta.group,
+                  item: `https://sythoria.com/docs#${meta.group.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+                },
+                {
+                  "@type": "ListItem",
+                  position: 4,
+                  name: doc.title,
+                  item: `https://sythoria.com/docs/${slug}`,
+                },
+              ]
+            : [
+                {
+                  "@type": "ListItem",
+                  position: 3,
+                  name: doc.title,
+                  item: `https://sythoria.com/docs/${slug}`,
+                },
+              ]),
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="animate-fade-in">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       {meta && (
         <span className="text-xs font-medium uppercase tracking-widest text-accent">
           {meta.group}
