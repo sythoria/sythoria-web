@@ -22,8 +22,8 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Sythoria – Privacy-First AI Desktop Client",
-    template: "%s | Sythoria",
+    default: "Sythoria — Home",
+    template: "Sythoria — %s",
   },
   description:
     "Sythoria is a privacy-first AI desktop client for local and hosted LLMs. Connect OpenAI, Anthropic, Ollama, and Gemini with zero telemetry.",
@@ -47,14 +47,14 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "Sythoria",
     url: "/",
-    title: "Sythoria – Privacy-First AI Desktop Client",
+    title: "Sythoria — Home",
     description:
       "Privacy-first AI desktop client for local and hosted LLMs. Connect OpenAI, Anthropic, Ollama, and Gemini with zero telemetry.",
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sythoria – Privacy-First AI Desktop Client",
+    title: "Sythoria — Home",
     description:
       "Privacy-first AI desktop client for local and hosted LLMs. Connect OpenAI, Anthropic, Ollama, and Gemini with zero telemetry.",
     images: ["/opengraph-image"],
