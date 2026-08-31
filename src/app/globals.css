@@ -2221,3 +2221,75 @@ html:not(.dark) [data-theme*=" "] span {
 .animate-ambient-pulse {
   animation: ambient-pulse 12s ease-in-out infinite alternate;
 }
+
+/* ═══════════════════════════════════════════════════
+   CUSTOM 404 HERO DISPLAY
+   ═══════════════════════════════════════════════════ */
+
+.not-found-number {
+  font-size: clamp(8rem, 24vw, 20rem);
+  font-weight: 900;
+  line-height: 0.85;
+  letter-spacing: -0.06em;
+  background: linear-gradient(
+    180deg,
+    #000000 0%,
+    #1d1d1f 35%,
+    #4a4a4f 70%,
+    #8e8e93 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.12));
+  user-select: none;
+}
+
+.dark .not-found-number {
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #e5e5ea 35%,
+    #a1a1a6 70%,
+    #636366 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 30px rgba(255, 255, 255, 0.1));
+}
+
+.not-found-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(90vw, 680px);
+  height: 280px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    ellipse,
+    rgba(0, 0, 0, 0.06) 0%,
+    rgba(0, 0, 0, 0.02) 50%,
+    transparent 70%
+  );
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.dark .not-found-glow {
+  background: radial-gradient(
+    ellipse,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.02) 50%,
+    transparent 70%
+  );
+  filter: blur(50px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .not-found-glow {
+    filter: blur(20px);
+  }
+}
