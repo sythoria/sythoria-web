@@ -9,6 +9,7 @@ import {
   Lock,
   KeyRound,
 } from "lucide-react";
+import Link from "next/link";
 import { useScrollInView } from "@/hooks/useScrollInView";
 import BentoCard from "./BentoCard";
 import InteractiveGlowSphere from "./InteractiveGlowSphere";
@@ -73,6 +74,7 @@ interface SmallFeature {
   description: string;
   code: string;
   accentColor: string;
+  href: string;
 }
 
 const smallFeatures: SmallFeature[] = [
@@ -83,6 +85,7 @@ const smallFeatures: SmallFeature[] = [
       "Let the agent read a project, review proposed edits, and apply approved changes from an isolated worktree.",
     code: "permissions: read | write | full",
     accentColor: "#f43f5e",
+    href: "/docs/features/project-workspaces",
   },
   {
     icon: Search,
@@ -91,6 +94,7 @@ const smallFeatures: SmallFeature[] = [
       "Search with Google, SearXNG, or Firecrawl, then fetch readable page content with Firecrawl or Jina.",
     code: "search: google | searxng | firecrawl",
     accentColor: "#f59e0b",
+    href: "/docs/features/web-search",
   },
   {
     icon: Columns3,
@@ -99,6 +103,7 @@ const smallFeatures: SmallFeature[] = [
       "Send one prompt to several configured models and read their responses side by side.",
     code: "layout: parallel columns",
     accentColor: "#10b981",
+    href: "/docs/features/comparison-grid",
   },
   {
     icon: Mic,
@@ -107,6 +112,7 @@ const smallFeatures: SmallFeature[] = [
       "Transcribe up to five minutes of speech and attach a confirmed capture of the frontmost app window.",
     code: "input: voice | appshot",
     accentColor: "#8b5cf6",
+    href: "/docs/features/voice",
   },
 ];
 
@@ -148,14 +154,25 @@ export default function Features() {
         <div className="bento-grid">
           {/* ═══ Card 1 — Multi-Provider Chat (lg) ═══ */}
           <BentoCard size="lg" accentColor="var(--color-accent)" delay={0}>
-            <h3 className="text-lg font-semibold text-text-primary mb-1">
-              Multi-Provider Chat
-            </h3>
-            <p className="text-sm text-text-secondary font-light leading-relaxed mb-4">
-              Connect to OpenAI, Anthropic, Google Gemini, Ollama, NVIDIA NIM,
-              OpenRouter, or another OpenAI-compatible API from the same desktop
-              app.
-            </p>
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-text-primary mb-1">
+                  Multi-Provider Chat
+                </h3>
+                <p className="text-sm text-text-secondary font-light leading-relaxed mb-4">
+                  Connect to OpenAI, Anthropic, Google Gemini, Ollama, NVIDIA
+                  NIM, OpenRouter, or another OpenAI-compatible API from the
+                  same desktop app.
+                </p>
+              </div>
+              <Link
+                href="/docs/features/multi-provider"
+                className="text-xs font-medium text-accent hover:text-accent-hover transition-colors shrink-0 ml-4 hidden sm:inline-flex items-center gap-1 group-hover:underline"
+                aria-label="Read Multi-Provider Chat documentation"
+              >
+                Docs <span aria-hidden="true">→</span>
+              </Link>
+            </div>
             <div className="flex-1 flex items-center justify-center">
               <InteractiveGlowSphere />
             </div>
@@ -163,15 +180,27 @@ export default function Features() {
 
           {/* ═══ Card 2 — Privacy (lg) ═══ */}
           <BentoCard size="lg" accentColor="#8E9DCC" delay={0.1}>
-            <h3 className="text-lg font-semibold text-text-primary mb-1">
-              Your Keys, Your Control
-            </h3>
-            <p className="text-sm text-text-secondary font-light leading-relaxed mb-4">
-              Sythoria encrypts its local secrets file and stores the root key
-              in your operating system credential vault. Prompts sent to a
-              hosted model still leave your device and are handled under that
-              provider&apos;s terms. Sythoria does not add its own prompt relay.
-            </p>
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-text-primary mb-1">
+                  Your Keys, Your Control
+                </h3>
+                <p className="text-sm text-text-secondary font-light leading-relaxed mb-4">
+                  Sythoria encrypts its local secrets file and stores the root
+                  key in your operating system credential vault. Prompts sent to
+                  a hosted model still leave your device and are handled under
+                  that provider&apos;s terms. Sythoria does not add its own
+                  prompt relay.
+                </p>
+              </div>
+              <Link
+                href="/docs/privacy"
+                className="text-xs font-medium text-accent hover:text-accent-hover transition-colors shrink-0 ml-4 hidden sm:inline-flex items-center gap-1 group-hover:underline"
+                aria-label="Read Privacy and Security documentation"
+              >
+                Docs <span aria-hidden="true">→</span>
+              </Link>
+            </div>
             <div className="flex-1 flex items-center justify-center">
               <PrivacyVisualization />
             </div>
@@ -188,23 +217,32 @@ export default function Features() {
                 delay={0.15 + i * 0.08}
               >
                 {/* Header: icon · title */}
-                <div className="flex items-center gap-3 mb-3">
-                  <div
-                    className="w-8 h-8 rounded-full border flex items-center justify-center shrink-0"
-                    style={{
-                      background: `${feat.accentColor}12`,
-                      borderColor: `${feat.accentColor}30`,
-                    }}
-                  >
-                    <Icon
-                      size={15}
-                      strokeWidth={1.5}
-                      style={{ color: feat.accentColor }}
-                    />
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-8 h-8 rounded-full border flex items-center justify-center shrink-0"
+                      style={{
+                        background: `${feat.accentColor}12`,
+                        borderColor: `${feat.accentColor}30`,
+                      }}
+                    >
+                      <Icon
+                        size={15}
+                        strokeWidth={1.5}
+                        style={{ color: feat.accentColor }}
+                      />
+                    </div>
+                    <h3 className="text-sm font-semibold text-text-primary">
+                      {feat.title}
+                    </h3>
                   </div>
-                  <h3 className="text-sm font-semibold text-text-primary">
-                    {feat.title}
-                  </h3>
+                  <Link
+                    href={feat.href}
+                    className="text-[11px] font-medium text-text-muted hover:text-accent transition-colors flex items-center gap-0.5 opacity-75 group-hover:opacity-100"
+                    aria-label={`Read ${feat.title} guide`}
+                  >
+                    Guide <span aria-hidden="true">→</span>
+                  </Link>
                 </div>
 
                 {/* Description */}
