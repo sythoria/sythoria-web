@@ -15,14 +15,14 @@ import Button from "@/components/ui/Button";
 import DownloadCards from "@/components/marketing/DownloadCards";
 
 export const metadata: Metadata = {
-  title: "Download Sythoria Desktop | Official Downloads",
+  title: "Downloads",
   description:
     "Download the latest published Sythoria Desktop release for Windows, macOS, or Linux.",
   alternates: {
     canonical: "/downloads",
   },
   openGraph: {
-    title: "Download Sythoria Desktop",
+    title: "Sythoria — Downloads",
     description:
       "Get Sythoria Desktop for Windows, macOS, and Linux. No Sythoria account or hosted prompt relay is required.",
   },
@@ -45,8 +45,37 @@ export default async function DownloadsPage() {
     /setup.*\.exe$/i.test(asset.name)
   );
   const macDmg = assets.find((a) => a.name.toLowerCase().endsWith(".dmg"));
+
+  const downloadsJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Sythoria Desktop",
+    operatingSystem:
+      "Windows 10/11 x64, macOS 12+ (Apple Silicon), Linux x86_64",
+    applicationCategory: "DeveloperApplication",
+    softwareVersion: versionTag,
+    downloadUrl: releaseUrl,
+    url: "https://sythoria.com/downloads",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    author: {
+      "@type": "Organization",
+      name: "Sythoria",
+      url: "https://sythoria.com",
+    },
+    description:
+      "Privacy-first native desktop client for local and hosted LLMs with zero telemetry and local credential storage.",
+  };
+
   return (
     <div className="min-h-screen bg-landing-bg text-text-primary selection:bg-accent/30 flex flex-col justify-between">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(downloadsJsonLd) }}
+      />
       <Navbar />
 
       {/* Background radial ambient glow */}
