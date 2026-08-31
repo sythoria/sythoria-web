@@ -1,0 +1,39 @@
+﻿# Sythoria
+> The privacy-first desktop client for local and hosted language models. Zero telemetry, local credential encryption, and bring-your-own-key (BYOK).
+
+## Overview
+Sythoria is a native desktop application (built with Tauri) for Windows, macOS (Apple Silicon), and Linux that connects to local and hosted LLMs without intermediate relays or accounts. API credentials remain on your device, encrypted with keys held in your operating system credential vault.
+
+- Website: https://sythoria.com
+- Downloads: https://sythoria.com/downloads
+- Documentation: https://sythoria.com/docs
+- Source & Desktop Releases: https://github.com/sythoria/sythoria-desktop
+
+## Key Capabilities
+- **Multi-Provider Support**: Built-in presets for OpenAI, Anthropic, Google Gemini, Ollama (local), OpenRouter, and NVIDIA NIM, plus custom OpenAI-compatible endpoints.
+- **Privacy & Security**: Zero telemetry, no user accounts required, AES encrypted local storage (secrets.enc), OS credential vault key protection.
+- **Project Workspaces**: Agentic read, review, and write capabilities with isolated Git worktrees.
+- **Web Search & Fetch**: Integrations with Google, SearXNG, and Firecrawl for searching, plus Jina Reader and Firecrawl for page fetching.
+- **Multi-Model Comparison**: Run side-by-side prompt benchmarks across multiple configured models concurrently.
+- **Model Context Protocol (MCP)**: Support for stdio, SSE, and Streamable HTTP transports with explicit per-call authorization.
+- **Voice & Vision**: Local microphone audio transcription and frontmost application window screenshot captures.
+
+## Supported Operating Systems
+- **Windows**: Windows 10 or 11 (x64 setup executable)
+- **macOS**: macOS 12 or later (Apple Silicon disk image)
+- **Linux**: Linux x86_64 (.deb, .rpm, AppImage)
+
+## Documentation Index
+- [Quickstart & Setup](https://sythoria.com/docs/getting-started): Download Sythoria Desktop and connect your first AI model.
+- [Multi-Provider Chat](https://sythoria.com/docs/features/multi-provider): Configure endpoints, context limits, and temperature presets.
+- [Project Workspaces](https://sythoria.com/docs/features/project-workspaces): Scoped folder access, diff review, and worktree isolation.
+- [Model Context Protocol (MCP)](https://sythoria.com/docs/features/mcp): Connect external tools and database servers via standard MCP transports.
+- [Search & Web Fetching](https://sythoria.com/docs/features/web-search): Connect local or cloud search engines and page scrapers.
+- [Comparison Grid](https://sythoria.com/docs/features/comparison-grid): Run prompts against multiple models simultaneously.
+- [Voice & Transcription](https://sythoria.com/docs/features/voice): Record voice messages with client-side transcription.
+- [Privacy & Security Architecture](https://sythoria.com/docs/privacy): Detailed analysis of network boundaries, telemetry policies, and secret encryption.
+- [Configuration & Settings](https://sythoria.com/docs/configuration): Command palette, shortcuts, and global preferences.
+- [Ollama Setup Guide](https://sythoria.com/docs/providers/ollama): Connect to local Ollama instances over LAN or localhost.
+- [OpenAI Provider](https://sythoria.com/docs/providers/openai): Setup instructions for OpenAI models and API keys.
+- [Anthropic Provider](https://sythoria.com/docs/providers/anthropic): Setup instructions for Claude models and API keys.
+- [Google Gemini Provider](https://sythoria.com/docs/providers/gemini): Setup instructions for Gemini models and API keys.
